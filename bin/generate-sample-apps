@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -e
+
+PHOENIX_VERSIONS="1.0.0 1.0.1 1.0.2 1.2.0"
+
+export MIX_ARCHIVES="${PWD}/tmp/archives"
+
+for phoenix_version in ${PHOENIX_VERSIONS}; do
+  echo "Generating app for version ${phoenix_version}"
+
+  echo "--- installing phoenix.new archive"
+  mix archive.install https://github.com/phoenixframework/archives/raw/master/phoenix_new-${phoenix_version}.ez --force
+
+  mix phoenix.new --version
+done
