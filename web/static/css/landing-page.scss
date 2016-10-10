@@ -1,6 +1,54 @@
 @import "variables";
+@import "mixins";
+@import "fonts";
 
 #landing-page {
+  #input-section {
+    @include gradient-radial(#F67938, #EF4734);
+
+    form {
+      margin-top: 30px;
+      margin-bottom: 30px;
+
+      color: white;
+      text-align: center;
+
+      h3 {
+        margin-top: 0;
+        margin-bottom: 20px;
+
+        @include font-open-sans-light;
+      }
+
+      label {
+        @include font-open-sans-regular;
+        margin-right: 6px;
+
+        text-transform: uppercase;
+        text-decoration: underline;
+      }
+
+      select {
+        margin-right: 20px;
+      }
+
+      button {
+        @include font-open-sans-bold;
+
+        text-transform: uppercase;
+        color: white;
+
+        border-color: white;
+        border-width: 2px;
+        background-color: transparent;
+
+        &:focus {
+          outline:0;
+        }
+      }
+    }
+  }
+
   #loading-container {
     text-align: center;
 

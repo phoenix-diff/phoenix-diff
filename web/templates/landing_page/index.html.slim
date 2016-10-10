@@ -1,7 +1,27 @@
 #landing-page ng-controller="DiffController as diff"
+  section#input-section
+    .container
+      form#options-form.ng-cloak.form-inline
+        h3 See the changes required to upgrade your Phoenix application
+        
+        .form-group
+          label for="sourceVersion" Source
+          select.form-control name="sourceVersion" ng-model="sourceVersion"
+            option value="1.1.0" 1.1.0
+            option value="1.2.0" 1.2.0
 
-  #diff-results-container
+        .form-group
+          label for="targetVersion" Target
+          select.form-control name="targetVersion" ng-model="targetVersion"
+            option value="1.1.0" 1.1.0
+            option value="1.2.0" 1.2.0
+            
+        button.btn.btn-default type="submit" See Changes
 
-  #loading-container.ng-cloak ng-show="loading"
-    i.fa.fa-spinner.fa-spin.fa-2x
-    span.text Loading...
+  section#results-sections
+    .container
+      #diff-results-container
+
+      #loading-container.ng-cloak ng-show="loading"
+        i.fa.fa-spinner.fa-spin.fa-2x
+        span.text Diffing...

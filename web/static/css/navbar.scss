@@ -1,0 +1,8 @@
+@import "fonts";
+
+nav.navbar {
+  a.navbar-brand {
+    @include font-open-sans-bold;
+    font-size: 28px;
+  }
+}
