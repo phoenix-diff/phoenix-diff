@@ -2,12 +2,16 @@ defmodule PhoenixDiff.Diff do
   @sample_app_path "data/sample-app"
 
   def get(from_version, to_version) do
-    # git diff --no-index data/sample-app/1.0.1 data/sample-app/1.2.0
+    from_path = "#{@sample_app_path}/#{from_version}"
+    to_path = "#{@sample_app_path}/#{to_version}"
+
     {result, _exit_code} = System.cmd("git", ["diff",
                                               "--no-index",
-                                              "#{@sample_app_path}/#{from_version}",
-                                              "#{@sample_app_path}/#{to_version}"]) |> IO.inspect
+                                              from_path,
+                                              to_path])
 
     result
+    |> String.replace("a/#{from_path}/", "")
+    |> String.replace("b/#{to_path}/", "")
   end
 end

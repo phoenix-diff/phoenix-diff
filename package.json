@@ -11,6 +11,8 @@
   },
   "devDependencies": {
     "babel-brunch": "6.0.6",
+    "babel-plugin-ng-annotate": "0.3.2",
+    "babel-plugin-syntax-decorators": "6.13.0",
     "bootstrap-sass": "3.3.7",
     "brunch": "2.8.2",
     "clean-css-brunch": "2.0.0",
