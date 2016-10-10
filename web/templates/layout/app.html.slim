@@ -20,5 +20,15 @@ html lang="en"
     main role="main"
       .container
         = render @view_module, @view_template, assigns
+        
+    footer.footer
+      .container
+        p.text-center
+          | A project by Navin Peiris&nbsp;&nbsp;
+          a href="https://github.com/navinpeiris" Github
+          | &nbsp;|&nbsp;
+          a href="https://twitter.com/navinpeiris" Twitter
+          | &nbsp;|&nbsp;
+          a href="https://www.linkedin.com/in/navinpeiris" LinkedIn
 
     script src="#{static_path(@conn, "/js/app.js")}"

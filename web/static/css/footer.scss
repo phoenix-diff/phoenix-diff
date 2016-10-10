@@ -1,0 +1,43 @@
+$footer-height: 60px;
+$footer-background-color: #343434;
+
+footer {
+  height: $footer-height;
+
+  font-size: 12px;
+  color: #898989;
+  background-color:  $footer-background-color;
+
+  p {
+    line-height: $footer-height;
+    margin-bottom: 0;
+  }
+
+  a, a:focus, a:visited {
+    color: #b7b7b7;
+  }
+
+  a:hover {
+    color: #eeeeee;
+    text-decoration: none;
+  }
+}
+
+/*
+ * Sticky footer
+ */
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: $footer-height;
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
