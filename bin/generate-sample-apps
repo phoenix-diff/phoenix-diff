@@ -3,14 +3,15 @@
 set -e
 
 PHOENIX_VERSIONS="1.0.0 1.0.1 1.0.2 1.2.0"
+SAMPLE_APP_DIR="${PWD}/sample-app"
 
 export MIX_ARCHIVES="${PWD}/tmp/archives"
 
 for phoenix_version in ${PHOENIX_VERSIONS}; do
   echo "Generating app for version ${phoenix_version}"
 
-  echo "--- installing phoenix.new archive"
   mix archive.install https://github.com/phoenixframework/archives/raw/master/phoenix_new-${phoenix_version}.ez --force
 
-  mix phoenix.new --version
+  sample_app_path="${SAMPLE_APP_DIR}/${phoenix_version}"
+  yes n | mix phoenix.new ${sample_app_path} --module SampleApp --app sample_app
 done
