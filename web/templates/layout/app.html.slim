@@ -8,11 +8,13 @@ html lang="en"
     title PhoenixDiff
     meta content="See what needs to be changed to upgrade your Phoenix application to a new version." name="description"
     meta content="Navin Peiris @navinpeiris" name="author"
-
-    link rel="stylesheet" href="#{static_path(@conn, "/css/app.css")}"
     
     link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/styles/github.min.css"
     link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/diff2html/2.0.7/diff2html.min.css"
+    
+    link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css"
+    
+    link rel="stylesheet" href="#{static_path(@conn, "/css/app.css")}"
 
   body ng-app="phoenixDiff" ng-strict-di=true
     nav.navbar.navbar-default.navbar-static-top
