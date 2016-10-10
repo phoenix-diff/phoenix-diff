@@ -2,10 +2,12 @@
 
 set -e
 
-PHOENIX_VERSIONS="1.0.0 1.0.1 1.0.2 1.2.0"
+PHOENIX_VERSIONS="1.0.0 1.0.1 1.0.2 1.0.3 1.0.4 1.1.0 1.1.1 1.1.2 1.1.3 1.1.4 1.1.5 1.1.6 1.2.0 1.2.1"
 SAMPLE_APP_DIR="${PWD}/data/sample-app"
 
 export MIX_ARCHIVES="${PWD}/tmp/archives"
+
+rm -fr ${SAMPLE_APP_DIR}
 
 for phoenix_version in ${PHOENIX_VERSIONS}; do
   echo "Generating app for version ${phoenix_version}"
