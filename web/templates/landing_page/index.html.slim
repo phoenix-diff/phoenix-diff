@@ -1,4 +1,7 @@
 #landing-page ng-controller="DiffController as diff"
-  h1.page-header Diffs
 
   #diff-results-container
+
+  #loading-container.ng-cloak ng-show="loading"
+    i.fa.fa-spinner.fa-spin.fa-2x
+    span.text Loading...

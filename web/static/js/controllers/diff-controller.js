@@ -8,12 +8,16 @@ export default class DiffController {
   }
 
   _showDiff() {
+    this.$scope.loading = true;
+
     this._getDiff().then(diff => {
       var diff2htmlUi = new Diff2HtmlUI({diff: diff});
 
       diff2htmlUi.draw('#diff-results-container', {inputFormat: 'json', outputFormat: 'line-by-line', showFiles: true, matching: 'lines'});
       diff2htmlUi.fileListCloseable('#diff-results-container', false);
       // diff2htmlUi.highlightCode('#diff-results-container');
+
+      this.$scope.loading = false;
     });
   }
 

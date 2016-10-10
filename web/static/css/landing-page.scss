@@ -1,0 +1,14 @@
+@import "variables";
+
+#landing-page {
+  #loading-container {
+    text-align: center;
+
+    color: $main-branding-color;
+
+    .text {
+      font-size: 24px;
+      padding-left: 6px
+    }
+  }
+}
