@@ -11,11 +11,12 @@
   },
   "devDependencies": {
     "babel-brunch": "6.0.6",
+    "bootstrap-sass": "3.3.7",
     "brunch": "2.8.2",
     "clean-css-brunch": "2.0.0",
     "css-brunch": "2.6.1",
     "javascript-brunch": "2.0.0",
-    "sass-brunch": "^2.7.0",
+    "sass-brunch": "2.7.0",
     "uglify-js-brunch": "2.0.1"
   }
 }
