@@ -33,7 +33,7 @@ defmodule SampleApp.Endpoint do
   plug Plug.Session,
     store: :cookie,
     key: "_sample_app_key",
-    signing_salt: "noofsC9s"
+    signing_salt: "3F7ZG78c"
 
   plug SampleApp.Router
 end

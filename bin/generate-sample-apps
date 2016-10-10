@@ -3,7 +3,7 @@
 set -e
 
 PHOENIX_VERSIONS="1.0.0 1.0.1 1.0.2 1.2.0"
-SAMPLE_APP_DIR="${PWD}/sample-app"
+SAMPLE_APP_DIR="${PWD}/data/sample-app"
 
 export MIX_ARCHIVES="${PWD}/tmp/archives"
 
