@@ -18,4 +18,8 @@ defmodule PhoenixDiff.Router do
 
     get "/", LandingPageController, :index
   end
+
+  scope "/", PhoenixDiff do
+    get "/diffs/:from/:to", DiffsController, :show
+  end
 end
