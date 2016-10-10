@@ -1,4 +1,4 @@
-defmodule PhoenixDiff.PageController do
+defmodule PhoenixDiff.LandingPageController do
   use PhoenixDiff.Web, :controller
 
   def index(conn, _params) do
