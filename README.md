@@ -1,6 +1,10 @@
+[![CircleCI](https://circleci.com/gh/navinpeiris/phoenix-diff.svg?style=svg)](https://circleci.com/gh/navinpeiris/phoenix-diff)
+
 # Phoenix Diff
 
-See what needs to be changed when upgrading a Phoenix framework application
+See what needs to be changed when upgrading a Phoenix framework application [http://www.phoenixdiff.org](http://www.phoenixdiff.org)
+
+## Development
 
 To start your Phoenix app:
 
@@ -10,12 +14,14 @@ To start your Phoenix app:
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
-Ready to run in production? Please [check our deployment guides](http://www.phoenixframework.org/docs/deployment).
+### Adding new phoenix versions to be diff'ed
 
-## Learn more
+The sample apps used to create the diffs are stored within the `data/sample-app` directory.
 
-  * Official website: http://www.phoenixframework.org/
-  * Guides: http://phoenixframework.org/docs/overview
-  * Docs: https://hexdocs.pm/phoenix
-  * Mailing list: http://groups.google.com/group/phoenix-talk
-  * Source: https://github.com/phoenixframework/phoenix
+When a new version of phoenix is available, add it to the versions variable in the following script and run it to regenerate that data.
+
+```
+./bin/generate-sample-apps
+```
+
+Currently the `secret_key_base` and `signing_salt` variables must be set to the same within all the apps manually so that they don't show up in the diffs, but this should be automated pretty soon.
