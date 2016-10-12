@@ -22,5 +22,9 @@
     .container
       #diff-results-container
       
+      #loading-container.message-container.ng-cloak ng-show="loading"
+        i.fa.fa-spinner.fa-spin.fa-2x
+        span.text Loading Diff
+      
       .message-container.ng-cloak ng-show="showNoChangesMessage"
         span.text There are no changes between version {{ sourceVersion }} and {{ targetVersion }}.

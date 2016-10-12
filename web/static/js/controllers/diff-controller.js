@@ -14,13 +14,13 @@ export default class DiffController {
     this._clearContent();
 
     this._getDiff().then(diff => {
+      this.$scope.loading = false;
+
       if (diff) {
         this._showDiff(diff);
       } else {
         this.$scope.showNoChangesMessage = true;
       }
-
-      this.$scope.loading = false;
     });
   }
 
