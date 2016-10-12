@@ -5,6 +5,7 @@
   "ex_unit_notifier": {:hex, :ex_unit_notifier, "0.1.1", "53d4d3a351d77f3d73e39aa04a59bd70bcfd16cae0d19a64b3bcda0a36703b6f", [:mix], []},
   "fs": {:hex, :fs, "0.9.2", "ed17036c26c3f70ac49781ed9220a50c36775c6ca2cf8182d123b6566e49ec59", [:rebar], []},
   "gettext": {:hex, :gettext, "0.11.0", "80c1dd42d270482418fa158ec5ba073d2980e3718bacad86f3d4ad71d5667679", [:mix], []},
+  "junit_formatter": {:hex, :junit_formatter, "1.1.0", "dbffc4f8123a57bd167e99223aca1b3bbeaa4aede9b5151cfd5739d21001c9cf", [:mix], []},
   "logster": {:hex, :logster, "0.4.0", "a4e43fd75b6505c45c2a08995154f38c048efd1bb32e243fa77d0353357fcde6", [:mix], [{:plug, "~> 1.0", [hex: :plug, optional: false]}, {:poison, "~> 1.5 or ~> 2.0", [hex: :poison, optional: false]}]},
   "mime": {:hex, :mime, "1.0.1", "05c393850524767d13a53627df71beeebb016205eb43bfbd92d14d24ec7a1b51", [:mix], []},
   "mix_test_watch": {:hex, :mix_test_watch, "0.2.6", "9fcc2b1b89d1594c4a8300959c19d50da2f0ff13642c8f681692a6e507f92cab", [:mix], [{:fs, "~> 0.9.1", [hex: :fs, optional: false]}]},

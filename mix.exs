@@ -39,8 +39,11 @@ defmodule PhoenixDiff.Mixfile do
       {:logster, "~> 0.3"},
 
       {:credo, "~> 0.4", only: [:dev, :test]},
+
       {:mix_test_watch, "~> 0.2", only: :dev},
-      {:ex_unit_notifier, "~> 0.1", only: :test}
+
+      {:ex_unit_notifier, "~> 0.1", only: :test},
+      {:junit_formatter, "~> 1.1", only: :test}
     ]
   end
 end

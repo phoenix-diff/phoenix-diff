@@ -1,0 +1,32 @@
+machine:
+  node:
+    version: 6.7.0
+  environment:
+    PATH: ${HOME}/dependencies/erlang/bin:${HOME}/dependencies/elixir/bin:${PATH}
+
+dependencies:
+  pre:
+    - ./bin/ci/prepare
+  post:
+    # --- The following is required for integration specs ---
+    - phantomjs --wd:
+        background: true
+  cache_directories:
+    - ~/dependencies
+    - ~/.mix
+    - ./_build
+    - ./deps
+    - ./node_modules
+
+test:
+  override:
+    - mix test
+    - mix credo --strict --all
+  post:
+    - cp ./_build/test/lib/phoenix_diff/test-junit-report.xml $CIRCLE_TEST_REPORTS/
+
+deployment:
+  staging:
+    branch: master
+    heroku:
+      appname: phoenixdiff
