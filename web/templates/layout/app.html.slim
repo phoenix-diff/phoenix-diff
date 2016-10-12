@@ -6,7 +6,7 @@ html lang="en"
     meta content="width=device-width, initial-scale=1" name="viewport"
 
     title PhoenixDiff
-    meta content="See what needs to be changed to upgrade your Phoenix application to a new version." name="description"
+    meta content="See the changes needed to upgrade your Phoenix application" name="description"
     meta content="Navin Peiris @navinpeiris" name="author"
     
     link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"
@@ -26,13 +26,20 @@ html lang="en"
         .navbar-header
           a.navbar-brand href="/" PhoenixDiff
           
+        p.navbar-text.navbar-right
+          a.navbar-link href="https://github.com/navinpeiris/phoenix-diff" target="_blank"
+            | View on Github
+            i.fa.fa-github
+          
     main role="main"
       = render @view_module, @view_template, assigns
         
     footer.footer
       .container
         p.text-center
-          | A project by Navin Peiris&nbsp;&nbsp;
+          | To all alchemists with&nbsp;
+          i.fa.fa-heart
+          | &nbsp;from Navin Peiris&nbsp;&nbsp;
           a href="https://github.com/navinpeiris" Github
           | &nbsp;|&nbsp;
           a href="https://twitter.com/navinpeiris" Twitter

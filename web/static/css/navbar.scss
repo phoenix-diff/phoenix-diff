@@ -8,4 +8,13 @@ nav.navbar {
 
     color: $main-branding-color;
   }
+
+  a.navbar-link {
+    color: $main-branding-color;
+
+    i.fa {
+      padding-left: 3px;
+      font-size: 20px;
+    }
+  }
 }
