@@ -56,10 +56,27 @@
     color: $main-branding-color;
 
     margin-top: 30px;
+    margin-bottom: 30px;
 
     .text {
       font-size: 24px;
       padding-left: 6px
+    }
+  }
+
+  #diff-results-container {
+    margin-top: 30px;
+    margin-bottom: 30px;
+
+    .d2h-file-list-header {
+      a {
+        font-size: 14px;
+        font-weight: bold;
+        color: $main-branding-color;
+        border: 2px solid $main-branding-color;
+        padding: 2px 4px;
+        margin-left: 4px;
+      }
     }
   }
 }
