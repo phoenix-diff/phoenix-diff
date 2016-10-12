@@ -1,27 +1,26 @@
-#landing-page ng-controller="DiffController as diff"
+#landing-page ng-controller="DiffController as diff" ng-init="diff.init('#{@previous_version}', '#{@latest_version}');"
   section#input-section
     .container
-      form#options-form.ng-cloak.form-inline
-        h3 See the changes required to upgrade your Phoenix application
+      form#options-form.ng-cloak.form-inline ng-submit="diff.show()"
+        h3 See the changes needed to upgrade your Phoenix application
         
         .form-group
           label for="sourceVersion" Source
           select.form-control name="sourceVersion" ng-model="sourceVersion"
-            option value="1.1.0" 1.1.0
-            option value="1.2.0" 1.2.0
+            = for version <- @available_versions do
+              option value="#{version}" = version
 
         .form-group
           label for="targetVersion" Target
           select.form-control name="targetVersion" ng-model="targetVersion"
-            option value="1.1.0" 1.1.0
-            option value="1.2.0" 1.2.0
-            
+            = for version <- @available_versions do
+              option value="#{version}" = version
+
         button.btn.btn-default type="submit" See Changes
 
   section#results-sections
     .container
       #diff-results-container
-
-      #loading-container.ng-cloak ng-show="loading"
-        i.fa.fa-spinner.fa-spin.fa-2x
-        span.text Diffing...
+      
+      .message-container.ng-cloak ng-show="showNoChangesMessage"
+        span.text There are no changes between version {{ sourceVersion }} and {{ targetVersion }}.

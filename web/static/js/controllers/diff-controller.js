@@ -1,24 +1,43 @@
 @Inject("$scope", "$http")
 export default class DiffController {
-  constructor() {
-    this.$scope.sourceVersion = "1.1.0";
-    this.$scope.targetVersion = "1.2.0";
+  init(sourceVersion, targetVersion) {
+    this.$scope.sourceVersion = sourceVersion;
+    this.$scope.targetVersion = targetVersion;
 
-    this._showDiff();
+    this.show();
   }
 
-  _showDiff() {
+  show() {
     this.$scope.loading = true;
+    this.$scope.showNoChangesMessage = false;
+
+    this._clearContent();
 
     this._getDiff().then(diff => {
-      var diff2htmlUi = new Diff2HtmlUI({diff: diff});
-
-      diff2htmlUi.draw('#diff-results-container', {inputFormat: 'json', outputFormat: 'line-by-line', showFiles: true, matching: 'lines'});
-      diff2htmlUi.fileListCloseable('#diff-results-container', false);
-      // diff2htmlUi.highlightCode('#diff-results-container');
+      if (diff) {
+        this._showDiff(diff);
+      } else {
+        this.$scope.showNoChangesMessage = true;
+      }
 
       this.$scope.loading = false;
     });
+  }
+
+  _showDiff(diff) {
+    var diff2htmlUi = new Diff2HtmlUI({diff: diff});
+
+    diff2htmlUi.draw(this._diffContainerSelector, {inputFormat: 'json', outputFormat: 'line-by-line', showFiles: true, matching: 'lines'});
+    diff2htmlUi.fileListCloseable(this._diffContainerSelector, false);
+    // diff2htmlUi.highlightCode(this._diffContainerSelector);
+  }
+
+  _clearContent() {
+    angular.element(this._diffContainerSelector).empty();
+  }
+
+  get _diffContainerSelector() {
+    return "#diff-results-container"
   }
 
   _getDiff() {

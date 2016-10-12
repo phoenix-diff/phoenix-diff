@@ -7,15 +7,16 @@
     @include gradient-radial(#F67938, #EF4734);
 
     form {
-      margin-top: 30px;
-      margin-bottom: 30px;
+      margin-top: 60px;
+      margin-bottom: 60px;
 
       color: white;
       text-align: center;
 
       h3 {
         margin-top: 0;
-        margin-bottom: 20px;
+        margin-bottom: 40px;
+        font-size: 22px;
 
         @include font-open-sans-light;
       }
@@ -49,10 +50,12 @@
     }
   }
 
-  #loading-container {
+  .message-container {
     text-align: center;
 
     color: $main-branding-color;
+
+    margin-top: 30px;
 
     .text {
       font-size: 24px;
