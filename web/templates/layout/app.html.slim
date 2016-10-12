@@ -59,3 +59,6 @@ html lang="en"
     script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.8/angular-animate.min.js"
     
     script src="#{static_path(@conn, "/js/app.js")}"
+
+    = if Mix.env == :prod do
+      = render "_tracking_scripts.html"
