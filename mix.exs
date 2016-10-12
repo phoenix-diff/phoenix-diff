@@ -17,7 +17,7 @@ defmodule PhoenixDiff.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {PhoenixDiff, []},
-     applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext]]
+     applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext, :logster]]
   end
 
   # Specifies which paths to compile per environment.
@@ -36,6 +36,7 @@ defmodule PhoenixDiff.Mixfile do
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 1.0"},
+      {:logster, "~> 0.3"},
 
       {:credo, "~> 0.4", only: [:dev, :test]},
       {:mix_test_watch, "~> 0.2", only: :dev},
