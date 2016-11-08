@@ -21,5 +21,7 @@ defmodule PhoenixDiff.Router do
 
   scope "/", PhoenixDiff do
     get "/diffs/:from/:to", DiffsController, :show
+
+    get "/.well-known/acme-challenge/:id", WellKnownLocationsController, :acme_challenge
   end
 end
