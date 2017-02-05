@@ -20,14 +20,12 @@ defmodule PhoenixDiff.ChannelCase do
       # Import conveniences for testing with channels
       use Phoenix.ChannelTest
 
-
       # The default endpoint for testing
       @endpoint PhoenixDiff.Endpoint
     end
   end
 
   setup tags do
-
     :ok
   end
 end
