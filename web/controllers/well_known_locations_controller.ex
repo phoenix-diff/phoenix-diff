@@ -2,8 +2,8 @@ defmodule PhoenixDiff.WellKnownLocationsController do
   use PhoenixDiff.Web, :controller
 
   def acme_challenge(conn, %{"id" => id}) do
-    if id == acme_challenge_key do
-      conn |> text(acme_challenge_secret)
+    if id == acme_challenge_key() do
+      conn |> text(acme_challenge_secret())
     else
       conn |> put_status(:not_found) |> text("Invalid key")
     end
