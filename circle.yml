@@ -20,6 +20,7 @@ dependencies:
 
 test:
   override:
+    - MIX_ENV=test mix compile --force --warnings-as-errors
     - mix test
     - mix credo --strict --all
   post:
