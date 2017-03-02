@@ -1,0 +1,13 @@
+diff --git mix.exs mix.exs
+index f9849a7..8296582 100644
+--- mix.exs
++++ mix.exs
+@@ -30,7 +30,7 @@ defmodule SampleApp.Mixfile do
+   #
+   # Type `mix help deps` for examples and options.
+   defp deps do
+-    [{:phoenix, "~> 1.1.5"},
++    [{:phoenix, "~> 1.1.4"},
+      {:postgrex, ">= 0.0.0"},
+      {:phoenix_ecto, "~> 2.0"},
+      {:phoenix_html, "~> 2.4"},

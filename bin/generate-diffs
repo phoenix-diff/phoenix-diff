@@ -1,0 +1,11 @@
+#!/bin/bash
+
+SAMPLE_APP_DIR="${PWD}/data/sample-app"
+DIFFS_DIR="${PWD}/data/diffs"
+APP_VERSIONS=`ls ${SAMPLE_APP_DIR}`
+
+for from_version in ${APP_VERSIONS}; do
+  for to_version in ${APP_VERSIONS}; do
+
+  done
+done

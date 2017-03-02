@@ -1,0 +1,156 @@
+diff --git config/config.exs config/config.exs
+index 52a4828..101273e 100644
+--- config/config.exs
++++ config/config.exs
+@@ -22,8 +22,3 @@ config :logger, :console,
+ # Import environment specific config. This must remain at the bottom
+ # of this file so it overrides the configuration defined above.
+ import_config "#{Mix.env}.exs"
+-
+-# Configure phoenix generators
+-config :phoenix, :generators,
+-  migration: true,
+-  binary_id: false
+diff --git config/test.exs config/test.exs
+index 78f87f6..48d55a7 100644
+--- config/test.exs
++++ config/test.exs
+@@ -9,6 +9,9 @@ config :sample_app, SampleApp.Endpoint,
+ # Print only warnings and errors during test
+ config :logger, level: :warn
+ 
++# Set a higher stacktrace during test
++config :phoenix, :stacktrace_depth, 20
++
+ # Configure your database
+ config :sample_app, SampleApp.Repo,
+   adapter: Ecto.Adapters.Postgres,
+diff --git mix.exs mix.exs
+index 8b1946c..b7390f8 100644
+--- mix.exs
++++ mix.exs
+@@ -9,43 +9,31 @@ defmodule SampleApp.Mixfile do
+      compilers: [:phoenix] ++ Mix.compilers,
+      build_embedded: Mix.env == :prod,
+      start_permanent: Mix.env == :prod,
+-     aliases: aliases,
+      deps: deps]
+   end
+ 
+-  # Configuration for the OTP application.
++  # Configuration for the OTP application
+   #
+-  # Type `mix help compile.app` for more information.
++  # Type `mix help compile.app` for more information
+   def application do
+     [mod: {SampleApp, []},
+      applications: [:phoenix, :phoenix_html, :cowboy, :logger,
+                     :phoenix_ecto, :postgrex]]
+   end
+ 
+-  # Specifies which paths to compile per environment.
++  # Specifies which paths to compile per environment
+   defp elixirc_paths(:test), do: ["lib", "web", "test/support"]
+   defp elixirc_paths(_),     do: ["lib", "web"]
+ 
+-  # Specifies your project dependencies.
++  # Specifies your project dependencies
+   #
+-  # Type `mix help deps` for examples and options.
++  # Type `mix help deps` for examples and options
+   defp deps do
+-    [{:phoenix, "~> 1.0.4"},
++    [{:phoenix, "~> 1.0.1"},
+      {:phoenix_ecto, "~> 1.1"},
+      {:postgrex, ">= 0.0.0"},
+      {:phoenix_html, "~> 2.1"},
+      {:phoenix_live_reload, "~> 1.0", only: :dev},
+      {:cowboy, "~> 1.0"}]
+   end
+-
+-  # Aliases are shortcut or tasks specific to the current project.
+-  # For example, to create, migrate and run the seeds file at once:
+-  #
+-  #     $ mix ecto.setup
+-  #
+-  # See the documentation for `Mix` for more info on aliases.
+-  defp aliases do
+-    ["ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+-     "ecto.reset": ["ecto.drop", "ecto.setup"]]
+-  end
+ end
+diff --git test/support/conn_case.ex test/support/conn_case.ex
+index ffae274..47c8473 100644
+--- test/support/conn_case.ex
++++ test/support/conn_case.ex
+@@ -36,6 +36,6 @@ defmodule SampleApp.ConnCase do
+       Ecto.Adapters.SQL.restart_test_transaction(SampleApp.Repo, [])
+     end
+ 
+-    {:ok, conn: Phoenix.ConnTest.conn()}
++    :ok
+   end
+ end
+diff --git test/support/model_case.ex test/support/model_case.ex
+index f318b1e..d9bfed8 100644
+--- test/support/model_case.ex
++++ test/support/model_case.ex
+@@ -39,12 +39,12 @@ defmodule SampleApp.ModelCase do
+   Given a User model that lists `:name` as a required field and validates
+   `:password` to be safe, it would return:
+ 
+-      iex> errors_on(%User{}, %{password: "password"})
++      iex> errors_on(%User{}, password: "password")
+       [password: "is unsafe", name: "is blank"]
+ 
+   You could then write your assertion like:
+ 
+-      assert {:password, "is unsafe"} in errors_on(%User{}, %{password: "password"})
++      assert {:password, "is unsafe"} in errors_on(%User{}, password: "password")
+ 
+   You can also create the changeset manually and retrieve the errors
+   field directly:
+diff --git web/static/js/socket.js web/static/js/socket.js
+index 73d1cf0..8d6ca6d 100644
+--- web/static/js/socket.js
++++ web/static/js/socket.js
+@@ -5,7 +5,7 @@
+ // and connect at the socket path in "lib/my_app/endpoint.ex":
+ import {Socket} from "deps/phoenix/web/static/js/phoenix"
+ 
+-let socket = new Socket("/socket", {params: {token: window.userToken}})
++let socket = new Socket("/socket")
+ 
+ // When you connect, you'll often need to authenticate the client.
+ // For example, imagine you have an authentication plug, `MyAuth`,
+@@ -51,7 +51,7 @@ let socket = new Socket("/socket", {params: {token: window.userToken}})
+ // Finally, pass the token on connect as below. Or remove it
+ // from connect if you don't care about authentication.
+ 
+-socket.connect()
++socket.connect({token: window.userToken})
+ 
+ // Now that you are connected, you can join channels with a topic:
+ let channel = socket.channel("topic:subtopic", {})
+diff --git web/web.ex web/web.ex
+index 3106250..fddb424 100644
+--- web/web.ex
++++ web/web.ex
+@@ -19,9 +19,6 @@ defmodule SampleApp.Web do
+   def model do
+     quote do
+       use Ecto.Model
+-
+-      import Ecto.Changeset
+-      import Ecto.Query, only: [from: 1, from: 2]
+     end
+   end
+ 
+@@ -64,6 +61,7 @@ defmodule SampleApp.Web do
+       alias SampleApp.Repo
+       import Ecto.Model
+       import Ecto.Query, only: [from: 1, from: 2]
++
+     end
+   end
+ 

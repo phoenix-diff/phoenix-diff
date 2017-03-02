@@ -1,0 +1,257 @@
+diff --git brunch-config.js brunch-config.js
+index 6c6d073..fa906bd 100644
+--- brunch-config.js
++++ brunch-config.js
+@@ -2,35 +2,35 @@ exports.config = {
+   // See http://brunch.io/#documentation for docs.
+   files: {
+     javascripts: {
+-      joinTo: 'js/app.js'
++      joinTo: "js/app.js"
+ 
+       // To use a separate vendor.js bundle, specify two files path
+       // https://github.com/brunch/brunch/blob/stable/docs/config.md#files
+       // joinTo: {
+-      //  'js/app.js': /^(web\/static\/js)/,
+-      //  'js/vendor.js': /^(web\/static\/vendor)|(deps)/
++      //  "js/app.js": /^(web\/static\/js)/,
++      //  "js/vendor.js": /^(web\/static\/vendor)|(deps)/
+       // }
+       //
+       // To change the order of concatenation of files, explicitly mention here
+       // https://github.com/brunch/brunch/tree/master/docs#concatenation
+       // order: {
+       //   before: [
+-      //     'web/static/vendor/js/jquery-2.1.1.js',
+-      //     'web/static/vendor/js/bootstrap.min.js'
++      //     "web/static/vendor/js/jquery-2.1.1.js",
++      //     "web/static/vendor/js/bootstrap.min.js"
+       //   ]
+       // }
+     },
+     stylesheets: {
+-      joinTo: 'css/app.css'
++      joinTo: "css/app.css"
+     },
+     templates: {
+-      joinTo: 'js/app.js'
++      joinTo: "js/app.js"
+     }
+   },
+ 
+   conventions: {
+     // This option sets where we should place non-css and non-js assets in.
+-    // By default, we set this to '/web/static/assets'. Files in this directory
++    // By default, we set this to "/web/static/assets". Files in this directory
+     // will be copied to `paths.public`, which is "priv/static" by default.
+     assets: /^(web\/static\/assets)/
+   },
+@@ -38,9 +38,12 @@ exports.config = {
+   // Phoenix paths configuration
+   paths: {
+     // Dependencies and current project directories to watch
+-    watched: ["deps/phoenix/web/static",
+-              "deps/phoenix_html/web/static",
+-              "web/static", "test/static"],
++    watched: [
++      "deps/phoenix/web/static",
++      "deps/phoenix_html/web/static",
++      "web/static",
++      "test/static"
++    ],
+ 
+     // Where to compile files to
+     public: "priv/static"
+@@ -56,7 +59,7 @@ exports.config = {
+ 
+   modules: {
+     autoRequire: {
+-      'js/app.js': ['web/static/js/app']
++      "js/app.js": ["web/static/js/app"]
+     }
+   },
+ 
+diff --git config/config.exs config/config.exs
+index 101273e..52a4828 100644
+--- config/config.exs
++++ config/config.exs
+@@ -22,3 +22,8 @@ config :logger, :console,
+ # Import environment specific config. This must remain at the bottom
+ # of this file so it overrides the configuration defined above.
+ import_config "#{Mix.env}.exs"
++
++# Configure phoenix generators
++config :phoenix, :generators,
++  migration: true,
++  binary_id: false
+diff --git config/dev.exs config/dev.exs
+index abb4452..9f4808b 100644
+--- config/dev.exs
++++ config/dev.exs
+@@ -38,4 +38,5 @@ config :sample_app, SampleApp.Repo,
+   username: "postgres",
+   password: "postgres",
+   database: "sample_app_dev",
++  hostname: "localhost",
+   pool_size: 10
+diff --git config/test.exs config/test.exs
+index 427dcc9..78f87f6 100644
+--- config/test.exs
++++ config/test.exs
+@@ -9,13 +9,11 @@ config :sample_app, SampleApp.Endpoint,
+ # Print only warnings and errors during test
+ config :logger, level: :warn
+ 
+-# Set a higher stacktrace during test
+-config :phoenix, :stacktrace_depth, 20
+-
+ # Configure your database
+ config :sample_app, SampleApp.Repo,
+   adapter: Ecto.Adapters.Postgres,
+   username: "postgres",
+   password: "postgres",
+   database: "sample_app_test",
++  hostname: "localhost",
+   pool: Ecto.Adapters.SQL.Sandbox
+diff --git mix.exs mix.exs
+index c6c7c03..8b1946c 100644
+--- mix.exs
++++ mix.exs
+@@ -9,31 +9,43 @@ defmodule SampleApp.Mixfile do
+      compilers: [:phoenix] ++ Mix.compilers,
+      build_embedded: Mix.env == :prod,
+      start_permanent: Mix.env == :prod,
++     aliases: aliases,
+      deps: deps]
+   end
+ 
+-  # Configuration for the OTP application
++  # Configuration for the OTP application.
+   #
+-  # Type `mix help compile.app` for more information
++  # Type `mix help compile.app` for more information.
+   def application do
+     [mod: {SampleApp, []},
+      applications: [:phoenix, :phoenix_html, :cowboy, :logger,
+                     :phoenix_ecto, :postgrex]]
+   end
+ 
+-  # Specifies which paths to compile per environment
++  # Specifies which paths to compile per environment.
+   defp elixirc_paths(:test), do: ["lib", "web", "test/support"]
+   defp elixirc_paths(_),     do: ["lib", "web"]
+ 
+-  # Specifies your project dependencies
++  # Specifies your project dependencies.
+   #
+-  # Type `mix help deps` for examples and options
++  # Type `mix help deps` for examples and options.
+   defp deps do
+-    [{:phoenix, "~> 1.0.0"},
++    [{:phoenix, "~> 1.0.4"},
+      {:phoenix_ecto, "~> 1.1"},
+      {:postgrex, ">= 0.0.0"},
+      {:phoenix_html, "~> 2.1"},
+      {:phoenix_live_reload, "~> 1.0", only: :dev},
+      {:cowboy, "~> 1.0"}]
+   end
++
++  # Aliases are shortcut or tasks specific to the current project.
++  # For example, to create, migrate and run the seeds file at once:
++  #
++  #     $ mix ecto.setup
++  #
++  # See the documentation for `Mix` for more info on aliases.
++  defp aliases do
++    ["ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
++     "ecto.reset": ["ecto.drop", "ecto.setup"]]
++  end
+ end
+diff --git test/support/conn_case.ex test/support/conn_case.ex
+index 47c8473..ffae274 100644
+--- test/support/conn_case.ex
++++ test/support/conn_case.ex
+@@ -36,6 +36,6 @@ defmodule SampleApp.ConnCase do
+       Ecto.Adapters.SQL.restart_test_transaction(SampleApp.Repo, [])
+     end
+ 
+-    :ok
++    {:ok, conn: Phoenix.ConnTest.conn()}
+   end
+ end
+diff --git test/support/model_case.ex test/support/model_case.ex
+index 0b96d4e..f318b1e 100644
+--- test/support/model_case.ex
++++ test/support/model_case.ex
+@@ -39,16 +39,16 @@ defmodule SampleApp.ModelCase do
+   Given a User model that lists `:name` as a required field and validates
+   `:password` to be safe, it would return:
+ 
+-      iex> errors_on(%User{}, password: "password")
++      iex> errors_on(%User{}, %{password: "password"})
+       [password: "is unsafe", name: "is blank"]
+ 
+   You could then write your assertion like:
+ 
+-      assert {:password, "is unsafe"} in errors_on(%User{}, password: "password")
+-  
++      assert {:password, "is unsafe"} in errors_on(%User{}, %{password: "password"})
++
+   You can also create the changeset manually and retrieve the errors
+   field directly:
+-  
++
+       iex> changeset = User.changeset(%User{}, password: "password")
+       iex> {:password, "is unsafe"} in changeset.errors
+       true
+diff --git web/static/js/socket.js web/static/js/socket.js
+index 8076c39..73d1cf0 100644
+--- web/static/js/socket.js
++++ web/static/js/socket.js
+@@ -5,7 +5,7 @@
+ // and connect at the socket path in "lib/my_app/endpoint.ex":
+ import {Socket} from "deps/phoenix/web/static/js/phoenix"
+ 
+-let socket = new Socket("/socket")
++let socket = new Socket("/socket", {params: {token: window.userToken}})
+ 
+ // When you connect, you'll often need to authenticate the client.
+ // For example, imagine you have an authentication plug, `MyAuth`,
+@@ -51,12 +51,12 @@ let socket = new Socket("/socket")
+ // Finally, pass the token on connect as below. Or remove it
+ // from connect if you don't care about authentication.
+ 
+-socket.connect({token: window.userToken})
++socket.connect()
+ 
+ // Now that you are connected, you can join channels with a topic:
+ let channel = socket.channel("topic:subtopic", {})
+ channel.join()
+-  .receive("ok", resp => { console.log("Joined succesffuly", resp) })
+-  .receive("error", resp => { console.log("Unabled to join", resp) })
++  .receive("ok", resp => { console.log("Joined successfully", resp) })
++  .receive("error", resp => { console.log("Unable to join", resp) })
+ 
+ export default socket
+diff --git web/web.ex web/web.ex
+index fddb424..3106250 100644
+--- web/web.ex
++++ web/web.ex
+@@ -19,6 +19,9 @@ defmodule SampleApp.Web do
+   def model do
+     quote do
+       use Ecto.Model
++
++      import Ecto.Changeset
++      import Ecto.Query, only: [from: 1, from: 2]
+     end
+   end
+ 
+@@ -61,7 +64,6 @@ defmodule SampleApp.Web do
+       alias SampleApp.Repo
+       import Ecto.Model
+       import Ecto.Query, only: [from: 1, from: 2]
+-
+     end
+   end
+ 
