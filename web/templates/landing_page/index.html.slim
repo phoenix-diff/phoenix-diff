@@ -1,4 +1,4 @@
-#landing-page ng-controller="DiffController as diff" ng-init="diff.init('#{@previous_version}', '#{@latest_version}');"
+#landing-page ng-controller="DiffController as diff" ng-init="diff.init('#{@source_version}', '#{@target_version}');"
   section#input-section
     .container
       form#options-form.ng-cloak.form-inline ng-submit="diff.show()"
