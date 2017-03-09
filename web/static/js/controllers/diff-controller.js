@@ -1,4 +1,4 @@
-@Inject("$scope", "$http")
+@Inject("$scope", "$http", "$location")
 export default class DiffController {
   init(sourceVersion, targetVersion) {
     this.$scope.sourceVersion = sourceVersion;
@@ -8,6 +8,8 @@ export default class DiffController {
   }
 
   show() {
+    this.$location.search({source_version: this.$scope.sourceVersion, target_version: this.$scope.targetVersion});
+
     this.$scope.loading = true;
     this.$scope.showNoChangesMessage = false;
 
