@@ -32,6 +32,40 @@ defmodule PhxDiff.Diffs do
     end
   end
 
+  def generate do
+    versions = all_versions()
+
+    version_tuples =
+      Enum.concat(
+        Enum.map(versions, fn source_version ->
+          Enum.map(versions, fn target_version ->
+            {source_version, target_version}
+          end)
+        end)
+      )
+
+    _ =
+      version_tuples
+      |> Task.async_stream(&generate_diff_content/1)
+      |> Enum.to_list()
+
+    :ok
+  end
+
+  defp generate_diff_content({source_version, target_version}) do
+    source_path = "#{@sample_app_path}/#{source_version}"
+    target_path = "#{@sample_app_path}/#{target_version}"
+
+    {result, _exit_code} = System.cmd("git", ["diff", "--no-index", source_path, target_path])
+
+    content =
+      result
+      |> String.replace("a/#{source_path}/", "")
+      |> String.replace("b/#{target_path}/", "")
+
+    File.write!(diff_file_path(source_version, target_version), content)
+  end
+
   defp diff_file_path(source_version, target_version) do
     "#{@diffs_path}/#{source_version}--#{target_version}.diff"
   end
