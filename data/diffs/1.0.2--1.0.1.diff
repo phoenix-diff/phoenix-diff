@@ -1,0 +1,38 @@
+diff --git config/config.exs config/config.exs
+index c039bc9..ed97b4a 100644
+--- config/config.exs
++++ config/config.exs
+@@ -22,8 +22,3 @@ config :logger, :console,
+ # Import environment specific config. This must remain at the bottom
+ # of this file so it overrides the configuration defined above.
+ import_config "#{Mix.env}.exs"
+-
+-# Configure phoenix generators
+-config :phoenix, :generators,
+-  migration: true,
+-  binary_id: false
+diff --git mix.exs mix.exs
+index a40c948..b7390f8 100644
+--- mix.exs
++++ mix.exs
+@@ -29,7 +29,7 @@ defmodule SampleApp.Mixfile do
+   #
+   # Type `mix help deps` for examples and options
+   defp deps do
+-    [{:phoenix, "~> 1.0.2"},
++    [{:phoenix, "~> 1.0.1"},
+      {:phoenix_ecto, "~> 1.1"},
+      {:postgrex, ">= 0.0.0"},
+      {:phoenix_html, "~> 2.1"},
+diff --git web/web.ex web/web.ex
+index b736122..fddb424 100644
+--- web/web.ex
++++ web/web.ex
+@@ -19,7 +19,6 @@ defmodule SampleApp.Web do
+   def model do
+     quote do
+       use Ecto.Model
+-      
+     end
+   end
+ 

@@ -1,0 +1,132 @@
+diff --git config/config.exs config/config.exs
+index 49827c9..86eb0e7 100644
+--- config/config.exs
++++ config/config.exs
+@@ -20,7 +20,7 @@ config :sample_app, SampleAppWeb.Endpoint,
+ # Configures Elixir's Logger
+ config :logger, :console,
+   format: "$time $metadata[$level] $message\n",
+-  metadata: [:user_id]
++  metadata: [:request_id]
+ 
+ # Import environment specific config. This must remain at the bottom
+ # of this file so it overrides the configuration defined above.
+diff --git lib/sample_app_web/endpoint.ex lib/sample_app_web/endpoint.ex
+index 58ce45a..21de496 100644
+--- lib/sample_app_web/endpoint.ex
++++ lib/sample_app_web/endpoint.ex
+@@ -19,6 +19,7 @@ defmodule SampleAppWeb.Endpoint do
+     plug Phoenix.CodeReloader
+   end
+ 
++  plug Plug.RequestId
+   plug Plug.Logger
+ 
+   plug Plug.Parsers,
+diff --git lib/sample_app_web/views/error_helpers.ex lib/sample_app_web/views/error_helpers.ex
+index 3425ae8..34882b0 100644
+--- lib/sample_app_web/views/error_helpers.ex
++++ lib/sample_app_web/views/error_helpers.ex
+@@ -18,23 +18,19 @@ defmodule SampleAppWeb.ErrorHelpers do
+   Translates an error message using gettext.
+   """
+   def translate_error({msg, opts}) do
+-    # When using gettext, we typically pass the strings we want
+-    # to translate as a static argument:
++    # Because error messages were defined within Ecto, we must
++    # call the Gettext module passing our Gettext backend. We
++    # also use the "errors" domain as translations are placed
++    # in the errors.po file.
++    # Ecto will pass the :count keyword if the error message is
++    # meant to be pluralized.
++    # On your own code and templates, depending on whether you
++    # need the message to be pluralized or not, this could be
++    # written simply as:
+     #
+-    #     # Translate "is invalid" in the "errors" domain
+-    #     dgettext "errors", "is invalid"
+-    #
+-    #     # Translate the number of files with plural rules
+     #     dngettext "errors", "1 file", "%{count} files", count
++    #     dgettext "errors", "is invalid"
+     #
+-    # Because the error messages we show in our forms and APIs
+-    # are defined inside Ecto, we need to translate them dynamically.
+-    # This requires us to call the Gettext module passing our gettext
+-    # backend as first argument.
+-    #
+-    # Note we use the "errors" domain, which means translations
+-    # should be written to the errors.po file. The :count option is
+-    # set by Ecto and indicates we should also apply plural rules.
+     if count = opts[:count] do
+       Gettext.dngettext(SampleAppWeb.Gettext, "errors", msg, msg, count, opts)
+     else
+diff --git lib/sample_app_web/views/error_view.ex lib/sample_app_web/views/error_view.ex
+index 90e0830..58efd34 100644
+--- lib/sample_app_web/views/error_view.ex
++++ lib/sample_app_web/views/error_view.ex
+@@ -1,16 +1,17 @@
+ defmodule SampleAppWeb.ErrorView do
+   use SampleAppWeb, :view
+ 
+-  # If you want to customize a particular status code
+-  # for a certain format, you may uncomment below.
+-  # def render("500.html", _assigns) do
+-  #   "Internal Server Error"
+-  # end
++  def render("404.html", _assigns) do
++    "Page not found"
++  end
++
++  def render("500.html", _assigns) do
++    "Internal server error"
++  end
+ 
+-  # By default, Phoenix returns the status message from
+-  # the template name. For example, "404.html" becomes
+-  # "Not Found".
+-  def template_not_found(template, _assigns) do
+-    Phoenix.Controller.status_message_from_template(template)
++  # In case no render clause matches or no
++  # template is found, let's render it as 500
++  def template_not_found(_template, assigns) do
++    render "500.html", assigns
+   end
+ end
+diff --git mix.exs mix.exs
+index ce74cea..b5765ac 100644
+--- mix.exs
++++ mix.exs
+@@ -33,7 +33,7 @@ defmodule SampleApp.Mixfile do
+   # Type `mix help deps` for examples and options.
+   defp deps do
+     [
+-      {:phoenix, "~> 1.3.2"},
++      {:phoenix, "~> 1.3.0"},
+       {:phoenix_pubsub, "~> 1.0"},
+       {:phoenix_ecto, "~> 3.2"},
+       {:postgrex, ">= 0.0.0"},
+diff --git test/sample_app_web/views/error_view_test.exs test/sample_app_web/views/error_view_test.exs
+index 7bcd5db..30b0524 100644
+--- test/sample_app_web/views/error_view_test.exs
++++ test/sample_app_web/views/error_view_test.exs
+@@ -6,11 +6,16 @@ defmodule SampleAppWeb.ErrorViewTest do
+ 
+   test "renders 404.html" do
+     assert render_to_string(SampleAppWeb.ErrorView, "404.html", []) ==
+-           "Not Found"
++           "Page not found"
+   end
+ 
+-  test "renders 500.html" do
++  test "render 500.html" do
+     assert render_to_string(SampleAppWeb.ErrorView, "500.html", []) ==
+-           "Internal Server Error"
++           "Internal server error"
++  end
++
++  test "render any other" do
++    assert render_to_string(SampleAppWeb.ErrorView, "505.html", []) ==
++           "Internal server error"
+   end
+ end

@@ -1,0 +1,33 @@
+diff --git mix.exs mix.exs
+index e416e08..3d66cb7 100644
+--- mix.exs
++++ mix.exs
+@@ -9,8 +9,8 @@ defmodule SampleApp.Mixfile do
+      compilers: [:phoenix, :gettext] ++ Mix.compilers,
+      build_embedded: Mix.env == :prod,
+      start_permanent: Mix.env == :prod,
+-     aliases: aliases(),
+-     deps: deps()]
++     aliases: aliases,
++     deps: deps]
+   end
+ 
+   # Configuration for the OTP application.
+@@ -30,13 +30,12 @@ defmodule SampleApp.Mixfile do
+   #
+   # Type `mix help deps` for examples and options.
+   defp deps do
+-    [{:phoenix, "~> 1.1.9"},
++    [{:phoenix, "~> 1.1.6"},
+      {:postgrex, ">= 0.0.0"},
+-     {:plug, "~> 1.1.0"},
+-     {:phoenix_ecto, "~> 2.0.1"},
+-     {:phoenix_html, "~> 2.6.0"},
++     {:phoenix_ecto, "~> 2.0"},
++     {:phoenix_html, "~> 2.4"},
+      {:phoenix_live_reload, "~> 1.0", only: :dev},
+-     {:gettext, "~> 0.9.0"},
++     {:gettext, "~> 0.9"},
+      {:cowboy, "~> 1.0"}]
+   end
+ 

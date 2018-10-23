@@ -1,0 +1,107 @@
+diff --git assets/brunch-config.js assets/brunch-config.js
+index dc34ce8..35ca792 100644
+--- assets/brunch-config.js
++++ assets/brunch-config.js
+@@ -5,14 +5,13 @@ exports.config = {
+       joinTo: "js/app.js"
+ 
+       // To use a separate vendor.js bundle, specify two files path
+-      // https://github.com/brunch/brunch/blob/master/docs/config.md#files
++      // http://brunch.io/docs/config#-files-
+       // joinTo: {
+       //  "js/app.js": /^(js)/,
+       //  "js/vendor.js": /^(vendor)|(deps)/
+       // }
+       //
+       // To change the order of concatenation of files, explicitly mention here
+-      // https://github.com/brunch/brunch/tree/master/docs#concatenation
+       // order: {
+       //   before: [
+       //     "vendor/js/jquery-2.1.1.js",
+diff --git assets/package.json assets/package.json
+index e180c46..c5423df 100644
+--- assets/package.json
++++ assets/package.json
+@@ -13,7 +13,6 @@
+     "babel-brunch": "6.0.6",
+     "brunch": "2.10.7",
+     "clean-css-brunch": "2.10.0",
+-    "css-brunch": "2.10.0",
+     "uglify-js-brunch": "2.1.1"
+   }
+ }
+diff --git lib/sample_app/web/views/error_helpers.ex lib/sample_app/web/views/error_helpers.ex
+index 0a568ad..9cda7c9 100644
+--- lib/sample_app/web/views/error_helpers.ex
++++ lib/sample_app/web/views/error_helpers.ex
+@@ -9,9 +9,9 @@ defmodule SampleApp.Web.ErrorHelpers do
+   Generates tag for inlined form input errors.
+   """
+   def error_tag(form, field) do
+-    if error = form.errors[field] do
++    Enum.map(Keyword.get_values(form.errors, field), fn (error) ->
+       content_tag :span, translate_error(error), class: "help-block"
+-    end
++    end)
+   end
+ 
+   @doc """
+diff --git priv/gettext/en/LC_MESSAGES/errors.po priv/gettext/en/LC_MESSAGES/errors.po
+index 2211c98..a589998 100644
+--- priv/gettext/en/LC_MESSAGES/errors.po
++++ priv/gettext/en/LC_MESSAGES/errors.po
+@@ -22,6 +22,10 @@ msgstr ""
+ msgid "is invalid"
+ msgstr ""
+ 
++## From Ecto.Changeset.validate_acceptance/3
++msgid "must be accepted"
++msgstr ""
++
+ ## From Ecto.Changeset.validate_format/3
+ msgid "has invalid format"
+ msgstr ""
+diff --git priv/gettext/errors.pot priv/gettext/errors.pot
+index a964f84..7b2d5ca 100644
+--- priv/gettext/errors.pot
++++ priv/gettext/errors.pot
+@@ -20,6 +20,10 @@ msgstr ""
+ msgid "is invalid"
+ msgstr ""
+ 
++## From Ecto.Changeset.validate_acceptance/3
++msgid "must be accepted"
++msgstr ""
++
+ ## From Ecto.Changeset.validate_format/3
+ msgid "has invalid format"
+ msgstr ""
+diff --git test/web/controllers/page_controller_test.exs test/sample_app/web/controllers/page_controller_test.exs
+similarity index 100%
+rename from data/sample-app/1.3.0-rc.1/test/web/controllers/page_controller_test.exs
+rename to data/sample-app/1.3.0-rc.2/test/sample_app/web/controllers/page_controller_test.exs
+diff --git test/web/views/error_view_test.exs test/sample_app/web/views/error_view_test.exs
+similarity index 100%
+rename from data/sample-app/1.3.0-rc.1/test/web/views/error_view_test.exs
+rename to data/sample-app/1.3.0-rc.2/test/sample_app/web/views/error_view_test.exs
+diff --git test/web/views/layout_view_test.exs test/sample_app/web/views/layout_view_test.exs
+similarity index 100%
+rename from data/sample-app/1.3.0-rc.1/test/web/views/layout_view_test.exs
+rename to data/sample-app/1.3.0-rc.2/test/sample_app/web/views/layout_view_test.exs
+diff --git test/web/views/page_view_test.exs test/sample_app/web/views/page_view_test.exs
+similarity index 100%
+rename from data/sample-app/1.3.0-rc.1/test/web/views/page_view_test.exs
+rename to data/sample-app/1.3.0-rc.2/test/sample_app/web/views/page_view_test.exs
+diff --git test/support/data_case.ex test/support/data_case.ex
+index ba71255..3a682c2 100644
+--- test/support/data_case.ex
++++ test/support/data_case.ex
+@@ -38,7 +38,7 @@ defmodule SampleApp.DataCase do
+   @doc """
+   A helper that transform changeset errors to a map of messages.
+ 
+-      changeset = Accounts.create_user(%{password: "short"})
++      assert {:error, changeset} = Accounts.create_user(%{password: "short"})
+       assert "password is too short" in errors_on(changeset).password
+       assert %{password: ["password is too short"]} = errors_on(changeset)
+ 

@@ -1,0 +1,220 @@
+diff --git README.md README.md
+index 6950510..61e4830 100644
+--- README.md
++++ README.md
+@@ -2,10 +2,9 @@
+ 
+ To start your Phoenix app:
+ 
+-  * Install dependencies with `mix deps.get`
+-  * Create and migrate your database with `mix ecto.create && mix ecto.migrate`
+-  * Install Node.js dependencies with `npm install`
+-  * Start Phoenix endpoint with `mix phoenix.server`
++  1. Install dependencies with `mix deps.get`
++  2. Create and migrate your database with `mix ecto.create && mix ecto.migrate`
++  3. Start Phoenix endpoint with `mix phoenix.server`
+ 
+ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+ 
+diff --git brunch-config.js brunch-config.js
+index d3999c9..fa906bd 100644
+--- brunch-config.js
++++ brunch-config.js
+@@ -39,6 +39,8 @@ exports.config = {
+   paths: {
+     // Dependencies and current project directories to watch
+     watched: [
++      "deps/phoenix/web/static",
++      "deps/phoenix_html/web/static",
+       "web/static",
+       "test/static"
+     ],
+@@ -62,9 +64,6 @@ exports.config = {
+   },
+ 
+   npm: {
+-    enabled: true,
+-    // Whitelist the npm deps to be pulled in as front-end assets.
+-    // All other deps in package.json will be excluded from the bundle.
+-    whitelist: ["phoenix", "phoenix_html"]
++    enabled: true
+   }
+ };
+diff --git config/dev.exs config/dev.exs
+index 473e8be..cb31bd3 100644
+--- config/dev.exs
++++ config/dev.exs
+@@ -10,6 +10,7 @@ config :sample_app, SampleApp.Endpoint,
+   http: [port: 4000],
+   debug_errors: true,
+   code_reloader: true,
++  cache_static_lookup: false,
+   check_origin: false,
+   watchers: [node: ["node_modules/brunch/bin/brunch", "watch", "--stdin"]]
+ 
+diff --git mix.exs mix.exs
+index e416e08..945c62b 100644
+--- mix.exs
++++ mix.exs
+@@ -9,8 +9,8 @@ defmodule SampleApp.Mixfile do
+      compilers: [:phoenix, :gettext] ++ Mix.compilers,
+      build_embedded: Mix.env == :prod,
+      start_permanent: Mix.env == :prod,
+-     aliases: aliases(),
+-     deps: deps()]
++     aliases: aliases,
++     deps: deps]
+   end
+ 
+   # Configuration for the OTP application.
+@@ -30,13 +30,12 @@ defmodule SampleApp.Mixfile do
+   #
+   # Type `mix help deps` for examples and options.
+   defp deps do
+-    [{:phoenix, "~> 1.1.9"},
++    [{:phoenix, "~> 1.1.1"},
++     {:phoenix_ecto, "~> 2.0"},
+      {:postgrex, ">= 0.0.0"},
+-     {:plug, "~> 1.1.0"},
+-     {:phoenix_ecto, "~> 2.0.1"},
+-     {:phoenix_html, "~> 2.6.0"},
++     {:phoenix_html, "~> 2.3"},
+      {:phoenix_live_reload, "~> 1.0", only: :dev},
+-     {:gettext, "~> 0.9.0"},
++     {:gettext, "~> 0.9"},
+      {:cowboy, "~> 1.0"}]
+   end
+ 
+diff --git package.json package.json
+index 150178b..eb0a7bc 100644
+--- package.json
++++ package.json
+@@ -2,13 +2,11 @@
+   "repository": {
+   },
+   "dependencies": {
+-    "babel-brunch": "~6.0.0",
+-    "brunch": "~2.1.3",
+-    "clean-css-brunch": "~1.8.0",
+-    "css-brunch": "~1.7.0",
+-    "javascript-brunch": "~1.8.0",
+-    "uglify-js-brunch": "~1.7.0",
+-    "phoenix": "file:deps/phoenix",
+-    "phoenix_html": "file:deps/phoenix_html"
++    "babel-brunch": "^6.0.0",
++    "brunch": "^2.0.0",
++    "clean-css-brunch": ">= 1.0 < 1.8",
++    "css-brunch": ">= 1.0 < 1.8",
++    "javascript-brunch": ">= 1.0 < 1.8",
++    "uglify-js-brunch": ">= 1.0 < 1.8"
+   }
+ }
+diff --git priv/gettext/errors.pot priv/gettext/errors.pot
+index 02c641c..893d26c 100644
+--- priv/gettext/errors.pot
++++ priv/gettext/errors.pot
+@@ -3,7 +3,6 @@
+ ## translations that can't be statically extracted. Run `mix
+ ## gettext.extract` to bring this file up to date. Leave `msgstr`s empty as
+ ## changing them here as no effect; edit them in PO (`.po`) files instead.
+-
+ ## From Ecto.Changeset.cast/4
+ msgid "can't be blank"
+ msgstr ""
+diff --git test/support/channel_case.ex test/support/channel_case.ex
+index d95e3dc..7c46734 100644
+--- test/support/channel_case.ex
++++ test/support/channel_case.ex
+@@ -21,9 +21,8 @@ defmodule SampleApp.ChannelCase do
+       use Phoenix.ChannelTest
+ 
+       alias SampleApp.Repo
+-      import Ecto
+-      import Ecto.Changeset
+-      import Ecto.Query, only: [from: 1, from: 2]
++      import Ecto.Model
++      import Ecto.Query, only: [from: 2]
+ 
+ 
+       # The default endpoint for testing
+diff --git test/support/conn_case.ex test/support/conn_case.ex
+index 19b1a66..ffae274 100644
+--- test/support/conn_case.ex
++++ test/support/conn_case.ex
+@@ -21,9 +21,8 @@ defmodule SampleApp.ConnCase do
+       use Phoenix.ConnTest
+ 
+       alias SampleApp.Repo
+-      import Ecto
+-      import Ecto.Changeset
+-      import Ecto.Query, only: [from: 1, from: 2]
++      import Ecto.Model
++      import Ecto.Query, only: [from: 2]
+ 
+       import SampleApp.Router.Helpers
+ 
+diff --git test/support/model_case.ex test/support/model_case.ex
+index 7539ace..f318b1e 100644
+--- test/support/model_case.ex
++++ test/support/model_case.ex
+@@ -17,10 +17,8 @@ defmodule SampleApp.ModelCase do
+   using do
+     quote do
+       alias SampleApp.Repo
+-
+-      import Ecto
+-      import Ecto.Changeset
+-      import Ecto.Query, only: [from: 1, from: 2]
++      import Ecto.Model
++      import Ecto.Query, only: [from: 2]
+       import SampleApp.ModelCase
+     end
+   end
+diff --git web/static/js/app.js web/static/js/app.js
+index e7549b9..8f61e4d 100644
+--- web/static/js/app.js
++++ web/static/js/app.js
+@@ -11,7 +11,7 @@
+ //
+ // If you no longer want to use a dependency, remember
+ // to also remove its path from "config.paths.watched".
+-import "phoenix_html"
++import "deps/phoenix_html/web/static/js/phoenix_html"
+ 
+ // Import local files
+ //
+diff --git web/static/js/socket.js web/static/js/socket.js
+index 0f8d461..73d1cf0 100644
+--- web/static/js/socket.js
++++ web/static/js/socket.js
+@@ -3,7 +3,7 @@
+ 
+ // To use Phoenix channels, the first step is to import Socket
+ // and connect at the socket path in "lib/my_app/endpoint.ex":
+-import {Socket} from "phoenix"
++import {Socket} from "deps/phoenix/web/static/js/phoenix"
+ 
+ let socket = new Socket("/socket", {params: {token: window.userToken}})
+ 
+diff --git web/views/error_helpers.ex web/views/error_helpers.ex
+index d113aa5..8b1eba5 100644
+--- web/views/error_helpers.ex
++++ web/views/error_helpers.ex
+@@ -2,7 +2,7 @@ defmodule SampleApp.ErrorHelpers do
+   @moduledoc """
+   Conveniences for translating and building error messages.
+   """
+-
++  
+   use Phoenix.HTML
+ 
+   @doc """
+@@ -13,7 +13,7 @@ defmodule SampleApp.ErrorHelpers do
+       content_tag :span, translate_error(error), class: "help-block"
+     end
+   end
+-
++  
+   @doc """
+   Translates an error message using gettext.
+   """
