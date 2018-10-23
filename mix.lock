@@ -1,6 +1,8 @@
 %{
+  "bunt": {:hex, :bunt, "0.2.0", "951c6e801e8b1d2cbe58ebbd3e616a869061ddadcc4863d0a2182541acae9a38", [:mix], [], "hexpm"},
   "cowboy": {:hex, :cowboy, "2.5.0", "4ef3ae066ee10fe01ea3272edc8f024347a0d3eb95f6fbb9aed556dacbfc1337", [:rebar3], [{:cowlib, "~> 2.6.0", [hex: :cowlib, repo: "hexpm", optional: false]}, {:ranch, "~> 1.6.2", [hex: :ranch, repo: "hexpm", optional: false]}], "hexpm"},
   "cowlib": {:hex, :cowlib, "2.6.0", "8aa629f81a0fc189f261dc98a42243fa842625feea3c7ec56c48f4ccdb55490f", [:rebar3], [], "hexpm"},
+  "credo": {:hex, :credo, "0.10.2", "03ad3a1eff79a16664ed42fc2975b5e5d0ce243d69318060c626c34720a49512", [:mix], [{:bunt, "~> 0.2.0", [hex: :bunt, repo: "hexpm", optional: false]}, {:jason, "~> 1.0", [hex: :jason, repo: "hexpm", optional: false]}], "hexpm"},
   "ex_unit_notifier": {:hex, :ex_unit_notifier, "0.1.4", "36a2dcab829f506e01bf17816590680dd1474407926d43e64c1263e627c364b8", [:mix], [], "hexpm"},
   "file_system": {:hex, :file_system, "0.2.6", "fd4dc3af89b9ab1dc8ccbcc214a0e60c41f34be251d9307920748a14bf41f1d3", [:mix], [], "hexpm"},
   "gettext": {:hex, :gettext, "0.16.0", "4a7e90408cef5f1bf57c5a39e2db8c372a906031cc9b1466e963101cb927dafc", [:mix], [], "hexpm"},

@@ -67,6 +67,5 @@ config :phoenix, :stacktrace_depth, 20
 config :phoenix, :plug_init_mode, :runtime
 
 config :mix_test_watch,
-  tasks: [
-    "test"
-  ]
+  tasks: ["test", "credo --strict --all"],
+  clear: true
