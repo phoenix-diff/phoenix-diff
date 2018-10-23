@@ -24,4 +24,15 @@ defmodule PhxDiff.Diffs do
       latest_release
     end
   end
+
+  def get_diff(source_version, target_version) do
+    case File.read(diff_file_path(source_version, target_version)) do
+      {:error, _} -> {:error, "Invalid versions"}
+      result -> result
+    end
+  end
+
+  defp diff_file_path(source_version, target_version) do
+    "#{@diffs_path}/#{source_version}--#{target_version}.diff"
+  end
 end

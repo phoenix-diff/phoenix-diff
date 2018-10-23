@@ -24,4 +24,22 @@ defmodule PhxDiff.DiffsTest do
       refute versions |> Enum.member?("1.4.0-rc.2")
     end
   end
+
+  describe "get_diff/2" do
+    test "returns content when versions are valid" do
+      {:ok, diff} = Diffs.get_diff("1.3.1", "1.3.2")
+
+      assert diff =~ "diff --git config/config.exs config/config.exs"
+    end
+
+    test "returns empty when versions are the same" do
+      {:ok, diff} = Diffs.get_diff("1.3.1", "1.3.1")
+
+      assert diff == ""
+    end
+
+    test "returns error when a version is invalid" do
+      {:error, "Invalid versions"} = Diffs.get_diff("1.3.1", "invalid")
+    end
+  end
 end
