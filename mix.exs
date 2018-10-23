@@ -9,7 +9,11 @@ defmodule PhxDiff.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      aliases: aliases(),
+      deps: deps(),
+      preferred_cli_env: [
+        ci: :test
+      ]
     ]
   end
 
@@ -42,6 +46,23 @@ defmodule PhxDiff.MixProject do
       {:credo, "~> 0.10", only: [:dev, :test], runtime: false},
       {:mix_test_watch, "~> 0.8", only: :dev, runtime: false},
       {:ex_unit_notifier, "~> 0.1", only: :test, runtime: false}
+    ]
+  end
+
+  # Aliases are shortcuts or tasks specific to the current project.
+  # For example, to create, migrate and run the seeds file at once:
+  #
+  #     $ mix ecto.setup
+  #
+  # See the documentation for `Mix` for more info on aliases.
+  defp aliases do
+    [
+      ci: [
+        "compile --warnings-as-errors --force",
+        "format --check-formatted",
+        "test --raise",
+        "credo --strict --all"
+      ]
     ]
   end
 end
