@@ -1,0 +1,30 @@
+#landing-page
+  section#input-section
+    .container-fluid
+      form#options-form.form-inline
+        h3 See the changes needed to upgrade your Phoenix application
+
+        .form-group
+          label for="sourceVersion" Source
+          select.form-control name="sourceVersion"
+            = for version <- @all_versions do
+              option value="#{version}" = version
+
+        .form-group
+          label for="targetVersion" Target
+          select.form-control name="targetVersion"
+            = for version <- @all_versions do
+              option value="#{version}" = version
+
+        button.btn.btn-default type="submit" View Diff
+
+  section#results-sections
+    .container-fluid
+      #diff-results-container
+
+      #loading-container.message-container
+        i.fa.fa-spinner.fa-spin.fa-2x
+        span.text Loading Diff
+
+      .message-container
+        span.text There are no changes between version {{ sourceVersion }} and {{ targetVersion }}.
