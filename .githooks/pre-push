@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+# Verify build before
+#
+
+mix ci
+
+if [ $? -ne 0 ]; then
+    printf "\n\n\n\e[31m"
+    printf "     ======================================================\n"
+    printf "     ERROR: The verification task failed. Aborting git push\n"
+    printf "     ======================================================\n"
+    printf "\n\n\e[0m"
+
+    exit 1
+fi

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cp -f .githooks/pre-push .git/hooks/pre-push
