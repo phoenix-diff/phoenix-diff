@@ -36,9 +36,13 @@ defmodule PhxDiff.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.4.0-rc"},
+      # {:phoenix, "~> 1.4.0-rc"},
+      # TODO: The following two are overridden due to phoenix_slime depending on older versions
+      {:phoenix, "~> 1.4.0-rc", override: true},
+      {:cowboy, "~> 2.0", override: true},
       {:phoenix_pubsub, "~> 1.1"},
       {:phoenix_html, "~> 2.11"},
+      {:phoenix_slime, "~> 0.10"},
       {:phoenix_live_reload, "~> 1.2-rc", only: :dev},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
