@@ -1,0 +1,20 @@
+nav.navbar {
+  border-bottom: 1px solid #eee;
+  padding: 0.1rem 1rem;
+
+  a.navbar-brand {
+    color: $main-brand-color;
+
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  a.nav-link {
+    color: $main-brand-color;
+
+    i.fa {
+      padding-left: 3px;
+      font-size: 20px;
+    }
+  }
+}

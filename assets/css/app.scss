@@ -1,3 +1,8 @@
+@import "base/variables";
 @import "base/bootstrap";
 
-@import "components/sticky_footer";
+@import "components/navbar";
+@import "components/footer";
+@import "components/sticky-footer";
+
+@import "pages/landing-page";

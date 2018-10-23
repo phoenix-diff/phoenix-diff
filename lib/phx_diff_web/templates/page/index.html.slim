@@ -1,9 +1,9 @@
 #landing-page
   section#input-section
     .container-fluid
-      form#options-form.form-inline
-        h3 See the changes needed to upgrade your Phoenix application
+      h3 See the changes needed to upgrade your Phoenix application
 
+      form#options-form.form-inline
         .form-group
           label for="sourceVersion" Source
           select.form-control name="sourceVersion"
@@ -16,9 +16,7 @@
             = for version <- @all_versions do
               option value="#{version}" = version
 
-        button.btn.btn-default type="submit" View Diff
-
-  section#results-sections
+  section#results-section
     .container-fluid
       #diff-results-container
 

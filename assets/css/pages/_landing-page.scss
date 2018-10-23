@@ -1,0 +1,56 @@
+#landing-page {
+  #input-section {
+    @include gradient-radial(#F67938, #EF4734);
+
+    padding: 60px 15px;
+
+    color: white;
+    text-align: center;
+
+    h3 {
+      margin-top: 0;
+      margin-bottom: 40px;
+
+      font-size: 22px;
+      font-weight: 300;
+    }
+
+    form {
+      justify-content: center;
+
+      label {
+        margin: 0 6px;
+
+        text-transform: uppercase;
+        text-decoration: underline;
+
+        font-size: 14px;
+      }
+
+      select {
+        font-size: 14px;
+        width: 100px;
+      }
+
+      .form-group {
+        margin: 10px 6px;
+      }
+    }
+  }
+
+  #results-section {
+    .message-container {
+      text-align: center;
+
+      color: $main-brand-color;
+
+      margin-top: 30px;
+      margin-bottom: 30px;
+
+      .text {
+        font-size: 24px;
+        padding-left: 6px
+      }
+    }
+  }
+}

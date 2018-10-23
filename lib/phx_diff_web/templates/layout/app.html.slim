@@ -23,7 +23,7 @@ html lang="en"
 
   body
     header
-      nav.navbar.navbar-light.bg-light
+      nav.navbar
         a.navbar-brand href="/" PhoenixDiff
 
         ul.navbar-nav.ml-auto
@@ -36,16 +36,16 @@ html lang="en"
       = render @view_module, @view_template, assigns
 
     footer.footer
-      .container
-        p.text-center
+      .container.py-3
+        .text-center
           = "To all alchemists with "
           i.fa.fa-heart
           = " by Navin Peiris "
-          a href="https://github.com/navinpeiris" GitHub
+          a.ml-1 href="https://github.com/navinpeiris" GitHub
           = " | "
           a href="https://twitter.com/navinpeiris" Twitter
           = " | "
-          a href="https://www.linkedin.com/in/navinpeiris" LinkedIn
+          a.mr-1 href="https://www.linkedin.com/in/navinpeiris" LinkedIn
 
     script src="#{Routes.static_url(@conn, "/js/app.js")}"
 
