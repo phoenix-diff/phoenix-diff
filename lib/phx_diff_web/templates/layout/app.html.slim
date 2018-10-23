@@ -1,0 +1,53 @@
+doctype html
+html lang="en"
+  head
+    meta charset="utf-8"
+    meta content="IE=edge" http-equiv="X-UA-Compatible"
+    meta content="width=device-width, initial-scale=1" name="viewport"
+
+    title PhoenixDiff
+    meta name="description" content="See the changes needed to upgrade your Phoenix application"
+    meta name="keywords" content="Elixir,Phoenix,PhoenixFramework,Upgrade,Diff,PhoenixDiff"
+    meta name="author" content="Navin Peiris @navinpeiris"
+
+    base href="/"
+
+    link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"
+    link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png"
+    link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"
+
+    link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700"
+    link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+
+    link rel="stylesheet" href="#{Routes.static_url(@conn, "/css/app.css")}"
+
+  body
+    header
+      nav.navbar.navbar-light.bg-light
+        a.navbar-brand href="/" PhoenixDiff
+
+        ul.navbar-nav.ml-auto
+          li.nav-item
+            a.nav-link href="https://github.com/navinpeiris/phoenix-diff" target="_blank"
+              | View on GitHub
+              i.fa.fa-github
+
+    main role="main"
+      = render @view_module, @view_template, assigns
+
+    footer.footer
+      .container
+        p.text-center
+          = "To all alchemists with "
+          i.fa.fa-heart
+          = " by Navin Peiris "
+          a href="https://github.com/navinpeiris" GitHub
+          = " | "
+          a href="https://twitter.com/navinpeiris" Twitter
+          = " | "
+          a href="https://www.linkedin.com/in/navinpeiris" LinkedIn
+
+    script src="#{Routes.static_url(@conn, "/js/app.js")}"
+
+    = if Mix.env == :prod do
+      = render "_tracking_scripts.html"
