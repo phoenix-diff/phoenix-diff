@@ -17,6 +17,7 @@ defmodule PhxDiffWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    get "/diffs", DiffController, :index
   end
 
   # Other scopes may use custom stacks.
