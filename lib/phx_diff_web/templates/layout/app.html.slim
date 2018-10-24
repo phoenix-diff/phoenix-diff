@@ -21,6 +21,16 @@ html lang="en"
 
     link rel="stylesheet" href="#{Routes.static_url(@conn, "/css/app.css")}"
 
+    script defer=true src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.slim.js"
+    script defer=true src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"
+
+    = if Mix.env == :prod do
+      script defer=true src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.min.js"
+    - else
+      script defer=true src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.js"
+
+    script defer=true src="#{Routes.static_url(@conn, "/js/app.js")}"
+
   body
     header
       nav.navbar
@@ -46,8 +56,6 @@ html lang="en"
           a href="https://twitter.com/navinpeiris" Twitter
           = " | "
           a.mr-1 href="https://www.linkedin.com/in/navinpeiris" LinkedIn
-
-    script src="#{Routes.static_url(@conn, "/js/app.js")}"
 
     = if Mix.env == :prod do
       = render "_tracking_scripts.html"
