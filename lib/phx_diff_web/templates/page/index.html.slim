@@ -1,28 +1,29 @@
-#landing-page
-  section#input-section
-    .container-fluid
-      h3 See the changes needed to upgrade your Phoenix application
+diff-loader inline-template=true source="#{@source_version}" target="#{@target_version}"
+  #landing-page
+    section#input-section
+      .container-fluid
+        h3 See the changes needed to upgrade your Phoenix application
 
-      form#options-form.form-inline
-        .form-group
-          label for="sourceVersion" Source
-          select.form-control name="sourceVersion"
-            = for version <- @all_versions do
-              option value="#{version}" = version
+        form#options-form.form-inline
+          .form-group
+            label for="sourceVersion" Source
+            select.form-control name="sourceVersion" v-model="sourceVersion"
+              = for version <- @all_versions do
+                option value="#{version}" = version
 
-        .form-group
-          label for="targetVersion" Target
-          select.form-control name="targetVersion"
-            = for version <- @all_versions do
-              option value="#{version}" = version
+          .form-group
+            label for="targetVersion" Target
+            select.form-control name="targetVersion" v-model="targetVersion"
+              = for version <- @all_versions do
+                option value="#{version}" = version
 
-  section#results-section
-    .container-fluid
-      #diff-results-container
+    section#results-section
+      .container-fluid
+        #diff-results-container
 
-      #loading-container.message-container
-        i.fa.fa-spinner.fa-spin.fa-2x
-        span.text Loading Diff
+        #loading-container.message-container
+          i.fa.fa-spinner.fa-spin.fa-2x
+          span.text Loading Diff
 
-      .message-container
-        span.text There are no changes between version {{ sourceVersion }} and {{ targetVersion }}.
+        .message-container
+          span.text There are no changes between version {{ sourceVersion }} and {{ targetVersion }}.
