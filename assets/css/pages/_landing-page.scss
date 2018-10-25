@@ -2,7 +2,7 @@
   #input-section {
     @include gradient-radial(#F67938, #EF4734);
 
-    padding: 60px 15px;
+    padding: 60px 15px 10px;
 
     color: white;
     text-align: center;
@@ -34,6 +34,17 @@
 
       .form-group {
         margin: 10px 6px;
+      }
+    }
+
+    p {
+      margin-top: 40px;
+      font-size: 12px;
+      font-style: italic;
+
+      a {
+        color: white;
+        text-decoration: underline;
       }
     }
   }
