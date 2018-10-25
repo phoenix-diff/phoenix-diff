@@ -53,4 +53,20 @@
       }
     }
   }
+
+  #diff-results-container {
+    margin-top: 30px;
+    margin-bottom: 30px;
+
+    .d2h-file-list-header {
+      a {
+        font-size: 14px;
+        font-weight: bold;
+        color: $main-brand-color;
+        border: 2px solid $main-brand-color;
+        padding: 2px 4px;
+        margin: 2px 0 20px;
+      }
+    }
+  }
 }
