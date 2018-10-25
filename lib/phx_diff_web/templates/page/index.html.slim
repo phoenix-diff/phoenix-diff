@@ -4,7 +4,7 @@ diff-loader inline-template=true source="#{@source_version}" target="#{@target_v
       .container-fluid
         h3 See the changes needed to upgrade your Phoenix application
 
-        form#options-form.form-inline
+        form#options-form.form-inline v-cloak=true
           .form-group
             label for="sourceVersion" Source
             select.form-control name="sourceVersion" v-model="sourceVersion" :disabled="loading" @change="loadDiff()"
@@ -17,7 +17,7 @@ diff-loader inline-template=true source="#{@source_version}" target="#{@target_v
               = for version <- @all_versions do
                 option value="#{version}" = version
 
-    section#results-section
+    section#results-section v-cloak=true
       .container
         #diff-view-toggles
           .header Display mode:
