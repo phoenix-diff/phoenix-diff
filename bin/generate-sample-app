@@ -1,0 +1,51 @@
+#!/bin/bash
+
+set -e
+
+if [ $# -ne 1 ]; then
+  echo "USAGE: ${0} <phoenix-app-version>"
+  exit 1
+fi
+
+SAMPLE_APP_DIR="${PWD}/data/sample-app"
+export MIX_ARCHIVES="${PWD}/tmp/archives"
+
+phoenix_version=${1}
+sample_app_path="${PWD}/data/sample-app/${phoenix_version}"
+
+if [ -d ${sample_app_path} ]; then
+  echo "Deleting existing sample app at ${sample_app_path}"
+  rm -fr ${sample_app_path}
+fi
+
+if [ -d ${MIX_ARCHIVES} ]; then
+  echo "Deleting existing temp mix archives at ${MIX_ARCHIVES}"
+  rm -fr ${MIX_ARCHIVES}
+fi
+
+echo "Installing phx_new mix archive for ${phoenix_version}"
+mix local.hex --force
+mix archive.install hex phx_new ${phoenix_version} --force
+
+echo "Generating new sample app for ${phoenix_version}"
+yes n | mix phx.new ${sample_app_path} --module SampleApp --app sample_app
+
+# The prod secrets file is ignored due to the .gitignore file within the sample app, so
+# we need to forcefully add it in
+
+echo "Adding sample app to git"
+git add ${sample_app_path}
+
+echo "Adding prod.secret.exs file to git"
+git add -f ${sample_app_path}/config/prod.secret.exs
+
+echo "Replacing secret keys with default"
+
+replace_in_file() {
+  sed -i.bak "${1}" ${2}
+  rm ${2}.bak
+}
+
+replace_in_file 's/secret_key_base:.*/secret_key_base: "aaaaaaaa"/g' ${sample_app_path}/config/prod.secret.exs
+replace_in_file 's/secret_key_base:.*/secret_key_base: "aaaaaaaa",/g' ${sample_app_path}/config/config.exs
+replace_in_file 's/signing_salt:.*/signing_salt: "aaaaaaaa"/g' ${sample_app_path}/lib/sample_app_web/endpoint.ex
