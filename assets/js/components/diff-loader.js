@@ -4,7 +4,8 @@ export default {
       sourceVersion: null,
       targetVersion: null,
       loading: false,
-      noChanges: false
+      noChanges: false,
+      diffOutputFormat: 'line-by-line'
     }
   },
   props: {
@@ -43,6 +44,12 @@ export default {
           }
         });
     },
+    showLineByLine() {
+      this._changeDisplayFormat('line-by-line');
+    },
+    showSideBySide() {
+      this._changeDisplayFormat('side-by-side');
+    },
     _clearDiffContainer() {
       this.diffResultsContainer.empty();
     },
@@ -58,13 +65,18 @@ export default {
         this.diffResultsContainer,
         {
           inputFormat: 'diff',
-          outputFormat: 'line-by-line',
+          outputFormat: this.diffOutputFormat,
           showFiles: true,
           matching: 'lines'
         }
       );
 
       diff2htmlUi.fileListCloseable(this.diffResultsContainer, false);
+    },
+    _changeDisplayFormat(format) {
+      this.diffOutputFormat = format;
+
+      setTimeout(this.loadDiff, 100);
     }
   }
 }
