@@ -18,11 +18,14 @@ html lang="en"
 
     link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700"
     link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/diff2html/2.4.0/diff2html.min.css"
 
     link rel="stylesheet" href="#{Routes.static_url(@conn, "/css/app.css")}"
 
     script defer=true src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.slim.js"
     script defer=true src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"
+    script defer=true src="https://cdnjs.cloudflare.com/ajax/libs/diff2html/2.4.0/diff2html.min.js"
+    script defer=true src="https://cdnjs.cloudflare.com/ajax/libs/diff2html/2.4.0/diff2html-ui.min.js"
 
     = if Mix.env == :prod do
       script defer=true src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.min.js"

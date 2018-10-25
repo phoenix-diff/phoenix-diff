@@ -7,13 +7,13 @@ diff-loader inline-template=true source="#{@source_version}" target="#{@target_v
         form#options-form.form-inline
           .form-group
             label for="sourceVersion" Source
-            select.form-control name="sourceVersion" v-model="sourceVersion" :disabled="loading"
+            select.form-control name="sourceVersion" v-model="sourceVersion" :disabled="loading" @change="loadDiff()"
               = for version <- @all_versions do
                 option value="#{version}" = version
 
           .form-group
             label for="targetVersion" Target
-            select.form-control name="targetVersion" v-model="targetVersion" :disabled="loading"
+            select.form-control name="targetVersion" v-model="targetVersion" :disabled="loading" @change="loadDiff()"
               = for version <- @all_versions do
                 option value="#{version}" = version
 

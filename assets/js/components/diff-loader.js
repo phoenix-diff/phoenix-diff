@@ -3,7 +3,7 @@ export default {
     return {
       sourceVersion: null,
       targetVersion: null,
-      loading: true,
+      loading: false,
       noChanges: false
     }
   },
@@ -20,5 +20,12 @@ export default {
   mounted() {
     this.sourceVersion = this.source;
     this.targetVersion = this.target;
+
+    this.loadDiff();
+  },
+  methods: {
+    loadDiff() {
+      this.loading = true;
+    }
   }
 }
