@@ -32,6 +32,7 @@ export default {
       this.noChanges = false;
 
       this._clearDiffContainer();
+      this._updateLocationParams();
 
       this._fetchDiff()
         .then(diff => {
@@ -77,6 +78,13 @@ export default {
       this.diffOutputFormat = format;
 
       setTimeout(this.loadDiff, 100);
+    },
+    _updateLocationParams() {
+      if (history.pushState) {
+        let queryString = `?source=${this.sourceVersion}&target=${this.targetVersion}`;
+        var newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + queryString;
+        window.history.pushState({path: newUrl}, '', newUrl);
+    }
     }
   }
 }
