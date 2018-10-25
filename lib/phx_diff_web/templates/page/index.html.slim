@@ -19,6 +19,16 @@ diff-loader inline-template=true source="#{@source_version}" target="#{@target_v
 
     section#results-section
       .container
+        #diff-view-toggles v-show="!loading && !noChanges"
+          .header Display diff:
+          .btn-group.btn-group-toggle data-toggle="buttons"
+            label.btn.btn-outline-primary.active
+              input type="radio" name="viewType" id="view-type-lines" autocomplete="off" checked=true
+              | Line by line
+            label.btn.btn-outline-primary
+              input type="radio" name="viewType" id="view-type-side" autocomplete="off"
+              | Side by side
+
         #diff-results-container
 
         #loading-container.message-container v-show="loading"

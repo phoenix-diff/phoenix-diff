@@ -38,6 +38,17 @@
     }
   }
 
+  #diff-view-toggles {
+    margin-top: 30px;
+
+    text-align: center;
+    .header {
+      display: inline-block;
+      margin-right: 8px;
+      font-weight: bold;
+    }
+  }
+
   #results-section {
     .message-container {
       text-align: center;
