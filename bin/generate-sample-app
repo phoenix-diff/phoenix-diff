@@ -28,16 +28,7 @@ mix local.hex --force
 mix archive.install hex phx_new ${phoenix_version} --force
 
 echo "Generating new sample app for ${phoenix_version}"
-yes n | mix phx.new ${sample_app_path} --module SampleApp --app sample_app
-
-# The prod secrets file is ignored due to the .gitignore file within the sample app, so
-# we need to forcefully add it in
-
-echo "Adding sample app to git"
-git add ${sample_app_path}
-
-echo "Adding prod.secret.exs file to git"
-git add -f ${sample_app_path}/config/prod.secret.exs
+echo n | mix phx.new ${sample_app_path} --module SampleApp --app sample_app
 
 echo "Replacing secret keys with default"
 
@@ -49,3 +40,12 @@ replace_in_file() {
 replace_in_file 's/secret_key_base:.*/secret_key_base: "aaaaaaaa"/g' ${sample_app_path}/config/prod.secret.exs
 replace_in_file 's/secret_key_base:.*/secret_key_base: "aaaaaaaa",/g' ${sample_app_path}/config/config.exs
 replace_in_file 's/signing_salt:.*/signing_salt: "aaaaaaaa"/g' ${sample_app_path}/lib/sample_app_web/endpoint.ex
+
+# The prod secrets file is ignored due to the .gitignore file within the sample app, so
+# we need to forcefully add it in
+
+echo "Adding sample app to git"
+git add ${sample_app_path}
+
+echo "Adding prod.secret.exs file to git"
+git add -f ${sample_app_path}/config/prod.secret.exs
