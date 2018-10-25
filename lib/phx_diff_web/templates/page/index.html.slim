@@ -7,13 +7,13 @@ diff-loader inline-template=true source="#{@source_version}" target="#{@target_v
         form#options-form.form-inline
           .form-group
             label for="sourceVersion" Source
-            select.form-control name="sourceVersion" v-model="sourceVersion"
+            select.form-control name="sourceVersion" v-model="sourceVersion" :disabled="loading"
               = for version <- @all_versions do
                 option value="#{version}" = version
 
           .form-group
             label for="targetVersion" Target
-            select.form-control name="targetVersion" v-model="targetVersion"
+            select.form-control name="targetVersion" v-model="targetVersion" :disabled="loading"
               = for version <- @all_versions do
                 option value="#{version}" = version
 
@@ -21,9 +21,9 @@ diff-loader inline-template=true source="#{@source_version}" target="#{@target_v
       .container-fluid
         #diff-results-container
 
-        #loading-container.message-container
+        #loading-container.message-container v-show="loading"
           i.fa.fa-spinner.fa-spin.fa-2x
           span.text Loading Diff
 
-        .message-container
+        .message-container v-show="!loading && noChanges"
           span.text There are no changes between version {{ sourceVersion }} and {{ targetVersion }}.

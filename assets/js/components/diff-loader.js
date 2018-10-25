@@ -2,7 +2,9 @@ export default {
   data() {
     return {
       sourceVersion: null,
-      targetVersion: null
+      targetVersion: null,
+      loading: true,
+      noChanges: false
     }
   },
   props: {
