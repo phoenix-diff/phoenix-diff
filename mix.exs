@@ -38,7 +38,7 @@ defmodule PhxDiff.MixProject do
     [
       # {:phoenix, "~> 1.4.0-rc"},
       # TODO: The following two are overridden due to phoenix_slime depending on older versions
-      {:phoenix, "~> 1.4.0-rc", override: true},
+      {:phoenix, "~> 1.4.0", override: true},
       {:cowboy, "~> 2.0", override: true},
       {:phoenix_pubsub, "~> 1.1"},
       {:phoenix_html, "~> 2.11"},
