@@ -1,0 +1,46 @@
+diff --git .formatter.exs .formatter.exs
+index 738a390..8a6391c 100644
+--- .formatter.exs
++++ .formatter.exs
+@@ -1,5 +1,5 @@
+ [
+   import_deps: [:ecto, :phoenix],
+-  inputs: ["*.{ex,exs}", "{config,lib,priv,test}/**/*.{ex,exs}"],
++  inputs: ["*.{ex,exs}", "priv/*/seeds.exs", "{config,lib,test}/**/*.{ex,exs}"],
+   subdirectories: ["priv/*/migrations"]
+ ]
+diff --git README.md README.md
+index 96fe487..7657c0f 100644
+--- README.md
++++ README.md
+@@ -3,7 +3,7 @@
+ To start your Phoenix server:
+ 
+   * Install dependencies with `mix deps.get`
+-  * Create and migrate your database with `mix ecto.create && mix ecto.migrate`
++  * Create and migrate your database with `mix ecto.setup`
+   * Install Node.js dependencies with `cd assets && npm install`
+   * Start Phoenix endpoint with `mix phx.server`
+ 
+diff --git mix.exs mix.exs
+index 377558d..a5d44b4 100644
+--- mix.exs
++++ mix.exs
+@@ -33,13 +33,13 @@ defmodule SampleApp.MixProject do
+   # Type `mix help deps` for examples and options.
+   defp deps do
+     [
+-      {:phoenix, "~> 1.4.0-rc"},
++      {:phoenix, "~> 1.4.0"},
+       {:phoenix_pubsub, "~> 1.1"},
+       {:phoenix_ecto, "~> 4.0"},
+-      {:ecto_sql, "~> 3.0-rc"},
+-      {:postgrex, ">= 0.0.0-rc"},
++      {:ecto_sql, "~> 3.0"},
++      {:postgrex, ">= 0.0.0"},
+       {:phoenix_html, "~> 2.11"},
+-      {:phoenix_live_reload, "~> 1.2-rc", only: :dev},
++      {:phoenix_live_reload, "~> 1.2", only: :dev},
+       {:gettext, "~> 0.11"},
+       {:jason, "~> 1.0"},
+       {:plug_cowboy, "~> 2.0"}

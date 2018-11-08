@@ -1,0 +1,118 @@
+diff --git .formatter.exs .formatter.exs
+index 8a6391c..562e886 100644
+--- .formatter.exs
++++ .formatter.exs
+@@ -1,5 +1,4 @@
+ [
+-  import_deps: [:ecto, :phoenix],
+-  inputs: ["*.{ex,exs}", "priv/*/seeds.exs", "{config,lib,test}/**/*.{ex,exs}"],
+-  subdirectories: ["priv/*/migrations"]
++  import_deps: [:phoenix],
++  inputs: ["*.{ex,exs}", "{config,lib,priv,test}/**/*.{ex,exs}"]
+ ]
+diff --git README.md README.md
+index 7657c0f..96fe487 100644
+--- README.md
++++ README.md
+@@ -3,7 +3,7 @@
+ To start your Phoenix server:
+ 
+   * Install dependencies with `mix deps.get`
+-  * Create and migrate your database with `mix ecto.setup`
++  * Create and migrate your database with `mix ecto.create && mix ecto.migrate`
+   * Install Node.js dependencies with `cd assets && npm install`
+   * Start Phoenix endpoint with `mix phx.server`
+ 
+diff --git config/config.exs config/config.exs
+index 25fe438..be6f3a3 100644
+--- config/config.exs
++++ config/config.exs
+@@ -22,8 +22,9 @@ config :logger, :console,
+   format: "$time $metadata[$level] $message\n",
+   metadata: [:request_id]
+ 
+-# Use Jason for JSON parsing in Phoenix
++# Use Jason for JSON parsing in Phoenix and Ecto
+ config :phoenix, :json_library, Jason
++config :ecto, :json_library, Jason
+ 
+ # Import environment specific config. This must remain at the bottom
+ # of this file so it overrides the configuration defined above.
+diff --git config/test.exs config/test.exs
+index 166e50f..e893efe 100644
+--- config/test.exs
++++ config/test.exs
+@@ -3,7 +3,7 @@ use Mix.Config
+ # We don't run a server during test. If one is required,
+ # you can enable the server option below.
+ config :sample_app, SampleAppWeb.Endpoint,
+-  http: [port: 4002],
++  http: [port: 4001],
+   server: false
+ 
+ # Print only warnings and errors during test
+diff --git lib/sample_app_web/templates/layout/app.html.eex lib/sample_app_web/templates/layout/app.html.eex
+index 57a6418..c01291c 100644
+--- lib/sample_app_web/templates/layout/app.html.eex
++++ lib/sample_app_web/templates/layout/app.html.eex
+@@ -5,7 +5,7 @@
+     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+     <title>SampleApp · Phoenix Framework</title>
+-    <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
++    <link rel="stylesheet" href="<%= Routes.static_url(@conn, "/css/app.css") %>"/>
+   </head>
+   <body>
+     <header>
+@@ -16,7 +16,7 @@
+           </ul>
+         </nav>
+         <a href="http://phoenixframework.org/" class="phx-logo">
+-          <img src="<%= Routes.static_path(@conn, "/images/phoenix.png") %>" alt="Phoenix Framework Logo"/>
++          <img src="<%= Routes.static_url(@conn, "/images/phoenix.png") %>" alt="Phoenix Framework Logo"/>
+         </a>
+       </section>
+     </header>
+@@ -25,6 +25,6 @@
+       <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+       <%= render @view_module, @view_template, assigns %>
+     </main>
+-    <script type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
++    <script type="text/javascript" src="<%= Routes.static_url(@conn, "/js/app.js") %>"></script>
+   </body>
+ </html>
+diff --git mix.exs mix.exs
+index a5d44b4..872a2af 100644
+--- mix.exs
++++ mix.exs
+@@ -33,16 +33,15 @@ defmodule SampleApp.MixProject do
+   # Type `mix help deps` for examples and options.
+   defp deps do
+     [
+-      {:phoenix, "~> 1.4.0"},
++      {:phoenix, "~> 1.4.0-rc"},
+       {:phoenix_pubsub, "~> 1.1"},
+-      {:phoenix_ecto, "~> 4.0"},
+-      {:ecto_sql, "~> 3.0"},
++      {:phoenix_ecto, "~> 3.2"},
+       {:postgrex, ">= 0.0.0"},
+       {:phoenix_html, "~> 2.11"},
+-      {:phoenix_live_reload, "~> 1.2", only: :dev},
++      {:phoenix_live_reload, "~> 1.0", only: :dev},
+       {:gettext, "~> 0.11"},
+       {:jason, "~> 1.0"},
+-      {:plug_cowboy, "~> 2.0"}
++      {:cowboy, "~> 1.0"}
+     ]
+   end
+ 
+diff --git priv/repo/migrations/.formatter.exs b/data/sample-app/1.4.0/priv/repo/migrations/.formatter.exs
+deleted file mode 100644
+index 49f9151..0000000
+--- priv/repo/migrations/.formatter.exs
++++ /dev/null
+@@ -1,4 +0,0 @@
+-[
+-  import_deps: [:ecto_sql],
+-  inputs: ["*.exs"]
+-]
