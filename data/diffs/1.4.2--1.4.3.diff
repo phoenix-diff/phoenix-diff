@@ -1,0 +1,32 @@
+diff --git config/dev.exs config/dev.exs
+index 14ea2bf..aaede44 100644
+--- config/dev.exs
++++ config/dev.exs
+@@ -49,10 +49,10 @@ config :sample_app, SampleAppWeb.Endpoint,
+ config :sample_app, SampleAppWeb.Endpoint,
+   live_reload: [
+     patterns: [
+-      ~r{priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$},
+-      ~r{priv/gettext/.*(po)$},
+-      ~r{lib/sample_app_web/views/.*(ex)$},
+-      ~r{lib/sample_app_web/templates/.*(eex)$}
++      ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
++      ~r"priv/gettext/.*(po)$",
++      ~r"lib/sample_app_web/{live,views}/.*(ex)$",
++      ~r"lib/sample_app_web/templates/.*(eex)$"
+     ]
+   ]
+ 
+diff --git mix.exs mix.exs
+index bb66843..dd14c6d 100644
+--- mix.exs
++++ mix.exs
+@@ -33,7 +33,7 @@ defmodule SampleApp.MixProject do
+   # Type `mix help deps` for examples and options.
+   defp deps do
+     [
+-      {:phoenix, "~> 1.4.2"},
++      {:phoenix, "~> 1.4.3"},
+       {:phoenix_pubsub, "~> 1.1"},
+       {:phoenix_ecto, "~> 4.0"},
+       {:ecto_sql, "~> 3.0"},
