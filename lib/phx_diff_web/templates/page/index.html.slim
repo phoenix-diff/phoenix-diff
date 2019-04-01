@@ -17,8 +17,10 @@ diff-loader inline-template=true source="#{@source_version}" target="#{@target_v
               = for version <- @all_versions do
                 option value="#{version}" = version
 
-        p
-          = "If you find this site useful, please leave a star on our "
+        span.star-message
+          = "If you found this tool useful, please "
+          i.fa.fa-star
+          = " our "
           a href="https://github.com/navinpeiris/phoenix-diff" target="_blank" GitHub repo
 
     section#results-section v-cloak=true

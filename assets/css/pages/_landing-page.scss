@@ -1,6 +1,6 @@
 #landing-page {
   #input-section {
-    @include gradient-radial(#F67938, #EF4734);
+    @include gradient-radial(#f67938, #ef4734);
 
     padding: 60px 15px 10px;
 
@@ -37,10 +37,16 @@
       }
     }
 
-    p {
+    .star-message {
+      display: inline-block;
+
       margin-top: 40px;
-      font-size: 12px;
-      font-style: italic;
+      margin-bottom: 40px;
+      padding: 10px 15px;
+
+      font-size: 16px;
+
+      border: 1px solid white;
 
       a {
         color: white;
@@ -60,8 +66,10 @@
       font-weight: bold;
     }
 
-    .btn{
-      &:focus, &:active, &.focus {
+    .btn {
+      &:focus,
+      &:active,
+      &.focus {
         outline: none;
         box-shadow: none;
       }
@@ -79,7 +87,7 @@
 
       .text {
         font-size: 24px;
-        padding-left: 6px
+        padding-left: 6px;
       }
     }
   }
