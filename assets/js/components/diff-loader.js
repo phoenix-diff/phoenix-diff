@@ -5,8 +5,8 @@ export default {
       targetVersion: null,
       loading: false,
       noChanges: false,
-      diffOutputFormat: 'line-by-line'
-    }
+      diffOutputFormat: "line-by-line"
+    };
   },
   props: {
     source: {
@@ -22,7 +22,7 @@ export default {
     this.sourceVersion = this.source;
     this.targetVersion = this.target;
 
-    this.diffResultsContainer = jQuery('#diff-results-container');
+    this.diffResultsContainer = jQuery("#diff-results-container");
 
     this.loadDiff();
   },
@@ -34,43 +34,39 @@ export default {
       this._clearDiffContainer();
       this._updateLocationParams();
 
-      this._fetchDiff()
-        .then(diff => {
-          this.loading = false;
+      this._fetchDiff().then(diff => {
+        this.loading = false;
 
-          if (diff) {
-            this._showDiff(diff);
-          } else {
-            this.noChanges = true;
-          }
-        });
+        if (diff) {
+          this._showDiff(diff);
+        } else {
+          this.noChanges = true;
+        }
+      });
     },
     showLineByLine() {
-      this._changeDisplayFormat('line-by-line');
+      this._changeDisplayFormat("line-by-line");
     },
     showSideBySide() {
-      this._changeDisplayFormat('side-by-side');
+      this._changeDisplayFormat("side-by-side");
     },
     _clearDiffContainer() {
       this.diffResultsContainer.empty();
     },
     _fetchDiff() {
       return axios
-              .get(`/diffs?source=${this.sourceVersion}&target=${this.targetVersion}`)
-              .then(response => response.data);
+        .get(`/diffs?source=${this.sourceVersion}&target=${this.targetVersion}`)
+        .then(response => response.data);
     },
     _showDiff(diff) {
-      var diff2htmlUi = new Diff2HtmlUI({diff: diff});
+      const diff2htmlUi = new Diff2HtmlUI({ diff: diff });
 
-      diff2htmlUi.draw(
-        this.diffResultsContainer,
-        {
-          inputFormat: 'diff',
-          outputFormat: this.diffOutputFormat,
-          showFiles: true,
-          matching: 'lines'
-        }
-      );
+      diff2htmlUi.draw(this.diffResultsContainer, {
+        inputFormat: "diff",
+        outputFormat: this.diffOutputFormat,
+        showFiles: true,
+        matching: "lines"
+      });
 
       diff2htmlUi.fileListCloseable(this.diffResultsContainer, false);
     },
@@ -80,11 +76,22 @@ export default {
       setTimeout(this.loadDiff, 100);
     },
     _updateLocationParams() {
-      if (history.pushState) {
-        let queryString = `?source=${this.sourceVersion}&target=${this.targetVersion}`;
-        var newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + queryString;
-        window.history.pushState({path: newUrl}, '', newUrl);
-    }
+      if (!history.pushState) {
+        return;
+      }
+
+      const queryString = `?source=${this.sourceVersion}&target=${
+        this.targetVersion
+      }`;
+
+      const newUrl =
+        window.location.protocol +
+        "//" +
+        window.location.host +
+        window.location.pathname +
+        queryString;
+
+      window.history.pushState({ path: newUrl }, "", newUrl);
     }
   }
-}
+};
