@@ -80,18 +80,26 @@ export default {
         return;
       }
 
+      const newURL = this._getPageURLWithQuery();
+      window.history.pushState({ path: newURL }, "", newURL);
+
+      document.title = this._getPageTitle();
+    },
+    _getPageURLWithQuery() {
       const queryString = `?source=${this.sourceVersion}&target=${
         this.targetVersion
       }`;
 
-      const newUrl =
+      return (
         window.location.protocol +
         "//" +
         window.location.host +
         window.location.pathname +
-        queryString;
-
-      window.history.pushState({ path: newUrl }, "", newUrl);
+        queryString
+      );
+    },
+    _getPageTitle() {
+      return `PhoenixDiff · v${this.sourceVersion} to v${this.targetVersion}`;
     }
   }
 };
