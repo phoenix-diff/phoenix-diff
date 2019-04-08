@@ -69,6 +69,18 @@ export default {
       });
 
       diff2htmlUi.fileListCloseable(this.diffResultsContainer, false);
+
+      this._updateDiffFileLinks();
+    },
+    _updateDiffFileLinks() {
+      const pageURL = this._getPageURLWithQuery();
+
+      $("a.d2h-file-name").each((index, el) => {
+        const element = $(el);
+
+        const hash = element.attr("href");
+        element.attr("href", pageURL + hash);
+      });
     },
     _changeDisplayFormat(format) {
       this.diffOutputFormat = format;
