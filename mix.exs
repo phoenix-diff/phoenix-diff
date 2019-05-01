@@ -44,7 +44,7 @@ defmodule PhxDiff.MixProject do
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
-      {:logster, "~> 0.4"},
+      {:logster, "~> 1.0"},
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
       {:mix_test_watch, "~> 0.8", only: :dev, runtime: false},
       {:ex_unit_notifier, "~> 0.1", only: :test, runtime: false}
