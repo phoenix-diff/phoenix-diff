@@ -1,0 +1,52 @@
+diff --git assets/webpack.config.js assets/webpack.config.js
+index 63c1d20..45ab14f 100644
+--- assets/webpack.config.js
++++ assets/webpack.config.js
+@@ -13,7 +13,7 @@ module.exports = (env, options) => ({
+     ]
+   },
+   entry: {
+-    './js/app.js': glob.sync('./vendor/**/*.js').concat(['./js/app.js'])
++      './js/app.js': ['./js/app.js'].concat(glob.sync('./vendor/**/*.js'))
+   },
+   output: {
+     filename: 'app.js',
+diff --git lib/sample_app_web/endpoint.ex lib/sample_app_web/endpoint.ex
+index b8aa4a6..92ca519 100644
+--- lib/sample_app_web/endpoint.ex
++++ lib/sample_app_web/endpoint.ex
+@@ -24,7 +24,7 @@ defmodule SampleAppWeb.Endpoint do
+   end
+ 
+   plug Plug.RequestId
+-  plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
++  plug Plug.Logger
+ 
+   plug Plug.Parsers,
+     parsers: [:urlencoded, :multipart, :json],
+diff --git mix.exs mix.exs
+index 6185b86..9269afe 100644
+--- mix.exs
++++ mix.exs
+@@ -33,7 +33,7 @@ defmodule SampleApp.MixProject do
+   # Type `mix help deps` for examples and options.
+   defp deps do
+     [
+-      {:phoenix, "~> 1.4.7"},
++      {:phoenix, "~> 1.4.5"},
+       {:phoenix_pubsub, "~> 1.1"},
+       {:phoenix_ecto, "~> 4.0"},
+       {:ecto_sql, "~> 3.0"},
+diff --git test/support/data_case.ex test/support/data_case.ex
+index ef81ce3..7ad0f52 100644
+--- test/support/data_case.ex
++++ test/support/data_case.ex
+@@ -46,7 +46,7 @@ defmodule SampleApp.DataCase do
+   def errors_on(changeset) do
+     Ecto.Changeset.traverse_errors(changeset, fn {message, opts} ->
+       Regex.replace(~r"%{(\w+)}", message, fn _, key ->
+-        opts |> Keyword.get(String.to_existing_atom(key), key) |> to_string()
++        opts |> Map.get(String.to_existing_atom(key), key) |> to_string()
+       end)
+     end)
+   end
