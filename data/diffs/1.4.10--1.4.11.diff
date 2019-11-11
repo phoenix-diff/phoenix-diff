@@ -1,0 +1,89 @@
+diff --git assets/package.json assets/package.json
+index a4ba0e7..48633fd 100644
+--- assets/package.json
++++ assets/package.json
+@@ -16,9 +16,9 @@
+     "copy-webpack-plugin": "^4.5.0",
+     "css-loader": "^2.1.1",
+     "mini-css-extract-plugin": "^0.4.0",
+-    "optimize-css-assets-webpack-plugin": "^4.0.0",
+-    "uglifyjs-webpack-plugin": "^1.2.4",
++    "optimize-css-assets-webpack-plugin": "^5.0.1",
++    "terser-webpack-plugin": "^1.1.0",
+     "webpack": "4.4.0",
+-    "webpack-cli": "^2.0.10"
++    "webpack-cli": "^3.3.2"
+   }
+ }
+diff --git assets/webpack.config.js assets/webpack.config.js
+index 63c1d20..4569a84 100644
+--- assets/webpack.config.js
++++ assets/webpack.config.js
+@@ -1,14 +1,14 @@
+ const path = require('path');
+ const glob = require('glob');
+ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
++const TerserPlugin = require('terser-webpack-plugin');
+ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+ const CopyWebpackPlugin = require('copy-webpack-plugin');
+ 
+ module.exports = (env, options) => ({
+   optimization: {
+     minimizer: [
+-      new UglifyJsPlugin({ cache: true, parallel: true, sourceMap: false }),
++      new TerserPlugin({ cache: true, parallel: true, sourceMap: false }),
+       new OptimizeCSSAssetsPlugin({})
+     ]
+   },
+diff --git mix.exs mix.exs
+index fdb92bc..d37b482 100644
+--- mix.exs
++++ mix.exs
+@@ -33,7 +33,7 @@ defmodule SampleApp.MixProject do
+   # Type `mix help deps` for examples and options.
+   defp deps do
+     [
+-      {:phoenix, "~> 1.4.10"},
++      {:phoenix, "~> 1.4.11"},
+       {:phoenix_pubsub, "~> 1.1"},
+       {:phoenix_ecto, "~> 4.0"},
+       {:ecto_sql, "~> 3.1"},
+diff --git test/support/conn_case.ex test/support/conn_case.ex
+index 3eb09ac..fbe0af6 100644
+--- test/support/conn_case.ex
++++ test/support/conn_case.ex
+@@ -8,9 +8,11 @@ defmodule SampleAppWeb.ConnCase do
+   to build common data structures and query the data layer.
+ 
+   Finally, if the test case interacts with the database,
+-  it cannot be async. For this reason, every test runs
+-  inside a transaction which is reset at the beginning
+-  of the test unless the test case is marked as async.
++  we enable the SQL sandbox, so changes done to the database
++  are reverted at the end of every test. If you are using
++  PostgreSQL, you can even run database tests asynchronously
++  by setting `use SampleAppWeb.ConnCase, async: true`, although
++  this option is not recommendded for other databases.
+   """
+ 
+   use ExUnit.CaseTemplate
+diff --git test/support/data_case.ex test/support/data_case.ex
+index ef81ce3..42988a0 100644
+--- test/support/data_case.ex
++++ test/support/data_case.ex
+@@ -7,9 +7,11 @@ defmodule SampleApp.DataCase do
+   your tests.
+ 
+   Finally, if the test case interacts with the database,
+-  it cannot be async. For this reason, every test runs
+-  inside a transaction which is reset at the beginning
+-  of the test unless the test case is marked as async.
++  we enable the SQL sandbox, so changes done to the database
++  are reverted at the end of every test. If you are using
++  PostgreSQL, you can even run database tests asynchronously
++  by setting `use SampleAppWeb.DataCase, async: true`, although
++  this option is not recommendded for other databases.
+   """
+ 
+   use ExUnit.CaseTemplate

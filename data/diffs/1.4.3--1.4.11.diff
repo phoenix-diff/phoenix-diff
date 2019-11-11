@@ -1,0 +1,293 @@
+diff --git .gitignore .gitignore
+index 7a97fd7..f190c9b 100644
+--- .gitignore
++++ .gitignore
+@@ -32,11 +32,3 @@ npm-debug.log
+ # we ignore priv/static. You may want to comment
+ # this depending on your deployment strategy.
+ /priv/static/
+-
+-# Files matching config/*.secret.exs pattern contain sensitive
+-# data and you should not commit them into version control.
+-#
+-# Alternatively, you may comment the line below and commit the
+-# secrets files as long as you replace their contents by environment
+-# variables.
+-/config/*.secret.exs
+diff --git assets/package.json assets/package.json
+index a4ba0e7..48633fd 100644
+--- assets/package.json
++++ assets/package.json
+@@ -16,9 +16,9 @@
+     "copy-webpack-plugin": "^4.5.0",
+     "css-loader": "^2.1.1",
+     "mini-css-extract-plugin": "^0.4.0",
+-    "optimize-css-assets-webpack-plugin": "^4.0.0",
+-    "uglifyjs-webpack-plugin": "^1.2.4",
++    "optimize-css-assets-webpack-plugin": "^5.0.1",
++    "terser-webpack-plugin": "^1.1.0",
+     "webpack": "4.4.0",
+-    "webpack-cli": "^2.0.10"
++    "webpack-cli": "^3.3.2"
+   }
+ }
+diff --git assets/webpack.config.js assets/webpack.config.js
+index 45ab14f..4569a84 100644
+--- assets/webpack.config.js
++++ assets/webpack.config.js
+@@ -1,19 +1,19 @@
+ const path = require('path');
+ const glob = require('glob');
+ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
++const TerserPlugin = require('terser-webpack-plugin');
+ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+ const CopyWebpackPlugin = require('copy-webpack-plugin');
+ 
+ module.exports = (env, options) => ({
+   optimization: {
+     minimizer: [
+-      new UglifyJsPlugin({ cache: true, parallel: true, sourceMap: false }),
++      new TerserPlugin({ cache: true, parallel: true, sourceMap: false }),
+       new OptimizeCSSAssetsPlugin({})
+     ]
+   },
+   entry: {
+-      './js/app.js': ['./js/app.js'].concat(glob.sync('./vendor/**/*.js'))
++    './js/app.js': glob.sync('./vendor/**/*.js').concat(['./js/app.js'])
+   },
+   output: {
+     filename: 'app.js',
+diff --git config/dev.exs config/dev.exs
+index aaede44..217905f 100644
+--- config/dev.exs
++++ config/dev.exs
+@@ -1,5 +1,14 @@
+ use Mix.Config
+ 
++# Configure your database
++config :sample_app, SampleApp.Repo,
++  username: "postgres",
++  password: "postgres",
++  database: "sample_app_dev",
++  hostname: "localhost",
++  show_sensitive_data_on_connection_error: true,
++  pool_size: 10
++
+ # For development, we disable any cache and enable
+ # debugging and code reloading.
+ #
+@@ -65,11 +74,3 @@ config :phoenix, :stacktrace_depth, 20
+ 
+ # Initialize plugs at runtime for faster development compilation
+ config :phoenix, :plug_init_mode, :runtime
+-
+-# Configure your database
+-config :sample_app, SampleApp.Repo,
+-  username: "postgres",
+-  password: "postgres",
+-  database: "sample_app_dev",
+-  hostname: "localhost",
+-  pool_size: 10
+diff --git config/prod.exs config/prod.exs
+index 0d797f4..60dd11b 100644
+--- config/prod.exs
++++ config/prod.exs
+@@ -10,7 +10,6 @@ use Mix.Config
+ # which you should run after static files are built and
+ # before starting your production server.
+ config :sample_app, SampleAppWeb.Endpoint,
+-  http: [:inet6, port: System.get_env("PORT") || 4000],
+   url: [host: "example.com", port: 80],
+   cache_static_manifest: "priv/static/cache_manifest.json"
+ 
+@@ -51,21 +50,6 @@ config :logger, level: :info
+ #
+ # Check `Plug.SSL` for all available options in `force_ssl`.
+ 
+-# ## Using releases (distillery)
+-#
+-# If you are doing OTP releases, you need to instruct Phoenix
+-# to start the server for all endpoints:
+-#
+-#     config :phoenix, :serve_endpoints, true
+-#
+-# Alternatively, you can configure exactly which server to
+-# start per endpoint:
+-#
+-#     config :sample_app, SampleAppWeb.Endpoint, server: true
+-#
+-# Note you can't rely on `System.get_env/1` when using releases.
+-# See the releases documentation accordingly.
+-
+-# Finally import the config/prod.secret.exs which should be versioned
+-# separately.
++# Finally import the config/prod.secret.exs which loads secrets
++# and configuration from environment variables.
+ import_config "prod.secret.exs"
+diff --git config/prod.secret.exs config/prod.secret.exs
+index a62a8db..b7149ee 100644
+--- config/prod.secret.exs
++++ config/prod.secret.exs
+@@ -1,19 +1,38 @@
++# In this file, we load production configuration and secrets
++# from environment variables. You can also hardcode secrets,
++# although such is generally not recommended and you have to
++# remember to add this file to your .gitignore.
+ use Mix.Config
+ 
+-# In this file, we keep production configuration that
+-# you'll likely want to automate and keep away from
+-# your version control system.
+-#
+-# You should document the content of this
+-# file or create a script for recreating it, since it's
+-# kept out of version control and might be hard to recover
+-# or recreate for your teammates (or yourself later on).
++database_url =
++  System.get_env("DATABASE_URL") ||
++    raise """
++    environment variable DATABASE_URL is missing.
++    For example: ecto://USER:PASS@HOST/DATABASE
++    """
++
++config :sample_app, SampleApp.Repo,
++  # ssl: true,
++  url: database_url,
++  pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
++
++secret_key_base =
++  System.get_env("SECRET_KEY_BASE") ||
++    raise """
++    environment variable SECRET_KEY_BASE is missing.
++    You can generate one by calling: mix phx.gen.secret
++    """
++
+ config :sample_app, SampleAppWeb.Endpoint,
++  http: [:inet6, port: String.to_integer(System.get_env("PORT") || "4000")],
+   secret_key_base: "aaaaaaaa"
+ 
+-# Configure your database
+-config :sample_app, SampleApp.Repo,
+-  username: "postgres",
+-  password: "postgres",
+-  database: "sample_app_prod",
+-  pool_size: 15
++# ## Using releases (Elixir v1.9+)
++#
++# If you are doing OTP releases, you need to instruct Phoenix
++# to start each relevant endpoint:
++#
++#     config :sample_app, SampleAppWeb.Endpoint, server: true
++#
++# Then you can assemble a release by calling `mix release`.
++# See `mix help release` for more information.
+diff --git config/test.exs config/test.exs
+index 166e50f..31fdfee 100644
+--- config/test.exs
++++ config/test.exs
+@@ -1,5 +1,13 @@
+ use Mix.Config
+ 
++# Configure your database
++config :sample_app, SampleApp.Repo,
++  username: "postgres",
++  password: "postgres",
++  database: "sample_app_test",
++  hostname: "localhost",
++  pool: Ecto.Adapters.SQL.Sandbox
++
+ # We don't run a server during test. If one is required,
+ # you can enable the server option below.
+ config :sample_app, SampleAppWeb.Endpoint,
+@@ -8,11 +16,3 @@ config :sample_app, SampleAppWeb.Endpoint,
+ 
+ # Print only warnings and errors during test
+ config :logger, level: :warn
+-
+-# Configure your database
+-config :sample_app, SampleApp.Repo,
+-  username: "postgres",
+-  password: "postgres",
+-  database: "sample_app_test",
+-  hostname: "localhost",
+-  pool: Ecto.Adapters.SQL.Sandbox
+diff --git lib/sample_app_web/endpoint.ex lib/sample_app_web/endpoint.ex
+index 92ca519..b8aa4a6 100644
+--- lib/sample_app_web/endpoint.ex
++++ lib/sample_app_web/endpoint.ex
+@@ -24,7 +24,7 @@ defmodule SampleAppWeb.Endpoint do
+   end
+ 
+   plug Plug.RequestId
+-  plug Plug.Logger
++  plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
+ 
+   plug Plug.Parsers,
+     parsers: [:urlencoded, :multipart, :json],
+diff --git mix.exs mix.exs
+index dd14c6d..d37b482 100644
+--- mix.exs
++++ mix.exs
+@@ -33,10 +33,10 @@ defmodule SampleApp.MixProject do
+   # Type `mix help deps` for examples and options.
+   defp deps do
+     [
+-      {:phoenix, "~> 1.4.3"},
++      {:phoenix, "~> 1.4.11"},
+       {:phoenix_pubsub, "~> 1.1"},
+       {:phoenix_ecto, "~> 4.0"},
+-      {:ecto_sql, "~> 3.0"},
++      {:ecto_sql, "~> 3.1"},
+       {:postgrex, ">= 0.0.0"},
+       {:phoenix_html, "~> 2.11"},
+       {:phoenix_live_reload, "~> 1.2", only: :dev},
+diff --git test/support/conn_case.ex test/support/conn_case.ex
+index 3eb09ac..fbe0af6 100644
+--- test/support/conn_case.ex
++++ test/support/conn_case.ex
+@@ -8,9 +8,11 @@ defmodule SampleAppWeb.ConnCase do
+   to build common data structures and query the data layer.
+ 
+   Finally, if the test case interacts with the database,
+-  it cannot be async. For this reason, every test runs
+-  inside a transaction which is reset at the beginning
+-  of the test unless the test case is marked as async.
++  we enable the SQL sandbox, so changes done to the database
++  are reverted at the end of every test. If you are using
++  PostgreSQL, you can even run database tests asynchronously
++  by setting `use SampleAppWeb.ConnCase, async: true`, although
++  this option is not recommendded for other databases.
+   """
+ 
+   use ExUnit.CaseTemplate
+diff --git test/support/data_case.ex test/support/data_case.ex
+index a71a146..42988a0 100644
+--- test/support/data_case.ex
++++ test/support/data_case.ex
+@@ -7,9 +7,11 @@ defmodule SampleApp.DataCase do
+   your tests.
+ 
+   Finally, if the test case interacts with the database,
+-  it cannot be async. For this reason, every test runs
+-  inside a transaction which is reset at the beginning
+-  of the test unless the test case is marked as async.
++  we enable the SQL sandbox, so changes done to the database
++  are reverted at the end of every test. If you are using
++  PostgreSQL, you can even run database tests asynchronously
++  by setting `use SampleAppWeb.DataCase, async: true`, although
++  this option is not recommendded for other databases.
+   """
+ 
+   use ExUnit.CaseTemplate
+@@ -45,8 +47,8 @@ defmodule SampleApp.DataCase do
+   """
+   def errors_on(changeset) do
+     Ecto.Changeset.traverse_errors(changeset, fn {message, opts} ->
+-      Enum.reduce(opts, message, fn {key, value}, acc ->
+-        String.replace(acc, "%{#{key}}", to_string(value))
++      Regex.replace(~r"%{(\w+)}", message, fn _, key ->
++        opts |> Keyword.get(String.to_existing_atom(key), key) |> to_string()
+       end)
+     end)
+   end
