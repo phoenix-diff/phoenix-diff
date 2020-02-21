@@ -1,0 +1,42 @@
+diff --git config/config.exs config/config.exs
+index c4d402f..c92ac23 100644
+--- config/config.exs
++++ config/config.exs
+@@ -16,7 +16,7 @@ config :sample_app, SampleAppWeb.Endpoint,
+   secret_key_base: "aaaaaaaa",
+   render_errors: [view: SampleAppWeb.ErrorView, accepts: ~w(html json)],
+   pubsub: [name: SampleApp.PubSub, adapter: Phoenix.PubSub.PG2],
+-  live_view: [signing_salt: "HLj/7Yzm"]
++  live_view: [signing_salt: "9wNu5IEE"]
+ 
+ # Configures Elixir's Logger
+ config :logger, :console,
+diff --git lib/sample_app_web/views/error_helpers.ex lib/sample_app_web/views/error_helpers.ex
+index 7bb8bdf..788d905 100644
+--- lib/sample_app_web/views/error_helpers.ex
++++ lib/sample_app_web/views/error_helpers.ex
+@@ -10,10 +10,7 @@ defmodule SampleAppWeb.ErrorHelpers do
+   """
+   def error_tag(form, field) do
+     Enum.map(Keyword.get_values(form.errors, field), fn error ->
+-      content_tag(:span, translate_error(error),
+-        class: "help-block",
+-        data: [phx_error_for: input_id(form, field)]
+-      )
++      content_tag(:span, translate_error(error), class: "help-block")
+     end)
+   end
+ 
+diff --git mix.exs mix.exs
+index 0b34fb9..2fd82df 100644
+--- mix.exs
++++ mix.exs
+@@ -33,7 +33,7 @@ defmodule SampleApp.MixProject do
+   # Type `mix help deps` for examples and options.
+   defp deps do
+     [
+-      {:phoenix, "~> 1.4.14"},
++      {:phoenix, "~> 1.4.13"},
+       {:phoenix_pubsub, "~> 1.1"},
+       {:phoenix_ecto, "~> 4.0"},
+       {:ecto_sql, "~> 3.1"},
