@@ -16,7 +16,7 @@ config :sample_app, SampleAppWeb.Endpoint,
   secret_key_base: "aaaaaaaa",
   render_errors: [view: SampleAppWeb.ErrorView, accepts: ~w(html json)],
   pubsub: [name: SampleApp.PubSub, adapter: Phoenix.PubSub.PG2],
-  live_view: [signing_salt: "9wNu5IEE"]
+  live_view: [signing_salt: "aaaaaaaa"]
 
 # Configures Elixir's Logger
 config :logger, :console,

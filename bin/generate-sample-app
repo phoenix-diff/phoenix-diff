@@ -39,6 +39,7 @@ replace_in_file() {
 
 replace_in_file 's/secret_key_base:.*/secret_key_base: "aaaaaaaa"/g' ${sample_app_path}/config/prod.secret.exs
 replace_in_file 's/secret_key_base:.*/secret_key_base: "aaaaaaaa",/g' ${sample_app_path}/config/config.exs
+replace_in_file 's/signing_salt:.*/signing_salt: "aaaaaaaa"]/g' ${sample_app_path}/config/config.exs
 replace_in_file 's/signing_salt:.*/signing_salt: "aaaaaaaa"/g' ${sample_app_path}/lib/sample_app_web/endpoint.ex
 
 # The prod secrets file is ignored due to the .gitignore file within the sample app, so
