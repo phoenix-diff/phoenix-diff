@@ -540,7 +540,7 @@ index 4569a84..0000000
 -  ]
 -});
 diff --git config/config.exs config/config.exs
-index c92ac23..47bdd68 100644
+index 2ad323e..47bdd68 100644
 --- config/config.exs
 +++ config/config.exs
 @@ -3,28 +3,22 @@
@@ -562,7 +562,7 @@ index c92ac23..47bdd68 100644
    secret_key_base: "aaaaaaaa",
    render_errors: [view: SampleAppWeb.ErrorView, accepts: ~w(html json)],
 -  pubsub: [name: SampleApp.PubSub, adapter: Phoenix.PubSub.PG2],
--  live_view: [signing_salt: "9wNu5IEE"]
+-  live_view: [signing_salt: "aaaaaaaa"]
 +  pubsub: [name: SampleApp.PubSub, adapter: Phoenix.PubSub.PG2]
  
  # Configures Elixir's Logger

@@ -65,7 +65,7 @@ index 45ab14f..4569a84 100644
    output: {
      filename: 'app.js',
 diff --git config/config.exs config/config.exs
-index 25fe438..c4d402f 100644
+index 25fe438..2ad323e 100644
 --- config/config.exs
 +++ config/config.exs
 @@ -15,7 +15,8 @@ config :sample_app, SampleAppWeb.Endpoint,
@@ -74,7 +74,7 @@ index 25fe438..c4d402f 100644
    render_errors: [view: SampleAppWeb.ErrorView, accepts: ~w(html json)],
 -  pubsub: [name: SampleApp.PubSub, adapter: Phoenix.PubSub.PG2]
 +  pubsub: [name: SampleApp.PubSub, adapter: Phoenix.PubSub.PG2],
-+  live_view: [signing_salt: "HLj/7Yzm"]
++  live_view: [signing_salt: "aaaaaaaa"]
  
  # Configures Elixir's Logger
  config :logger, :console,

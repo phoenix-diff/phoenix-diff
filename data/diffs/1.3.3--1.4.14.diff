@@ -540,7 +540,7 @@ index 0000000..4569a84
 +  ]
 +});
 diff --git config/config.exs config/config.exs
-index 49827c9..c4d402f 100644
+index 49827c9..2ad323e 100644
 --- config/config.exs
 +++ config/config.exs
 @@ -3,9 +3,10 @@
@@ -562,7 +562,7 @@ index 49827c9..c4d402f 100644
 -  pubsub: [name: SampleApp.PubSub,
 -           adapter: Phoenix.PubSub.PG2]
 +  pubsub: [name: SampleApp.PubSub, adapter: Phoenix.PubSub.PG2],
-+  live_view: [signing_salt: "HLj/7Yzm"]
++  live_view: [signing_salt: "aaaaaaaa"]
  
  # Configures Elixir's Logger
  config :logger, :console,

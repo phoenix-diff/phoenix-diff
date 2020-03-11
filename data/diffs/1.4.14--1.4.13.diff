@@ -1,16 +1,3 @@
-diff --git config/config.exs config/config.exs
-index c4d402f..c92ac23 100644
---- config/config.exs
-+++ config/config.exs
-@@ -16,7 +16,7 @@ config :sample_app, SampleAppWeb.Endpoint,
-   secret_key_base: "aaaaaaaa",
-   render_errors: [view: SampleAppWeb.ErrorView, accepts: ~w(html json)],
-   pubsub: [name: SampleApp.PubSub, adapter: Phoenix.PubSub.PG2],
--  live_view: [signing_salt: "HLj/7Yzm"]
-+  live_view: [signing_salt: "9wNu5IEE"]
- 
- # Configures Elixir's Logger
- config :logger, :console,
 diff --git lib/sample_app_web/views/error_helpers.ex lib/sample_app_web/views/error_helpers.ex
 index 7bb8bdf..788d905 100644
 --- lib/sample_app_web/views/error_helpers.ex
