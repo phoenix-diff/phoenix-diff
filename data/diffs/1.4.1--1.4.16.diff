@@ -1,0 +1,477 @@
+diff --git .gitignore .gitignore
+index 7a97fd7..f190c9b 100644
+--- .gitignore
++++ .gitignore
+@@ -32,11 +32,3 @@ npm-debug.log
+ # we ignore priv/static. You may want to comment
+ # this depending on your deployment strategy.
+ /priv/static/
+-
+-# Files matching config/*.secret.exs pattern contain sensitive
+-# data and you should not commit them into version control.
+-#
+-# Alternatively, you may comment the line below and commit the
+-# secrets files as long as you replace their contents by environment
+-# variables.
+-/config/*.secret.exs
+diff --git README.md README.md
+index 7657c0f..1da0428 100644
+--- README.md
++++ README.md
+@@ -13,8 +13,8 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
+ 
+ ## Learn more
+ 
+-  * Official website: http://www.phoenixframework.org/
++  * Official website: https://www.phoenixframework.org/
+   * Guides: https://hexdocs.pm/phoenix/overview.html
+   * Docs: https://hexdocs.pm/phoenix
+-  * Mailing list: http://groups.google.com/group/phoenix-talk
++  * Forum: https://elixirforum.com/c/phoenix-forum
+   * Source: https://github.com/phoenixframework/phoenix
+diff --git assets/package.json assets/package.json
+index c81fa4f..cd2bb9a 100644
+--- assets/package.json
++++ assets/package.json
+@@ -13,12 +13,12 @@
+     "@babel/core": "^7.0.0",
+     "@babel/preset-env": "^7.0.0",
+     "babel-loader": "^8.0.0",
+-    "copy-webpack-plugin": "^4.5.0",
+-    "css-loader": "^0.28.10",
+-    "mini-css-extract-plugin": "^0.4.0",
+-    "optimize-css-assets-webpack-plugin": "^4.0.0",
+-    "uglifyjs-webpack-plugin": "^1.2.4",
+-    "webpack": "4.4.0",
+-    "webpack-cli": "^2.0.10"
++    "copy-webpack-plugin": "^5.1.1",
++    "css-loader": "^3.4.2",
++    "mini-css-extract-plugin": "^0.9.0",
++    "optimize-css-assets-webpack-plugin": "^5.0.1",
++    "terser-webpack-plugin": "^2.3.2",
++    "webpack": "4.41.5",
++    "webpack-cli": "^3.3.2"
+   }
+ }
+diff --git assets/webpack.config.js assets/webpack.config.js
+index 45ab14f..4569a84 100644
+--- assets/webpack.config.js
++++ assets/webpack.config.js
+@@ -1,19 +1,19 @@
+ const path = require('path');
+ const glob = require('glob');
+ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
++const TerserPlugin = require('terser-webpack-plugin');
+ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+ const CopyWebpackPlugin = require('copy-webpack-plugin');
+ 
+ module.exports = (env, options) => ({
+   optimization: {
+     minimizer: [
+-      new UglifyJsPlugin({ cache: true, parallel: true, sourceMap: false }),
++      new TerserPlugin({ cache: true, parallel: true, sourceMap: false }),
+       new OptimizeCSSAssetsPlugin({})
+     ]
+   },
+   entry: {
+-      './js/app.js': ['./js/app.js'].concat(glob.sync('./vendor/**/*.js'))
++    './js/app.js': glob.sync('./vendor/**/*.js').concat(['./js/app.js'])
+   },
+   output: {
+     filename: 'app.js',
+diff --git config/config.exs config/config.exs
+index 25fe438..2ad323e 100644
+--- config/config.exs
++++ config/config.exs
+@@ -15,7 +15,8 @@ config :sample_app, SampleAppWeb.Endpoint,
+   url: [host: "localhost"],
+   secret_key_base: "aaaaaaaa",
+   render_errors: [view: SampleAppWeb.ErrorView, accepts: ~w(html json)],
+-  pubsub: [name: SampleApp.PubSub, adapter: Phoenix.PubSub.PG2]
++  pubsub: [name: SampleApp.PubSub, adapter: Phoenix.PubSub.PG2],
++  live_view: [signing_salt: "aaaaaaaa"]
+ 
+ # Configures Elixir's Logger
+ config :logger, :console,
+diff --git config/dev.exs config/dev.exs
+index 14ea2bf..254648d 100644
+--- config/dev.exs
++++ config/dev.exs
+@@ -1,5 +1,14 @@
+ use Mix.Config
+ 
++# Configure your database
++config :sample_app, SampleApp.Repo,
++  username: "postgres",
++  password: "postgres",
++  database: "sample_app_dev",
++  hostname: "localhost",
++  show_sensitive_data_on_connection_error: true,
++  pool_size: 10
++
+ # For development, we disable any cache and enable
+ # debugging and code reloading.
+ #
+@@ -49,10 +58,10 @@ config :sample_app, SampleAppWeb.Endpoint,
+ config :sample_app, SampleAppWeb.Endpoint,
+   live_reload: [
+     patterns: [
+-      ~r{priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$},
+-      ~r{priv/gettext/.*(po)$},
+-      ~r{lib/sample_app_web/views/.*(ex)$},
+-      ~r{lib/sample_app_web/templates/.*(eex)$}
++      ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
++      ~r"priv/gettext/.*(po)$",
++      ~r"lib/sample_app_web/(live|views)/.*(ex)$",
++      ~r"lib/sample_app_web/templates/.*(eex)$"
+     ]
+   ]
+ 
+@@ -65,11 +74,3 @@ config :phoenix, :stacktrace_depth, 20
+ 
+ # Initialize plugs at runtime for faster development compilation
+ config :phoenix, :plug_init_mode, :runtime
+-
+-# Configure your database
+-config :sample_app, SampleApp.Repo,
+-  username: "postgres",
+-  password: "postgres",
+-  database: "sample_app_dev",
+-  hostname: "localhost",
+-  pool_size: 10
+diff --git config/prod.exs config/prod.exs
+index 0d797f4..1e3a375 100644
+--- config/prod.exs
++++ config/prod.exs
+@@ -10,7 +10,6 @@ use Mix.Config
+ # which you should run after static files are built and
+ # before starting your production server.
+ config :sample_app, SampleAppWeb.Endpoint,
+-  http: [:inet6, port: System.get_env("PORT") || 4000],
+   url: [host: "example.com", port: 80],
+   cache_static_manifest: "priv/static/cache_manifest.json"
+ 
+@@ -26,11 +25,11 @@ config :logger, level: :info
+ #       ...
+ #       url: [host: "example.com", port: 443],
+ #       https: [
+-#         :inet6,
+ #         port: 443,
+ #         cipher_suite: :strong,
+ #         keyfile: System.get_env("SOME_APP_SSL_KEY_PATH"),
+-#         certfile: System.get_env("SOME_APP_SSL_CERT_PATH")
++#         certfile: System.get_env("SOME_APP_SSL_CERT_PATH"),
++#         transport_options: [socket_opts: [:inet6]]
+ #       ]
+ #
+ # The `cipher_suite` is set to `:strong` to support only the
+@@ -51,21 +50,6 @@ config :logger, level: :info
+ #
+ # Check `Plug.SSL` for all available options in `force_ssl`.
+ 
+-# ## Using releases (distillery)
+-#
+-# If you are doing OTP releases, you need to instruct Phoenix
+-# to start the server for all endpoints:
+-#
+-#     config :phoenix, :serve_endpoints, true
+-#
+-# Alternatively, you can configure exactly which server to
+-# start per endpoint:
+-#
+-#     config :sample_app, SampleAppWeb.Endpoint, server: true
+-#
+-# Note you can't rely on `System.get_env/1` when using releases.
+-# See the releases documentation accordingly.
+-
+-# Finally import the config/prod.secret.exs which should be versioned
+-# separately.
++# Finally import the config/prod.secret.exs which loads secrets
++# and configuration from environment variables.
+ import_config "prod.secret.exs"
+diff --git config/prod.secret.exs config/prod.secret.exs
+index a62a8db..95aaebb 100644
+--- config/prod.secret.exs
++++ config/prod.secret.exs
+@@ -1,19 +1,41 @@
++# In this file, we load production configuration and secrets
++# from environment variables. You can also hardcode secrets,
++# although such is generally not recommended and you have to
++# remember to add this file to your .gitignore.
+ use Mix.Config
+ 
+-# In this file, we keep production configuration that
+-# you'll likely want to automate and keep away from
+-# your version control system.
+-#
+-# You should document the content of this
+-# file or create a script for recreating it, since it's
+-# kept out of version control and might be hard to recover
+-# or recreate for your teammates (or yourself later on).
++database_url =
++  System.get_env("DATABASE_URL") ||
++    raise """
++    environment variable DATABASE_URL is missing.
++    For example: ecto://USER:PASS@HOST/DATABASE
++    """
++
++config :sample_app, SampleApp.Repo,
++  # ssl: true,
++  url: database_url,
++  pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
++
++secret_key_base =
++  System.get_env("SECRET_KEY_BASE") ||
++    raise """
++    environment variable SECRET_KEY_BASE is missing.
++    You can generate one by calling: mix phx.gen.secret
++    """
++
+ config :sample_app, SampleAppWeb.Endpoint,
++  http: [
++    port: String.to_integer(System.get_env("PORT") || "4000"),
++    transport_options: [socket_opts: [:inet6]]
++  ],
+   secret_key_base: "aaaaaaaa"
+ 
+-# Configure your database
+-config :sample_app, SampleApp.Repo,
+-  username: "postgres",
+-  password: "postgres",
+-  database: "sample_app_prod",
+-  pool_size: 15
++# ## Using releases (Elixir v1.9+)
++#
++# If you are doing OTP releases, you need to instruct Phoenix
++# to start each relevant endpoint:
++#
++#     config :sample_app, SampleAppWeb.Endpoint, server: true
++#
++# Then you can assemble a release by calling `mix release`.
++# See `mix help release` for more information.
+diff --git config/test.exs config/test.exs
+index 166e50f..31fdfee 100644
+--- config/test.exs
++++ config/test.exs
+@@ -1,5 +1,13 @@
+ use Mix.Config
+ 
++# Configure your database
++config :sample_app, SampleApp.Repo,
++  username: "postgres",
++  password: "postgres",
++  database: "sample_app_test",
++  hostname: "localhost",
++  pool: Ecto.Adapters.SQL.Sandbox
++
+ # We don't run a server during test. If one is required,
+ # you can enable the server option below.
+ config :sample_app, SampleAppWeb.Endpoint,
+@@ -8,11 +16,3 @@ config :sample_app, SampleAppWeb.Endpoint,
+ 
+ # Print only warnings and errors during test
+ config :logger, level: :warn
+-
+-# Configure your database
+-config :sample_app, SampleApp.Repo,
+-  username: "postgres",
+-  password: "postgres",
+-  database: "sample_app_test",
+-  hostname: "localhost",
+-  pool: Ecto.Adapters.SQL.Sandbox
+diff --git lib/sample_app_web/endpoint.ex lib/sample_app_web/endpoint.ex
+index 92ca519..fa783dc 100644
+--- lib/sample_app_web/endpoint.ex
++++ lib/sample_app_web/endpoint.ex
+@@ -1,6 +1,15 @@
+ defmodule SampleAppWeb.Endpoint do
+   use Phoenix.Endpoint, otp_app: :sample_app
+ 
++  # The session will be stored in the cookie and signed,
++  # this means its contents can be read but not tampered with.
++  # Set :encryption_salt if you would also like to encrypt it.
++  @session_options [
++    store: :cookie,
++    key: "_sample_app_key",
++    signing_salt: "aaaaaaaa"
++  ]
++
+   socket "/socket", SampleAppWeb.UserSocket,
+     websocket: true,
+     longpoll: false
+@@ -24,7 +33,7 @@ defmodule SampleAppWeb.Endpoint do
+   end
+ 
+   plug Plug.RequestId
+-  plug Plug.Logger
++  plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
+ 
+   plug Plug.Parsers,
+     parsers: [:urlencoded, :multipart, :json],
+@@ -33,14 +42,6 @@ defmodule SampleAppWeb.Endpoint do
+ 
+   plug Plug.MethodOverride
+   plug Plug.Head
+-
+-  # The session will be stored in the cookie and signed,
+-  # this means its contents can be read but not tampered with.
+-  # Set :encryption_salt if you would also like to encrypt it.
+-  plug Plug.Session,
+-    store: :cookie,
+-    key: "_sample_app_key",
+-    signing_salt: "aaaaaaaa"
+-
++  plug Plug.Session, @session_options
+   plug SampleAppWeb.Router
+ end
+diff --git lib/sample_app_web/templates/layout/app.html.eex lib/sample_app_web/templates/layout/app.html.eex
+index 57a6418..30e612b 100644
+--- lib/sample_app_web/templates/layout/app.html.eex
++++ lib/sample_app_web/templates/layout/app.html.eex
+@@ -4,8 +4,9 @@
+     <meta charset="utf-8"/>
+     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+-    <title>SampleApp · Phoenix Framework</title>
++    <title><%= assigns[:page_title] || "SampleApp · Phoenix Framework" %></title>
+     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
++    <%= csrf_meta_tag() %>
+   </head>
+   <body>
+     <header>
+@@ -15,7 +16,7 @@
+             <li><a href="https://hexdocs.pm/phoenix/overview.html">Get Started</a></li>
+           </ul>
+         </nav>
+-        <a href="http://phoenixframework.org/" class="phx-logo">
++        <a href="https://phoenixframework.org/" class="phx-logo">
+           <img src="<%= Routes.static_path(@conn, "/images/phoenix.png") %>" alt="Phoenix Framework Logo"/>
+         </a>
+       </section>
+diff --git lib/sample_app_web/templates/page/index.html.eex lib/sample_app_web/templates/page/index.html.eex
+index 0784473..8cbd9d8 100644
+--- lib/sample_app_web/templates/page/index.html.eex
++++ lib/sample_app_web/templates/page/index.html.eex
+@@ -1,6 +1,6 @@
+ <section class="phx-hero">
+   <h1><%= gettext "Welcome to %{name}!", name: "Phoenix" %></h1>
+-  <p>A productive web framework that<br/>does not compromise speed and maintainability.</p>
++  <p>A productive web framework that<br/>does not compromise speed or maintainability.</p>
+ </section>
+ 
+ <section class="row">
+diff --git lib/sample_app_web/views/error_helpers.ex lib/sample_app_web/views/error_helpers.ex
+index 788d905..7bb8bdf 100644
+--- lib/sample_app_web/views/error_helpers.ex
++++ lib/sample_app_web/views/error_helpers.ex
+@@ -10,7 +10,10 @@ defmodule SampleAppWeb.ErrorHelpers do
+   """
+   def error_tag(form, field) do
+     Enum.map(Keyword.get_values(form.errors, field), fn error ->
+-      content_tag(:span, translate_error(error), class: "help-block")
++      content_tag(:span, translate_error(error),
++        class: "help-block",
++        data: [phx_error_for: input_id(form, field)]
++      )
+     end)
+   end
+ 
+diff --git mix.exs mix.exs
+index bec62bb..3a39fc4 100644
+--- mix.exs
++++ mix.exs
+@@ -33,10 +33,10 @@ defmodule SampleApp.MixProject do
+   # Type `mix help deps` for examples and options.
+   defp deps do
+     [
+-      {:phoenix, "~> 1.4.1"},
++      {:phoenix, "~> 1.4.16"},
+       {:phoenix_pubsub, "~> 1.1"},
+       {:phoenix_ecto, "~> 4.0"},
+-      {:ecto_sql, "~> 3.0"},
++      {:ecto_sql, "~> 3.1"},
+       {:postgrex, ">= 0.0.0"},
+       {:phoenix_html, "~> 2.11"},
+       {:phoenix_live_reload, "~> 1.2", only: :dev},
+diff --git test/sample_app_web/views/layout_view_test.exs test/sample_app_web/views/layout_view_test.exs
+index 6125800..518823f 100644
+--- test/sample_app_web/views/layout_view_test.exs
++++ test/sample_app_web/views/layout_view_test.exs
+@@ -1,3 +1,8 @@
+ defmodule SampleAppWeb.LayoutViewTest do
+   use SampleAppWeb.ConnCase, async: true
++
++  # When testing helpers, you may want to import Phoenix.HTML and
++  # use functions such as safe_to_string() to convert the helper
++  # result into an HTML string.
++  # import Phoenix.HTML
+ end
+diff --git test/support/channel_case.ex test/support/channel_case.ex
+index d199879..1e12c94 100644
+--- test/support/channel_case.ex
++++ test/support/channel_case.ex
+@@ -8,9 +8,11 @@ defmodule SampleAppWeb.ChannelCase do
+   to build common data structures and query the data layer.
+ 
+   Finally, if the test case interacts with the database,
+-  it cannot be async. For this reason, every test runs
+-  inside a transaction which is reset at the beginning
+-  of the test unless the test case is marked as async.
++  we enable the SQL sandbox, so changes done to the database
++  are reverted at the end of every test. If you are using
++  PostgreSQL, you can even run database tests asynchronously
++  by setting `use SampleAppWeb.ChannelCase, async: true`, although
++  this option is not recommended for other databases.
+   """
+ 
+   use ExUnit.CaseTemplate
+diff --git test/support/conn_case.ex test/support/conn_case.ex
+index 3eb09ac..f03645b 100644
+--- test/support/conn_case.ex
++++ test/support/conn_case.ex
+@@ -8,9 +8,11 @@ defmodule SampleAppWeb.ConnCase do
+   to build common data structures and query the data layer.
+ 
+   Finally, if the test case interacts with the database,
+-  it cannot be async. For this reason, every test runs
+-  inside a transaction which is reset at the beginning
+-  of the test unless the test case is marked as async.
++  we enable the SQL sandbox, so changes done to the database
++  are reverted at the end of every test. If you are using
++  PostgreSQL, you can even run database tests asynchronously
++  by setting `use SampleAppWeb.ConnCase, async: true`, although
++  this option is not recommended for other databases.
+   """
+ 
+   use ExUnit.CaseTemplate
+diff --git test/support/data_case.ex test/support/data_case.ex
+index a71a146..11a105f 100644
+--- test/support/data_case.ex
++++ test/support/data_case.ex
+@@ -7,9 +7,11 @@ defmodule SampleApp.DataCase do
+   your tests.
+ 
+   Finally, if the test case interacts with the database,
+-  it cannot be async. For this reason, every test runs
+-  inside a transaction which is reset at the beginning
+-  of the test unless the test case is marked as async.
++  we enable the SQL sandbox, so changes done to the database
++  are reverted at the end of every test. If you are using
++  PostgreSQL, you can even run database tests asynchronously
++  by setting `use SampleApp.DataCase, async: true`, although
++  this option is not recommended for other databases.
+   """
+ 
+   use ExUnit.CaseTemplate
+@@ -45,8 +47,8 @@ defmodule SampleApp.DataCase do
+   """
+   def errors_on(changeset) do
+     Ecto.Changeset.traverse_errors(changeset, fn {message, opts} ->
+-      Enum.reduce(opts, message, fn {key, value}, acc ->
+-        String.replace(acc, "%{#{key}}", to_string(value))
++      Regex.replace(~r"%{(\w+)}", message, fn _, key ->
++        opts |> Keyword.get(String.to_existing_atom(key), key) |> to_string()
+       end)
+     end)
+   end
