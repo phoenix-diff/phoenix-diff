@@ -28,7 +28,7 @@ mix local.hex --force
 mix archive.install hex phx_new ${phoenix_version} --force
 
 echo "Generating new sample app for ${phoenix_version}"
-echo n | mix phx.new ${sample_app_path} --module SampleApp --app sample_app
+echo n | mix phx.new ${sample_app_path} --module SampleApp --app sample_app --live
 
 echo "Replacing secret keys with default"
 
