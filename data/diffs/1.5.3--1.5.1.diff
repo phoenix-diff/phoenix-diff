@@ -1,0 +1,84 @@
+diff --git README.md README.md
+index c3f1951..ae0a073 100644
+--- README.md
++++ README.md
+@@ -2,9 +2,7 @@
+ 
+ To start your Phoenix server:
+ 
+-  * Install dependencies with `mix deps.get`
+-  * Create and migrate your database with `mix ecto.setup`
+-  * Install Node.js dependencies with `npm install` inside the `assets` directory
++  * Setup the project with `mix setup`
+   * Start Phoenix endpoint with `mix phx.server`
+ 
+ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+diff --git lib/sample_app_web/telemetry.ex lib/sample_app_web/telemetry.ex
+index 6350dfa..bc2d117 100644
+--- lib/sample_app_web/telemetry.ex
++++ lib/sample_app_web/telemetry.ex
+@@ -9,8 +9,6 @@ defmodule SampleAppWeb.Telemetry do
+   @impl true
+   def init(_arg) do
+     children = [
+-      # Telemetry poller will execute the given period measurements
+-      # every 10_000ms. Learn more here: https://hexdocs.pm/telemetry_metrics
+       {:telemetry_poller, measurements: periodic_measurements(), period: 10_000}
+       # Add reporters as children of your supervision tree.
+       # {Telemetry.Metrics.ConsoleReporter, metrics: metrics()}
+diff --git lib/sample_app_web/templates/layout/root.html.leex lib/sample_app_web/templates/layout/root.html.leex
+index 02f5448..fd5319e 100644
+--- lib/sample_app_web/templates/layout/root.html.leex
++++ lib/sample_app_web/templates/layout/root.html.leex
+@@ -6,8 +6,8 @@
+     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+     <%= csrf_meta_tag() %>
+     <%= live_title_tag assigns[:page_title] || "SampleApp", suffix: " · Phoenix Framework" %>
+-    <link phx-track-static rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
+-    <script defer phx-track-static type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
++    <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
++    <script defer type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
+   </head>
+   <body>
+     <header>
+diff --git lib/sample_app_web.ex lib/sample_app_web.ex
+index 2bf6fe2..6b5bfd8 100644
+--- lib/sample_app_web.ex
++++ lib/sample_app_web.ex
+@@ -34,8 +34,7 @@ defmodule SampleAppWeb do
+         namespace: SampleAppWeb
+ 
+       # Import convenience functions from controllers
+-      import Phoenix.Controller,
+-        only: [get_flash: 1, get_flash: 2, view_module: 1, view_template: 1]
++      import Phoenix.Controller, only: [get_flash: 1, get_flash: 2, view_module: 1]
+ 
+       # Include shared imports and aliases for views
+       unquote(view_helpers())
+diff --git mix.exs mix.exs
+index 473b5a5..e0b9e03 100644
+--- mix.exs
++++ mix.exs
+@@ -33,11 +33,11 @@ defmodule SampleApp.MixProject do
+   # Type `mix help deps` for examples and options.
+   defp deps do
+     [
+-      {:phoenix, "~> 1.5.3"},
++      {:phoenix, "~> 1.5.1"},
+       {:phoenix_ecto, "~> 4.1"},
+       {:ecto_sql, "~> 3.4"},
+       {:postgrex, ">= 0.0.0"},
+-      {:phoenix_live_view, "~> 0.13.0"},
++      {:phoenix_live_view, "~> 0.12.0"},
+       {:floki, ">= 0.0.0", only: :test},
+       {:phoenix_html, "~> 2.11"},
+       {:phoenix_live_reload, "~> 1.2", only: :dev},
+@@ -61,7 +61,7 @@ defmodule SampleApp.MixProject do
+       setup: ["deps.get", "ecto.setup", "cmd npm install --prefix assets"],
+       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+       "ecto.reset": ["ecto.drop", "ecto.setup"],
+-      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"]
++      test: ["ecto.create --quiet", "ecto.migrate", "test"]
+     ]
+   end
+ end
