@@ -5,7 +5,7 @@ defmodule PhxDiffWeb.DiffControllerTest do
     test "returns diff when versions are valid", %{conn: conn} do
       conn = conn |> get("/diffs?source=1.3.0&target=1.3.1")
 
-      assert text_response(conn, 200) =~ "diff --git config/config.exs config/config.exs"
+      assert text_response(conn, 200) =~ "config/config.exs config/config.exs"
     end
 
     test "returns empty when versions are the same", %{conn: conn} do
