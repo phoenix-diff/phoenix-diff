@@ -39,7 +39,7 @@ defmodule PhxDiff.DiffsTest do
     end
 
     test "returns error when a version is invalid" do
-      {:error, "Invalid versions"} = Diffs.get_diff("1.3.1", "invalid")
+      {:error, :invalid_versions} = Diffs.get_diff("1.3.1", "invalid")
     end
   end
 end

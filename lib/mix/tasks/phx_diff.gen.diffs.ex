@@ -5,7 +5,7 @@ defmodule Mix.Tasks.PhxDiff.Gen.Diffs do
 
   def run(_) do
     Mix.shell().info([:yellow, "Generating diffs..."])
-    PhxDiff.Diffs.generate()
+    PhxDiff.Diffs.DiffEngine.generate()
     Mix.shell().info([:green, "Completed generating diffs"])
   end
 end
