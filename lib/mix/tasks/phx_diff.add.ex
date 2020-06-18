@@ -5,6 +5,5 @@ defmodule Mix.Tasks.PhxDiff.Add do
 
   def run(args) do
     Mix.Tasks.PhxDiff.Gen.Sample.run(args)
-    Mix.Tasks.PhxDiff.Gen.Diffs.run(args)
   end
 end

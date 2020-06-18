@@ -29,7 +29,7 @@ defmodule PhxDiff.DiffsTest do
     test "returns content when versions are valid" do
       {:ok, diff} = Diffs.get_diff("1.3.1", "1.3.2")
 
-      assert diff =~ "diff --git config/config.exs config/config.exs"
+      assert diff =~ "config/config.exs config/config.exs"
     end
 
     test "returns empty when versions are the same" do
