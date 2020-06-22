@@ -2,6 +2,7 @@ defmodule PhxDiff.DiffsTest do
   use ExUnit.Case, async: true
 
   alias PhxDiff.Diffs
+  alias PhxDiff.Diffs.AppSpecification
 
   describe "all_versions/0" do
     test "returns all versions" do
@@ -27,19 +28,28 @@ defmodule PhxDiff.DiffsTest do
 
   describe "get_diff/2" do
     test "returns content when versions are valid" do
-      {:ok, diff} = Diffs.get_diff("1.3.1", "1.3.2")
+      source = AppSpecification.new("1.3.1")
+      target = AppSpecification.new("1.3.2")
+
+      {:ok, diff} = Diffs.get_diff(source, target)
 
       assert diff =~ "config/config.exs config/config.exs"
     end
 
     test "returns empty when versions are the same" do
-      {:ok, diff} = Diffs.get_diff("1.3.1", "1.3.1")
+      source = AppSpecification.new("1.3.1")
+      target = AppSpecification.new("1.3.1")
+
+      {:ok, diff} = Diffs.get_diff(source, target)
 
       assert diff == ""
     end
 
     test "returns error when a version is invalid" do
-      {:error, :invalid_versions} = Diffs.get_diff("1.3.1", "invalid")
+      source = AppSpecification.new("1.3.1")
+      target = AppSpecification.new("invalid")
+
+      {:error, :invalid_versions} = Diffs.get_diff(source, target)
     end
   end
 end
