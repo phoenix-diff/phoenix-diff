@@ -2,6 +2,7 @@ defmodule PhxDiff.Diffs.AppRepo do
   @moduledoc false
 
   alias PhxDiff.Diffs.{
+    AppRepo.AppGenerator,
     AppSpecification,
     Config
   }
@@ -49,6 +50,26 @@ defmodule PhxDiff.Diffs.AppRepo do
     end
   end
 
+  @spec generate_sample_app(Config.t(), AppSpecification.t()) ::
+          {:ok, String.t()} | {:error, :invalid_version}
+  def generate_sample_app(%Config{} = config, %AppSpecification{} = app_spec) do
+    with {:ok, app_dir} <- AppGenerator.generate(config, app_spec),
+         {:ok, path_in_storage} <- store_generated_app(config, app_spec, app_dir) do
+      {:ok, path_in_storage}
+    end
+  end
+
+  defp store_generated_app(config, app_spec, source_path) do
+    destination_path = app_path(config, app_spec)
+
+    File.rm_rf(destination_path)
+    File.mkdir_p!(destination_path)
+
+    File.rename!(source_path, destination_path)
+
+    {:ok, destination_path}
+  end
+
   defp app_generated_for_specification?(config, app_spec) do
     app_spec in app_specifications_for_pre_generated_apps(config)
   end
@@ -61,8 +82,12 @@ defmodule PhxDiff.Diffs.AppRepo do
   end
 
   defp app_specifications_for_pre_generated_apps(%Config{app_repo_path: app_repo_path}) do
-    app_repo_path
-    |> File.ls!()
-    |> Enum.map(&AppSpecification.new/1)
+    case File.ls(app_repo_path) do
+      {:ok, files} ->
+        Enum.map(files, &AppSpecification.new/1)
+
+      {:error, _reason} ->
+        []
+    end
   end
 end
