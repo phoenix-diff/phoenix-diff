@@ -1,7 +1,7 @@
 defmodule PhxDiff.Diffs.AppRepo do
   @moduledoc false
 
-  @type version :: Phoenix.Diffs.version()
+  @type version :: PhxDiff.Diffs.version()
 
   @sample_app_path "data/sample-app"
 

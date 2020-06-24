@@ -1,4 +1,16 @@
 language: elixir
-elixir: "1.8.2"
-otp_release: "21.2"
+elixir: "1.10.2"
+otp_release: "22.2.8"
+
+cache:
+  directories:
+    - _build
+    - deps
+
+before_script:
+  # Build the plt ahead of time so mix ci doesn't
+  # have to be run with travis_wait, which doesn't echo
+  # output in realtime.
+  - MIX_ENV=test travis_wait 20 mix dialyzer --plt
+
 script: mix ci
