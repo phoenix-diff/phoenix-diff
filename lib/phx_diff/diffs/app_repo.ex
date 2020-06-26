@@ -3,7 +3,7 @@ defmodule PhxDiff.Diffs.AppRepo do
 
   alias PhxDiff.Diffs.AppSpecification
 
-  @type version :: Phoenix.Diffs.version()
+  @type version :: PhxDiff.Diffs.version()
 
   @sample_app_path "data/sample-app"
 
