@@ -13,7 +13,8 @@ defmodule PhxDiff.MixProject do
       deps: deps(),
       preferred_cli_env: [
         ci: :test
-      ]
+      ],
+      dialyzer: dialyzer()
     ]
   end
 
@@ -46,6 +47,7 @@ defmodule PhxDiff.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:logster, "~> 1.0"},
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
       {:ex_unit_notifier, "~> 0.1", only: :test, runtime: false}
     ]
@@ -63,8 +65,13 @@ defmodule PhxDiff.MixProject do
         "compile --warnings-as-errors --force",
         "format --check-formatted",
         "test --raise",
-        "credo --strict --all"
+        "credo --strict --all",
+        "dialyzer"
       ]
     ]
+  end
+
+  defp dialyzer do
+    [plt_add_apps: [:mix, :ex_unit]]
   end
 end
