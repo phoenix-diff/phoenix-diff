@@ -1,16 +1,23 @@
 defmodule PhxDiff.Diffs.DiffEngine do
   @moduledoc false
 
-  alias PhxDiff.Diffs.AppRepo
-  alias PhxDiff.Diffs.AppSpecification
+  alias PhxDiff.Diffs.{
+    AppRepo,
+    AppSpecification,
+    Config
+  }
 
   @type diff :: PhxDiff.Diffs.diff()
 
-  @spec get_diff(AppSpecification.t(), AppSpecification.t()) ::
+  @spec get_diff(Config.t(), AppSpecification.t(), AppSpecification.t()) ::
           {:ok, diff} | {:error, :invalid_versions}
-  def get_diff(%AppSpecification{} = source_spec, %AppSpecification{} = target_spec) do
-    with {:ok, source_path} <- AppRepo.fetch_app_path(source_spec),
-         {:ok, target_path} <- AppRepo.fetch_app_path(target_spec) do
+  def get_diff(
+        %Config{} = config,
+        %AppSpecification{} = source_spec,
+        %AppSpecification{} = target_spec
+      ) do
+    with {:ok, source_path} <- AppRepo.fetch_app_path(config, source_spec),
+         {:ok, target_path} <- AppRepo.fetch_app_path(config, target_spec) do
       diff = compute_diff!(source_path, target_path)
       {:ok, diff}
     else
