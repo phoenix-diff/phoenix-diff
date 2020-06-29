@@ -5,25 +5,63 @@ defmodule PhxDiff.Diffs do
 
   alias PhxDiff.Diffs.AppRepo
   alias PhxDiff.Diffs.AppSpecification
+  alias PhxDiff.Diffs.Config
   alias PhxDiff.Diffs.DiffEngine
 
   @type diff :: String.t()
   @type version :: String.t()
   @type option :: String.t()
 
-  @spec all_versions() :: [version]
-  defdelegate all_versions, to: AppRepo
+  @type config_opt :: {:config, Config.t()}
 
-  @spec release_versions() :: [version]
-  defdelegate release_versions, to: AppRepo
+  @spec all_versions([config_opt]) :: [version]
+  def all_versions(opts \\ []) when is_list(opts) do
+    opts
+    |> get_config()
+    |> AppRepo.all_versions()
+  end
 
-  @spec latest_version() :: version
-  defdelegate latest_version, to: AppRepo
+  @spec release_versions([config_opt]) :: [version]
+  def release_versions(opts \\ []) when is_list(opts) do
+    opts
+    |> get_config()
+    |> AppRepo.release_versions()
+  end
 
-  @spec previous_release_version() :: version
-  defdelegate previous_release_version, to: AppRepo
+  @spec latest_version([config_opt]) :: version
+  def latest_version(opts \\ []) when is_list(opts) do
+    opts
+    |> get_config()
+    |> AppRepo.latest_version()
+  end
 
-  @spec get_diff(AppSpecification.t(), AppSpecification.t()) ::
+  @spec previous_release_version([config_opt]) :: version
+  def previous_release_version(opts \\ []) when is_list(opts) do
+    opts
+    |> get_config()
+    |> AppRepo.previous_release_version()
+  end
+
+  @spec get_diff(AppSpecification.t(), AppSpecification.t(), [config_opt]) ::
           {:ok, diff} | {:error, :invalid_versions}
-  defdelegate get_diff(source_spec, target_spec), to: DiffEngine
+  def get_diff(%AppSpecification{} = source_spec, %AppSpecification{} = target_spec, opts \\ [])
+      when is_list(opts) do
+    config = get_config(opts)
+
+    with {:ok, source_path} <- AppRepo.fetch_app_path(config, source_spec),
+         {:ok, target_path} <- AppRepo.fetch_app_path(config, target_spec) do
+      diff = DiffEngine.compute_diff(source_path, target_path)
+      {:ok, diff}
+    else
+      {:error, :invalid_version} -> {:error, :invalid_versions}
+    end
+  end
+
+  defp get_config(opts) when is_list(opts) do
+    Keyword.get_lazy(opts, :config, &default_config/0)
+  end
+
+  defp default_config do
+    %Config{app_repo_path: "data/sample-app"}
+  end
 end
