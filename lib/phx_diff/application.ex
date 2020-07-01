@@ -8,9 +8,11 @@ defmodule PhxDiff.Application do
   def start(_type, _args) do
     # List all child processes to be supervised
     children = [
+      # Start the PubSub system
+      {Phoenix.PubSub, name: PhxDiff.PubSub},
       # Start the endpoint when the application starts
       PhxDiffWeb.Endpoint
-      # Starts a worker by calling: PhxDiff.Worker.start_link(arg)
+      # Start a worker by calling: PhxDiff.Worker.start_link(arg)
       # {PhxDiff.Worker, arg},
     ]
 

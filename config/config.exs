@@ -12,7 +12,7 @@ config :phx_diff, PhxDiffWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "yZ51VROLXAgAiopHqa3JgxK2SDFp9BymmYjkVs1EjKhsJUbPJeg6WZIIqyp0C5Lk",
   render_errors: [view: PhxDiffWeb.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: PhxDiff.PubSub, adapter: Phoenix.PubSub.PG2]
+  pubsub_server: PhxDiff.PubSub
 
 # Configures Elixir's Logger
 config :logger, :console,
