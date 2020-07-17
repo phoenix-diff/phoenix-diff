@@ -41,7 +41,10 @@ defmodule PhxDiff.MixProject do
       {:phoenix_pubsub, "~> 2.0"},
       {:phoenix_html, "~> 2.11"},
       {:phoenix_slime, "~> 0.10"},
+      {:phoenix_live_view, "~> 0.14.1"},
       {:phoenix_live_reload, "~> 1.2-rc", only: :dev},
+      {:ecto, "~> 3.4"},
+      {:phoenix_ecto, "~> 4.0"},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.1"},
@@ -49,7 +52,8 @@ defmodule PhxDiff.MixProject do
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
-      {:ex_unit_notifier, "~> 0.1", only: :test, runtime: false}
+      {:ex_unit_notifier, "~> 0.1", only: :test, runtime: false},
+      {:floki, ">= 0.0.0", only: :test}
     ]
   end
 

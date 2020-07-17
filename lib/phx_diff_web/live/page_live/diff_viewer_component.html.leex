@@ -1,0 +1,23 @@
+<%= f = form_for @changeset, "#",
+    id: "diff-viewer-form-#{@id}",
+    as: :form,
+    phx_change: "options-changed",
+    phx_target: @myself %>
+  <div id="diff-view-toggles">
+    <div class="header">Display mode:</div>
+
+    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+      <label class="btn btn-outline-primary <%= if @view_type == "line-by-line", do: "active" %>">
+        <%= radio_button(f, :view_type, "line-by-line") %>
+        Line by line
+      </label>
+
+      <label class="btn btn-outline-primary <%= if @view_type == "side-by-side", do: "active" %>">
+        <%= radio_button(f, :view_type, "side-by-side") %>
+          Side by side
+      </label>
+    </div>
+  </div>
+
+  <div class="diff-results-container" phx-hook="DiffViewerComponent" data-view-type="<%= @view_type %>" data-diff="<%= @diff %>"></div>
+</form>

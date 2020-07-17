@@ -1,0 +1,48 @@
+<div id="landing-page" class="<%= if @no_changes?, do: "phx-diff-loaded-diff" %>">
+  <section id="input-section">
+    <div class="container-fluid">
+      <h3>See the changes needed to upgrade your Phoenix application</h3>
+
+      <%= f = form_for @changeset, "#",
+          id: "diff-selector-form",
+          as: :diff_selection,
+          phx_change: "diff-changed",
+          phx_hook: "DiffSelectorComponent" %>
+        <div class="version-selectors form-inline">
+          <div class="form-group">
+            <%= label f, :source %>
+            <%= select f, :source, @all_versions, class: "form-control" %>
+          </div>
+
+
+          <div class="form-group">
+            <%= label f, :target %>
+            <%= select f, :target, @all_versions, class: "form-control" %>
+          </div>
+        </div>
+      </form>
+
+      <span class="star-message">
+        If you found this tool useful, please <i class="fa fa-star"></i> our
+        <a href="https://github.com/navinpeiris/phoenix-diff" target="_blank"> GitHub repo</a>
+      </span>
+    </div>
+  </section>
+
+  <section id="results-section">
+    <div class="container">
+      <%= if @no_changes? do %>
+        <div class="message-container">
+          <span class="text">There are no changes between version <%= @source_version %> and  <%= @target_version %>.</span>
+        </div>
+      <% else %>
+          <%= live_component @socket, PhxDiffWeb.PageLive.DiffViewerComponent, id: "main-diff", diff: @diff %>
+      <% end %>
+
+      <div id="loading-container" class="message-container">
+        <i class="fa fa-spinner fa-spin fa-2x"></i>
+        <span class="text">Loading diff</span>
+      </div>
+    </div>
+  </section>
+</div>

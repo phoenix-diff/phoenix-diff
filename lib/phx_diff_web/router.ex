@@ -4,7 +4,8 @@ defmodule PhxDiffWeb.Router do
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
-    plug :fetch_flash
+    plug :fetch_live_flash
+    plug :put_root_layout, {PhxDiffWeb.LayoutView, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
   end
@@ -16,6 +17,7 @@ defmodule PhxDiffWeb.Router do
   scope "/", PhxDiffWeb do
     pipe_through :browser
 
+    live "/live_index", PageLive, :index
     get "/", PageController, :index
     get "/diffs", DiffController, :index
   end

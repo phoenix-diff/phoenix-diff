@@ -11,7 +11,7 @@ use Mix.Config
 # before starting your production server.
 config :phx_diff, PhxDiffWeb.Endpoint,
   http: [:inet6, port: System.get_env("PORT") || 4000],
-  url: [scheme: "https", host: "www.phoenixdiff.org", port: 443],
+  url: [scheme: "https", host: System.get_env("URL_HOST", "www.phoenixdiff.org"), port: 443],
   force_ssl: [rewrite_on: [:x_forwarded_proto]],
   static_url: [scheme: "https", host: {:system, "ASSET_HOST"}, port: 443],
   cache_static_manifest: "priv/static/cache_manifest.json",

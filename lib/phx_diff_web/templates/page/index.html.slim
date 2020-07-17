@@ -44,3 +44,5 @@ diff-loader inline-template=true source="#{@source_version}" target="#{@target_v
 
         .message-container v-show="!loading && noChanges"
           span.text There are no changes between version {{ sourceVersion }} and {{ targetVersion }}.
+
+    script defer=true src="#{Routes.static_url(@conn, "/js/old-app.js")}"
