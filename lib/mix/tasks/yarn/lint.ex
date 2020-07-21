@@ -1,4 +1,5 @@
 defmodule Mix.Tasks.Yarn.Lint do
+  @moduledoc false
   use Mix.Task
 
   @shortdoc "Run yarn lint within assets directory"

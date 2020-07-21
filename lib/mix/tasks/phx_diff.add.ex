@@ -1,9 +1,12 @@
 defmodule Mix.Tasks.PhxDiff.Add do
+  @moduledoc false
   use Mix.Task
+
+  alias Mix.Tasks.PhxDiff.Gen
 
   @shortdoc "Add a version of phoenix to phoenix diff"
 
   def run(args) do
-    Mix.Tasks.PhxDiff.Gen.Sample.run(args)
+    Gen.Sample.run(args)
   end
 end
