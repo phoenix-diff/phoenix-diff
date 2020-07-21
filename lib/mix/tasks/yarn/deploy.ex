@@ -1,4 +1,5 @@
 defmodule Mix.Tasks.Yarn.Deploy do
+  @moduledoc false
   use Mix.Task
 
   @shortdoc "Run yarn deploy within assets directory"
