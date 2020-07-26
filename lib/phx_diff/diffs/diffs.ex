@@ -57,11 +57,22 @@ defmodule PhxDiff.Diffs do
     end
   end
 
+  @spec generate_sample_app(AppSpecification.t(), [config_opt]) ::
+          {:ok, String.t()} | {:error, :invalid_version}
+  def generate_sample_app(%AppSpecification{} = app_spec, opts \\ []) when is_list(opts) do
+    config = get_config(opts)
+
+    AppRepo.generate_sample_app(config, app_spec)
+  end
+
   defp get_config(opts) when is_list(opts) do
     Keyword.get_lazy(opts, :config, &default_config/0)
   end
 
   defp default_config do
-    %Config{app_repo_path: "data/sample-app"}
+    %Config{
+      app_repo_path: "data/sample-app",
+      app_generator_workspace_path: "tmp"
+    }
   end
 end
