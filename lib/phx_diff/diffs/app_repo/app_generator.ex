@@ -18,20 +18,22 @@ defmodule PhxDiff.Diffs.AppRepo.AppGenerator do
 
     with {:ok, mix_archives_path} <-
            MixArchivesDirectories.fetch_path_for_phoenix_version(workspace_path, version) do
-      generate_sample_app(workspace_path, mix_archives_path)
+      generate_sample_app(workspace_path, mix_archives_path, app_specification)
     end
   end
 
-  defp generate_sample_app(workspace_path, mix_archives_path) do
+  defp generate_sample_app(workspace_path, mix_archives_path, app_specification) do
     sample_app_path = generate_sample_app_path(workspace_path)
 
-    with :ok <- run_phoenix_generator(sample_app_path, mix_archives_path),
+    with :ok <- run_phoenix_generator(sample_app_path, mix_archives_path, app_specification),
          :ok <- clean_up_generated_app!(sample_app_path) do
       {:ok, sample_app_path}
     end
   end
 
-  defp run_phoenix_generator(sample_app_path, mix_archives_path) do
+  defp run_phoenix_generator(sample_app_path, mix_archives_path, app_specification) do
+    %AppSpecification{phx_new_arguments: arguments} = app_specification
+
     {_output, 0} =
       MixTaskRunner.run(
         [
@@ -40,9 +42,8 @@ defmodule PhxDiff.Diffs.AppRepo.AppGenerator do
           "--module",
           "SampleApp",
           "--app",
-          "sample_app",
-          "--live"
-        ],
+          "sample_app"
+        ] ++ arguments,
         env: [{"MIX_ARCHIVES", mix_archives_path}],
         prompt_responses: [:no_to_all]
       )

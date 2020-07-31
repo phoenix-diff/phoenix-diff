@@ -46,6 +46,43 @@ defmodule Mix.Tasks.PhxDiff.Gen.SampleTest do
              """
   end
 
+  test "the appropriate diff is returned when generating phoenix 1.4 apps" do
+    Gen.Sample.run(["1.4.16"])
+
+    assert_receive {:mix_shell, :info, [msg]}
+
+    assert msg == """
+
+           Successfully generated sample app.
+
+           To add this to version control, run:
+
+               git add data/sample-app/1.4.16
+               git add -f data/sample-app/1.4.16/config/prod.secret.exs
+           """
+
+    Gen.Sample.run(["1.4.17"])
+
+    assert {:ok, diff} =
+             Diffs.get_diff(
+               Diffs.fetch_default_app_specification!("1.4.16"),
+               Diffs.fetch_default_app_specification!("1.4.17")
+             )
+
+    assert diff =~
+             """
+             @@ -33,7 +33,7 @@
+                # Type `mix help deps` for examples and options.
+                defp deps do
+                  [
+             -      {:phoenix, "~> 1.4.16"},
+             +      {:phoenix, "~> 1.4.17"},
+                    {:phoenix_pubsub, "~> 1.1"},
+                    {:phoenix_ecto, "~> 4.0"},
+                    {:ecto_sql, "~> 3.1"},
+             """
+  end
+
   test "errors with an invalid version id" do
     Gen.Sample.run(["not_a_version"])
 
