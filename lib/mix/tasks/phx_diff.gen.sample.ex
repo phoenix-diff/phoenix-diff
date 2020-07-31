@@ -27,6 +27,15 @@ defmodule Mix.Tasks.PhxDiff.Gen.Sample do
 
       {:error, :invalid_version} ->
         Mix.shell().error([:red, "Invalid version: ", inspect(arg)])
+
+      {:error, :unknown_version} ->
+        Mix.shell().error([
+          [:red, "Unknown version: ", inspect(arg), :reset, "\n"],
+          "\n",
+          "Available phoenix versions are listed here:\n",
+          "\n",
+          "    https://hex.pm/packages/phoenix/versions"
+        ])
     end
   end
 
