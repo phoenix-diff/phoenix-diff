@@ -11,7 +11,7 @@ defmodule PhxDiff.Diffs.AppRepo.AppGenerator do
   @type generate_opt :: {:workspace_path, String.t()}
 
   @spec generate(Config.t(), AppSpecification.t()) ::
-          {:ok, dir} | {:error, :invalid_version}
+          {:ok, dir} | {:error, :invalid_version | :unknown_version}
   def generate(%Config{} = config, %AppSpecification{} = app_specification) do
     %Config{app_generator_workspace_path: workspace_path} = config
     %AppSpecification{phoenix_version: version} = app_specification

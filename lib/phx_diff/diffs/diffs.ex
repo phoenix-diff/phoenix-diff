@@ -58,7 +58,7 @@ defmodule PhxDiff.Diffs do
   end
 
   @spec generate_sample_app(AppSpecification.t(), [config_opt]) ::
-          {:ok, String.t()} | {:error, :invalid_version}
+          {:ok, String.t()} | {:error, :invalid_version | :unknown_version}
   def generate_sample_app(%AppSpecification{} = app_spec, opts \\ []) when is_list(opts) do
     config = get_config(opts)
 

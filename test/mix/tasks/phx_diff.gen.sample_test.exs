@@ -48,7 +48,15 @@ defmodule Mix.Tasks.PhxDiff.Gen.SampleTest do
 
     assert_receive {:mix_shell, :error, [msg]}
 
-    assert msg == "Invalid version: \"not_a_version\""
+    assert msg == ~s|Invalid version: \"not_a_version\"|
+  end
+
+  test "errors with an unknown version" do
+    Gen.Sample.run(["0.1.10"])
+
+    assert_receive {:mix_shell, :error, [msg]}
+
+    assert msg =~ ~s|Unknown version: "0.1.10"|
   end
 
   test "errors when a phoenix version isn't specified" do

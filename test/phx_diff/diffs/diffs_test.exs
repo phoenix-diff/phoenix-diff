@@ -117,6 +117,11 @@ defmodule PhxDiff.DiffsTest do
       end)
     end
 
+    test "returns {:error, :unknown_version} when phoenix does not have the given version number" do
+      assert {:error, :unknown_version} =
+               AppSpecification.new("0.1.10") |> Diffs.generate_sample_app()
+    end
+
     test "returns {:error, :invalid_version} when version number is not parseable" do
       assert {:error, :invalid_version} =
                AppSpecification.new("/etc") |> Diffs.generate_sample_app()
