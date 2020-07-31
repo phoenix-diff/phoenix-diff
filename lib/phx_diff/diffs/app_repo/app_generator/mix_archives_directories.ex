@@ -5,18 +5,14 @@ defmodule PhxDiff.Diffs.AppRepo.AppGenerator.MixArchivesDirectories do
   @type path :: String.t()
 
   @spec fetch_path_for_phoenix_version(path, version) ::
-          {:ok, path} | {:error, :invalid_version | :unknown_version}
+          {:ok, path} | {:error, :unknown_version}
   def fetch_path_for_phoenix_version(workspace_path, version) do
-    with :ok <- validate_version(version) do
-      find_or_create_mix_archives_path_for_phoenix_version(workspace_path, version)
-    end
+    validate_version!(version)
+    find_or_create_mix_archives_path_for_phoenix_version(workspace_path, version)
   end
 
-  defp validate_version(version) do
-    case Version.parse(version) do
-      {:ok, _} -> :ok
-      :error -> {:error, :invalid_version}
-    end
+  defp validate_version!(version) do
+    Version.parse!(version)
   end
 
   defp find_or_create_mix_archives_path_for_phoenix_version(workspace_path, version) do

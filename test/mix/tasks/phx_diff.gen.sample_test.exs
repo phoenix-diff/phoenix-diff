@@ -2,7 +2,7 @@ defmodule Mix.Tasks.PhxDiff.Gen.SampleTest do
   use ExUnit.Case, async: true
 
   alias Mix.Tasks.PhxDiff.Gen
-  alias PhxDiff.Diffs.AppSpecification
+  alias PhxDiff.Diffs
 
   test "the appropriate diff is returned after generating 2 versions of an app" do
     Gen.Sample.run(["1.5.2"])
@@ -22,7 +22,10 @@ defmodule Mix.Tasks.PhxDiff.Gen.SampleTest do
     Gen.Sample.run(["1.5.3"])
 
     assert {:ok, diff} =
-             PhxDiff.Diffs.get_diff(AppSpecification.new("1.5.2"), AppSpecification.new("1.5.3"))
+             Diffs.get_diff(
+               Diffs.fetch_default_app_specification!("1.5.2"),
+               Diffs.fetch_default_app_specification!("1.5.3")
+             )
 
     assert diff =~
              """

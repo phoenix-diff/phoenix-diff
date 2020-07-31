@@ -50,8 +50,8 @@ defmodule PhxDiff.DiffsTest do
 
   describe "get_diff/3" do
     test "returns content when versions are valid" do
-      source = AppSpecification.new("1.3.1")
-      target = AppSpecification.new("1.3.2")
+      source = Diffs.fetch_default_app_specification!("1.3.1")
+      target = Diffs.fetch_default_app_specification!("1.3.2")
 
       {:ok, diff} = Diffs.get_diff(source, target)
 
@@ -59,27 +59,20 @@ defmodule PhxDiff.DiffsTest do
     end
 
     test "returns empty when versions are the same" do
-      source = AppSpecification.new("1.3.1")
-      target = AppSpecification.new("1.3.1")
+      source = Diffs.fetch_default_app_specification!("1.3.1")
+      target = Diffs.fetch_default_app_specification!("1.3.1")
 
       {:ok, diff} = Diffs.get_diff(source, target)
 
       assert diff == ""
     end
 
-    test "returns error when a version is invalid" do
-      source = AppSpecification.new("1.3.1")
-      target = AppSpecification.new("invalid")
-
-      {:error, :invalid_versions} = Diffs.get_diff(source, target)
-    end
-
     test "returns an error when an app hasn't been generated for the given version" do
       with_tmp(fn path ->
         config = build_config(path)
 
-        source = AppSpecification.new("1.3.1")
-        target = AppSpecification.new("1.4.2")
+        source = Diffs.fetch_default_app_specification!("1.3.1")
+        target = Diffs.fetch_default_app_specification!("1.4.2")
 
         assert {:error, :invalid_versions} = Diffs.get_diff(source, target, config: config)
       end)
@@ -93,7 +86,7 @@ defmodule PhxDiff.DiffsTest do
 
         assert {:ok, storage_dir} =
                  "1.5.3"
-                 |> AppSpecification.new()
+                 |> Diffs.fetch_default_app_specification!()
                  |> Diffs.generate_sample_app(config: config)
 
         assert storage_dir == Path.join(config.app_repo_path, "1.5.3")
@@ -119,12 +112,58 @@ defmodule PhxDiff.DiffsTest do
 
     test "returns {:error, :unknown_version} when phoenix does not have the given version number" do
       assert {:error, :unknown_version} =
-               AppSpecification.new("0.1.10") |> Diffs.generate_sample_app()
+               Diffs.fetch_default_app_specification!("0.1.10")
+               |> Diffs.generate_sample_app()
+    end
+  end
+
+  describe "fetch_default_app_specification!/1" do
+    test "returns an app spec with no arguments for versions less than 1.5.0" do
+      assert Diffs.fetch_default_app_specification!("1.4.16") ==
+               %AppSpecification{
+                 phoenix_version: "1.4.16",
+                 phx_new_arguments: []
+               }
     end
 
-    test "returns {:error, :invalid_version} when version number is not parseable" do
-      assert {:error, :invalid_version} =
-               AppSpecification.new("/etc") |> Diffs.generate_sample_app()
+    test "returns an app spec with --live argument for versions >= 1.5.0" do
+      for version <- ["1.5.0-rc.0", "1.5.0", "1.5.1"] do
+        assert Diffs.fetch_default_app_specification!(version) ==
+                 %AppSpecification{
+                   phoenix_version: version,
+                   phx_new_arguments: ["--live"]
+                 }
+      end
+    end
+
+    test "raises on an invalid version number" do
+      assert_raise Version.InvalidVersionError, fn ->
+        Diffs.fetch_default_app_specification!("foo")
+      end
+    end
+  end
+
+  describe "fetch_default_app_specification/1" do
+    test "returns an app spec with no arguments for versions less than 1.5.0" do
+      assert {:ok,
+              %AppSpecification{
+                phoenix_version: "1.4.16",
+                phx_new_arguments: []
+              }} = Diffs.fetch_default_app_specification("1.4.16")
+    end
+
+    test "returns an app spec with --live argument for versions >= 1.5.0" do
+      for version <- ["1.5.0-rc.0", "1.5.0", "1.5.1"] do
+        assert {:ok,
+                %AppSpecification{
+                  phoenix_version: ^version,
+                  phx_new_arguments: ["--live"]
+                }} = Diffs.fetch_default_app_specification(version)
+      end
+    end
+
+    test "returns {:error, :invalid_version} on an invalid version number" do
+      assert {:error, :invalid_version} = Diffs.fetch_default_app_specification("foo")
     end
   end
 

@@ -4,7 +4,6 @@ defmodule PhxDiffWeb.PageLive do
 
   alias Ecto.Changeset
   alias PhxDiff.Diffs
-  alias PhxDiff.Diffs.AppSpecification
   alias PhxDiffWeb.PageLive.DiffSelection
 
   @impl true
@@ -22,7 +21,11 @@ defmodule PhxDiffWeb.PageLive do
       {:ok, diff_selection} ->
         %DiffSelection{source: source, target: target} = diff_selection
 
-        {:ok, diff} = Diffs.get_diff(AppSpecification.new(source), AppSpecification.new(target))
+        {:ok, diff} =
+          Diffs.get_diff(
+            Diffs.fetch_default_app_specification!(source),
+            Diffs.fetch_default_app_specification!(target)
+          )
 
         {:noreply,
          socket
