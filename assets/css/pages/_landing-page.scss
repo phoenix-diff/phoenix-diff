@@ -15,7 +15,7 @@
       font-weight: 300;
     }
 
-    form {
+    .version-selectors {
       justify-content: center;
 
       label {
@@ -92,7 +92,7 @@
     }
   }
 
-  #diff-results-container {
+  .diff-results-container {
     margin-top: 30px;
     margin-bottom: 30px;
 
@@ -106,5 +106,20 @@
         margin: 2px 0 20px;
       }
     }
+  }
+
+  .diff-results-container {
+      display: none;
+  }
+
+  &.phx-diff-loaded-diff {
+      #loading-container {
+          display: none;
+      }
+
+      .diff-results-container {
+          display: block;
+      }
+
   }
 }

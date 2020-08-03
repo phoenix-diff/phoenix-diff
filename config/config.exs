@@ -12,7 +12,8 @@ config :phx_diff, PhxDiffWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "yZ51VROLXAgAiopHqa3JgxK2SDFp9BymmYjkVs1EjKhsJUbPJeg6WZIIqyp0C5Lk",
   render_errors: [view: PhxDiffWeb.ErrorView, accepts: ~w(html json)],
-  pubsub_server: PhxDiff.PubSub
+  pubsub_server: PhxDiff.PubSub,
+  live_view: [signing_salt: "NpCfQvr9hr3z/LRwF8WZL5LmKP0wC9e3"]
 
 # Configures Elixir's Logger
 config :logger, :console,
@@ -24,7 +25,8 @@ config :phoenix, :json_library, Jason
 
 config :phoenix, :template_engines,
   slim: PhoenixSlime.Engine,
-  slime: PhoenixSlime.Engine
+  slime: PhoenixSlime.Engine,
+  slimleex: PhoenixSlime.LiveViewEngine
 
 config :phoenix_slime, :use_slim_extension, true
 
