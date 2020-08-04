@@ -42,6 +42,33 @@ defmodule PhxDiff.Diffs do
     |> AppRepo.previous_release_version()
   end
 
+  @spec fetch_default_app_specification!(version) :: AppSpecification.t() | no_return()
+  def fetch_default_app_specification!(version) when is_binary(version) do
+    case fetch_default_app_specification(version) do
+      {:ok, app_specification} -> app_specification
+      {:error, :invalid_version} -> raise Version.InvalidVersionError, version
+    end
+  end
+
+  @spec fetch_default_app_specification(version) ::
+          {:ok, AppSpecification.t()} | {:error, :invalid_version}
+  def fetch_default_app_specification(version) when is_binary(version) do
+    with {:ok, parsed_version} <- parse_version(version) do
+      if Version.match?(parsed_version, ">= 1.5.0-rc.0") do
+        {:ok, AppSpecification.new(parsed_version, ["--live"])}
+      else
+        {:ok, AppSpecification.new(parsed_version, [])}
+      end
+    end
+  end
+
+  defp parse_version(version_string) do
+    case Version.parse(version_string) do
+      {:ok, version} -> {:ok, version}
+      :error -> {:error, :invalid_version}
+    end
+  end
+
   @spec get_diff(AppSpecification.t(), AppSpecification.t(), [config_opt]) ::
           {:ok, diff} | {:error, :invalid_versions}
   def get_diff(%AppSpecification{} = source_spec, %AppSpecification{} = target_spec, opts \\ [])
@@ -58,7 +85,7 @@ defmodule PhxDiff.Diffs do
   end
 
   @spec generate_sample_app(AppSpecification.t(), [config_opt]) ::
-          {:ok, String.t()} | {:error, :invalid_version | :unknown_version}
+          {:ok, String.t()} | {:error, :unknown_version}
   def generate_sample_app(%AppSpecification{} = app_spec, opts \\ []) when is_list(opts) do
     config = get_config(opts)
 

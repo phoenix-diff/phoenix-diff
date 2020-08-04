@@ -3,28 +3,22 @@ defmodule Mix.Tasks.PhxDiff.Gen.Sample do
   use Mix.Task
 
   alias PhxDiff.Diffs
-  alias PhxDiff.Diffs.AppSpecification
 
   @shortdoc "Generate a sample app for a phoenix version"
 
   def run([arg]) do
-    arg
-    |> AppSpecification.new()
-    |> Diffs.generate_sample_app()
-    |> case do
-      {:ok, app_path} ->
-        Mix.shell().info("""
+    with {:ok, app_spec} <- Diffs.fetch_default_app_specification(arg),
+         {:ok, app_path} <- Diffs.generate_sample_app(app_spec) do
+      Mix.shell().info("""
 
-        Successfully generated sample app.
+      Successfully generated sample app.
 
-        To add this to version control, run:
+      To add this to version control, run:
 
-            git add #{app_path}
-            git add -f #{app_path}/config/prod.secret.exs
-        """)
-
-        :ok
-
+          git add #{app_path}
+          git add -f #{app_path}/config/prod.secret.exs
+      """)
+    else
       {:error, :invalid_version} ->
         Mix.shell().error([:red, "Invalid version: ", inspect(arg)])
 
