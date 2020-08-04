@@ -1,5 +1,6 @@
 defmodule PhxDiffWeb.Router do
   use PhxDiffWeb, :router
+  use Honeybadger.Plug
 
   pipeline :browser do
     plug :accepts, ["html"]

@@ -30,6 +30,9 @@ config :phoenix, :template_engines,
 
 config :phoenix_slime, :use_slim_extension, true
 
+config :honeybadger,
+  environment_name: System.get_env("HONEYBADGER_ENV_NAME", to_string(Mix.env()))
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"
