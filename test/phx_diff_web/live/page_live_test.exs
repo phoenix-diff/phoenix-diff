@@ -102,6 +102,50 @@ defmodule PhxDiffWeb.PageLiveTest do
       )
   end
 
+  @version_with_live_default_option "1.5.0"
+  @version_without_live_default_option "1.4.0"
+
+  test "indicates the options used to generate the source and target apps", %{conn: conn} do
+    {:ok, view, _html} =
+      conn
+      |> live(Routes.page_path(conn, :index))
+      |> follow_redirect(conn)
+
+    view
+    |> element("#diff-selector-form")
+    |> render_change(%{
+      "diff_selection" => %{
+        "source" => @version_with_live_default_option,
+        "target" => @version_without_live_default_option
+      }
+    })
+
+    assert view
+           |> element(".version-selector-source")
+           |> render() =~ "Generated with --live"
+
+    refute view
+           |> element(".version-selector-target")
+           |> render() =~ "Generated with --live"
+
+    view
+    |> element("#diff-selector-form")
+    |> render_change(%{
+      "diff_selection" => %{
+        "source" => @version_without_live_default_option,
+        "target" => @version_with_live_default_option
+      }
+    })
+
+    refute view
+           |> element(".version-selector-source")
+           |> render() =~ "Generated with --live"
+
+    assert view
+           |> element(".version-selector-target")
+           |> render() =~ "Generated with --live"
+  end
+
   defp assert_diff_rendered(view, expected_diff) do
     diff_from_view =
       element(view, ".diff-results-container")

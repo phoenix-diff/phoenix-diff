@@ -4,6 +4,7 @@ defmodule PhxDiffWeb.PageLive do
 
   alias Ecto.Changeset
   alias PhxDiff.Diffs
+  alias PhxDiff.Diffs.AppSpecification
   alias PhxDiffWeb.PageLive.DiffSelection
 
   @impl true
@@ -20,22 +21,22 @@ defmodule PhxDiffWeb.PageLive do
     case validate_form(socket.assigns.diff_selection, params) do
       {:ok, diff_selection} ->
         %DiffSelection{source: source, target: target} = diff_selection
+        source_app_spec = Diffs.fetch_default_app_specification!(source)
+        target_app_spec = Diffs.fetch_default_app_specification!(target)
 
-        {:ok, diff} =
-          Diffs.get_diff(
-            Diffs.fetch_default_app_specification!(source),
-            Diffs.fetch_default_app_specification!(target)
-          )
+        {:ok, diff} = Diffs.get_diff(source_app_spec, target_app_spec)
 
         {:noreply,
          socket
          |> assign(:diff_selection, diff_selection)
          |> assign(:changeset, DiffSelection.changeset(diff_selection))
-         |> assign(:page_title, "v#{source} to v#{target}")
+         |> assign(:page_title, page_title(source_app_spec, target_app_spec))
          |> assign(:no_changes?, diff == "")
          |> assign(:diff, diff)
          |> assign(:source_version, source)
-         |> assign(:target_version, target)}
+         |> assign(:source_arguments, arguments_string(source_app_spec))
+         |> assign(:target_version, target)
+         |> assign(:target_arguments, arguments_string(target_app_spec))}
 
       {:error, _changeset} ->
         {:noreply,
@@ -71,5 +72,15 @@ defmodule PhxDiffWeb.PageLive do
     diff_selection
     |> DiffSelection.changeset(params)
     |> Changeset.apply_action(:lookup)
+  end
+
+  defp page_title(%AppSpecification{} = source, %AppSpecification{} = target) do
+    "v#{source.phoenix_version} to v#{target.phoenix_version}"
+  end
+
+  defp arguments_string(%AppSpecification{phx_new_arguments: []}), do: nil
+
+  defp arguments_string(%AppSpecification{phx_new_arguments: args}) do
+    Enum.join(args, " ")
   end
 end
