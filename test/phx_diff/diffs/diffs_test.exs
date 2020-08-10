@@ -107,13 +107,21 @@ defmodule PhxDiff.DiffsTest do
         end)
 
         assert ["1.5.3"] = Diffs.all_versions(config: config)
+
+        assert_temp_dirs_cleaned_up(config)
       end)
     end
 
     test "returns {:error, :unknown_version} when phoenix does not have the given version number" do
-      assert {:error, :unknown_version} =
-               Diffs.fetch_default_app_specification!("0.1.10")
-               |> Diffs.generate_sample_app()
+      with_tmp(fn path ->
+        config = build_config(path)
+
+        assert {:error, :unknown_version} =
+                 Diffs.fetch_default_app_specification!("0.1.10")
+                 |> Diffs.generate_sample_app(config: config)
+
+        assert_temp_dirs_cleaned_up(config)
+      end)
     end
   end
 
@@ -172,5 +180,41 @@ defmodule PhxDiff.DiffsTest do
       app_repo_path: Path.join(tmp_path, "app_repo"),
       app_generator_workspace_path: Path.join(tmp_path, "generator_workspace")
     }
+  end
+
+  defp assert_temp_dirs_cleaned_up(config) do
+    mix_archives_tmp_path =
+      Path.join([
+        config.app_generator_workspace_path,
+        "mix_archives",
+        "tmp"
+      ])
+
+    assert_dir_empty(mix_archives_tmp_path)
+
+    generated_apps_path =
+      Path.join([
+        config.app_generator_workspace_path,
+        "generated_apps"
+      ])
+
+    assert_dir_empty(generated_apps_path)
+  end
+
+  defp assert_dir_empty(path) do
+    case File.ls(path) do
+      {:ok, []} ->
+        :ok
+
+      {:ok, contents} when is_list(contents) ->
+        flunk("""
+        expected #{path} to be empty, but had the following entities
+
+        #{inspect(contents)}
+        """)
+
+      {:error, _} ->
+        :ok
+    end
   end
 end

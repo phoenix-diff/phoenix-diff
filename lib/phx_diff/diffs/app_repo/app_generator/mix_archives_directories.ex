@@ -27,19 +27,23 @@ defmodule PhxDiff.Diffs.AppRepo.AppGenerator.MixArchivesDirectories do
 
   defp create_archive_store(workspace_path, version) do
     working_dir = generate_mix_archives_temp_path(workspace_path)
-    File.mkdir_p!(working_dir)
 
-    with :ok <- install_hex(working_dir),
-         :ok <- install_phx_new(working_dir, version) do
-      :ok = File.mkdir_p!(base_archives_repo_path(workspace_path))
+    with_tmp_dir(working_dir, fn ->
+      with :ok <- install_hex(working_dir),
+           :ok <- install_phx_new(working_dir, version) do
+        :ok = File.mkdir_p!(base_archives_repo_path(workspace_path))
 
-      version_specific_archives_path =
-        archives_repo_path_for_phoenix_version(workspace_path, version)
+        version_specific_archives_path =
+          archives_repo_path_for_phoenix_version(workspace_path, version)
 
-      :ok = File.rename!(working_dir, version_specific_archives_path)
+        :ok = File.rename!(working_dir, version_specific_archives_path)
 
-      {:ok, version_specific_archives_path}
-    end
+        {:ok, version_specific_archives_path}
+      else
+        {:error, :unknown_version} ->
+          {:error, :unknown_version}
+      end
+    end)
   end
 
   defp install_hex(working_dir) do
@@ -89,5 +93,13 @@ defmodule PhxDiff.Diffs.AppRepo.AppGenerator.MixArchivesDirectories do
 
   defp random_string(length) do
     length |> :crypto.strong_rand_bytes() |> Base.url_encode64() |> binary_part(0, length)
+  end
+
+  defp with_tmp_dir(path, function) when is_binary(path) and is_function(function, 0) do
+    File.mkdir_p!(path)
+
+    function.()
+  after
+    File.rm_rf(path)
   end
 end
