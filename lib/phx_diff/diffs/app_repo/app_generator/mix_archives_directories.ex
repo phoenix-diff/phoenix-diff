@@ -31,14 +31,7 @@ defmodule PhxDiff.Diffs.AppRepo.AppGenerator.MixArchivesDirectories do
     with_tmp_dir(working_dir, fn ->
       with :ok <- install_hex(working_dir),
            :ok <- install_phx_new(working_dir, version) do
-        :ok = File.mkdir_p!(base_archives_repo_path(workspace_path))
-
-        version_specific_archives_path =
-          archives_repo_path_for_phoenix_version(workspace_path, version)
-
-        :ok = File.rename!(working_dir, version_specific_archives_path)
-
-        {:ok, version_specific_archives_path}
+        move_to_archives_repo(workspace_path, version, working_dir)
       else
         {:error, :unknown_version} ->
           {:error, :unknown_version}
@@ -75,13 +68,25 @@ defmodule PhxDiff.Diffs.AppRepo.AppGenerator.MixArchivesDirectories do
     end
   end
 
+  defp move_to_archives_repo(workspace_path, version, working_dir) do
+    # Ensure archives repo root path exists
+    :ok = File.mkdir_p!(archives_repo_path(workspace_path))
+
+    version_specific_archives_path =
+      archives_repo_path_for_phoenix_version(workspace_path, version)
+
+    :ok = File.rename!(working_dir, version_specific_archives_path)
+
+    {:ok, version_specific_archives_path}
+  end
+
   defp archives_repo_path_for_phoenix_version(workspace_path, version) do
     workspace_path
-    |> base_archives_repo_path()
+    |> archives_repo_path()
     |> Path.join(version)
   end
 
-  defp base_archives_repo_path(workspace_path) do
+  defp archives_repo_path(workspace_path) do
     Path.join([workspace_path, "mix_archives", "repo"])
   end
 
