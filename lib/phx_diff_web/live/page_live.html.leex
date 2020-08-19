@@ -8,16 +8,29 @@
           as: :diff_selection,
           phx_change: "diff-changed",
           phx_hook: "DiffSelectorComponent" %>
-        <div class="version-selectors form-inline">
-          <div class="form-group">
-            <%= label f, :source %>
-            <%= select f, :source, @all_versions, class: "form-control" %>
+        <div class="version-selectors">
+          <div class="version-selector version-selector-source">
+            <div class="field-group">
+              <%= label f, :source %>
+              <%= select f, :source, @all_versions, class: "form-control" %>
+            </div>
+            <%= if @source_arguments do %>
+              <div class="generator-options">
+                Generated with <%= @source_arguments %>
+              </div>
+            <% end %>
           </div>
 
-
-          <div class="form-group">
-            <%= label f, :target %>
-            <%= select f, :target, @all_versions, class: "form-control" %>
+          <div class="version-selector version-selector-target">
+            <div class="field-group">
+              <%= label f, :target %>
+              <%= select f, :target, @all_versions, class: "form-control" %>
+            </div>
+            <%= if @target_arguments do %>
+              <div class="generator-options">
+                Generated with <%= @target_arguments %>
+              </div>
+            <% end %>
           </div>
         </div>
       </form>

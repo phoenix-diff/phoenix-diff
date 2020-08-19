@@ -17,9 +17,18 @@
 
     .version-selectors {
       justify-content: center;
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .version-selector{
+      flex: 0 0 150px;
+
+      margin: 10px 6px;
+      text-align: center;
 
       label {
-        margin: 0 6px;
+        margin: 0 6px 2px;
 
         text-transform: uppercase;
         text-decoration: underline;
@@ -30,10 +39,18 @@
       select {
         font-size: 14px;
         width: 100px;
+        margin: 0 auto 2px;
       }
 
-      .form-group {
-        margin: 10px 6px;
+      .generator-options {
+        font-size: 12px;
+      }
+    }
+
+    @include media-breakpoint-up(sm) {
+      .version-selector .field-group{
+        display: flex;
+        align-items: center;
       }
     }
 
