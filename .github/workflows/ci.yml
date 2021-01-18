@@ -1,0 +1,21 @@
+name: CI
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-elixir@v1
+        with:
+          otp-version: '22.2.8'
+          elixir-version: '1.10.2'
+      - uses: actions/cache@v2
+        with:
+          path: |
+            _build
+            deps
+          key: ${{ runner.os }}-cache-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+
+      - run: mix deps.get
+      - run: MIX_ENV=test mix dialyzer --plt
+      - run: mix ci
