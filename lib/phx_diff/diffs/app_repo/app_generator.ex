@@ -52,9 +52,13 @@ defmodule PhxDiff.Diffs.AppRepo.AppGenerator do
   end
 
   defp clean_up_generated_app!(sample_app_path) do
-    update_file!(Path.join(sample_app_path, "config/prod.secret.exs"), fn file ->
-      String.replace(file, ~r/secret_key_base:.*/, "secret_key_base: \"aaaaaaaa\"")
-    end)
+    prod_secret_path = Path.join(sample_app_path, "config/prod.secret.exs")
+
+    if File.exists?(prod_secret_path) do
+      update_file!(prod_secret_path, fn file ->
+        String.replace(file, ~r/secret_key_base:.*/, "secret_key_base: \"aaaaaaaa\"")
+      end)
+    end
 
     update_file!(Path.join(sample_app_path, "config/config.exs"), fn file ->
       file
