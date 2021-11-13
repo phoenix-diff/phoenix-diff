@@ -2,6 +2,8 @@ defmodule PhxDiff.Diffs.AppRepo.AppGenerator.MixTaskRunner do
   @moduledoc false
   use GenServer
 
+  @dialyzer {:no_improper_lists, handle_info: 2}
+
   @type prompt_response :: :no_to_all | :yes_to_all | String.t()
   @type opt ::
           {:prompt_responses, [prompt_response]}
