@@ -43,7 +43,7 @@ defmodule PhxDiff.MixProject do
       {:phoenix_slime, "~> 0.10"},
       {:phoenix_live_view, "~> 0.14.1"},
       {:phoenix_live_reload, "~> 1.2-rc", only: :dev},
-      {:ecto, "~> 3.4"},
+      {:ecto, "~> 3.7.1"},
       {:phoenix_ecto, "~> 4.0"},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
