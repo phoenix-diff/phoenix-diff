@@ -49,7 +49,7 @@
           <span class="text">There are no changes between version <%= @source_version %> and  <%= @target_version %>.</span>
         </div>
       <% else %>
-          <%= live_component @socket, PhxDiffWeb.PageLive.DiffViewerComponent, id: "main-diff", diff: @diff %>
+          <%= live_component PhxDiffWeb.PageLive.DiffViewerComponent, id: "main-diff", diff: @diff %>
       <% end %>
 
       <div id="loading-container" class="message-container">

@@ -3720,11 +3720,6 @@ npm-run-path@^2.0.0:
     gauge "~2.7.3"
     set-blocking "~2.0.0"
 
-nprogress@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/nprogress/-/nprogress-0.2.0.tgz#cb8f34c53213d895723fcbab907e9422adbcafb1"
-  integrity sha1-y480xTIT2JVyP8urkH6UIq28r7E=
-
 nth-check@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/nth-check/-/nth-check-1.0.2.tgz#b2bd295c37e3dd58a3bf0700376663ba4d9cf05c"
@@ -4036,13 +4031,13 @@ performance-now@^2.1.0:
   integrity sha1-Ywn04OX6kT7BxpMHrjZLSzd8nns=
 
 "phoenix@file:../deps/phoenix":
-  version "1.5.3"
+  version "1.5.9"
 
 "phoenix_html@file:../deps/phoenix_html":
-  version "2.14.2"
+  version "2.14.3"
 
 "phoenix_live_view@file:../deps/phoenix_live_view":
-  version "0.14.1"
+  version "0.15.7"
 
 pify@^2.0.0:
   version "2.3.0"
@@ -5398,6 +5393,11 @@ to-regex@^3.0.1, to-regex@^3.0.2:
     extend-shallow "^3.0.2"
     regex-not "^1.0.2"
     safe-regex "^1.1.0"
+
+topbar@^0.1.4:
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/topbar/-/topbar-0.1.4.tgz#d050e536ef5053d9629499ed71008b88cb2398fb"
+  integrity sha512-P3n4WnN4GFd2mQXDo30rQmsAGe4V1bVkggtTreSbNyL50Fyc+eVkW5oatSLeGQmJoan2TLIgoXUZypN+6nw4MQ==
 
 tough-cookie@~2.5.0:
   version "2.5.0"
