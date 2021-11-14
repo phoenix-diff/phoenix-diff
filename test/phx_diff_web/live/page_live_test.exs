@@ -19,13 +19,13 @@ defmodule PhxDiffWeb.PageLiveTest do
 
     assert has_element?(
              view,
-             "#diff_selection_source [selected=selected]",
+             ~S|#[name="diff_selection[source]"] [selected=selected]|,
              Diffs.previous_release_version()
            )
 
     assert has_element?(
              view,
-             "#diff_selection_target [selected=selected]",
+             ~S|#[name="diff_selection[target]"] [selected=selected]|,
              Diffs.latest_version()
            )
 
