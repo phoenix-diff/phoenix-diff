@@ -94,7 +94,7 @@ defmodule PhxDiff.DiffsTest do
         assert_file(Path.join(storage_dir, "mix.exs"))
 
         assert_file(Path.join(storage_dir, "config/prod.secret.exs"), fn file ->
-          assert file =~ ~s|secret_key_base: "aaaaaaaa"|
+          assert file =~ ~s|secret_key_base: secret_key_base|
         end)
 
         assert_file(Path.join(storage_dir, "config/config.exs"), fn file ->

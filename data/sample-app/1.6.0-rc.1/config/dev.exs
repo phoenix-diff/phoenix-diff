@@ -22,7 +22,7 @@ config :sample_app, SampleAppWeb.Endpoint,
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
-  secret_key_base: "99nOXo2fWK0+io0pls1tNomRqBJ/HZxf7BSgxmTwQaueBWusBncSLnbR5GJSBF12",
+  secret_key_base: "aaaaaaaa",
   watchers: [
     # Start the esbuild watcher by calling Esbuild.install_and_run(:default, args)
     esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]}

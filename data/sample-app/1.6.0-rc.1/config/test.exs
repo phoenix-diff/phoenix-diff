@@ -17,7 +17,7 @@ config :sample_app, SampleApp.Repo,
 # you can enable the server option below.
 config :sample_app, SampleAppWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
-  secret_key_base: "OFbuur7ZasZgasnBe9AE1WuEyT7+54DTXBGfGxQ/w0Dnk+tmAcFMoUeNXJzSUbxL",
+  secret_key_base: "aaaaaaaa",
   server: false
 
 # In test we don't send emails.

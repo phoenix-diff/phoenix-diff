@@ -52,23 +52,36 @@ defmodule PhxDiff.Diffs.AppRepo.AppGenerator do
   end
 
   defp clean_up_generated_app!(sample_app_path) do
-    prod_secret_path = Path.join(sample_app_path, "config/prod.secret.exs")
+    config_paths =
+      sample_app_path
+      |> Path.join("config/*.exs")
+      |> Path.wildcard()
 
-    if File.exists?(prod_secret_path) do
-      update_file!(prod_secret_path, fn file ->
-        String.replace(file, ~r/secret_key_base:.*/, "secret_key_base: \"aaaaaaaa\"")
+    endpoint_paths =
+      sample_app_path
+      |> Path.join("**/endpoint.ex")
+      |> Path.wildcard()
+
+    for path <- endpoint_paths ++ config_paths do
+      update_file!(path, fn file ->
+        updated =
+          file
+          |> replace_secret_key_base()
+          |> replace_signing_salt()
+
+        updated
       end)
     end
 
-    update_file!(Path.join(sample_app_path, "config/config.exs"), fn file ->
-      file
-      |> String.replace(~r/secret_key_base:.*/, "secret_key_base: \"aaaaaaaa\",")
-      |> String.replace(~r/signing_salt:.*/, "signing_salt: \"aaaaaaaa\"]")
-    end)
+    :ok
+  end
 
-    update_file!(Path.join(sample_app_path, "lib/sample_app_web/endpoint.ex"), fn file ->
-      String.replace(file, ~r/signing_salt:.*/, "signing_salt: \"aaaaaaaa\"")
-    end)
+  defp replace_secret_key_base(file_contents) do
+    String.replace(file_contents, ~r/(secret_key_base: )"[^"]*"/, ~S|\1"aaaaaaaa"|)
+  end
+
+  defp replace_signing_salt(file_contents) do
+    String.replace(file_contents, ~r/(signing_salt: )"[^"]*"/, ~S|\1"aaaaaaaa"|)
   end
 
   defp update_file!(path, function) do

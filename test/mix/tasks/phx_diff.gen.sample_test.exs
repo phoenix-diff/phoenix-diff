@@ -23,7 +23,8 @@ defmodule Mix.Tasks.PhxDiff.Gen.SampleTest do
 
   @diffs_to_compare [
     {"1.4.16", "1.4.17"},
-    {"1.5.2", "1.5.3"}
+    {"1.5.2", "1.5.3"},
+    {"1.6.0-rc.1", "1.6.0"}
   ]
 
   describe "diff generation" do
