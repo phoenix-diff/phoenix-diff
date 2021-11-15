@@ -3,8 +3,9 @@ defmodule Mix.Tasks.PhxDiff.Gen.SampleTest do
 
   alias Mix.Tasks.PhxDiff.Gen
   alias PhxDiff.Diffs
+  alias PhxDiff.TestSupport.DiffFixtures
 
-  test "the appropriate diff is returned after generating 2 versions of an app" do
+  test "outputs the appropriate instructions after generating an app" do
     Gen.Sample.run(["1.5.2"])
 
     assert_receive {:mix_shell, :info, [msg]}
@@ -18,69 +19,28 @@ defmodule Mix.Tasks.PhxDiff.Gen.SampleTest do
                git add data/sample-app/1.5.2
                git add -f data/sample-app/1.5.2/config/prod.secret.exs
            """
-
-    Gen.Sample.run(["1.5.3"])
-
-    assert {:ok, diff} =
-             Diffs.get_diff(
-               Diffs.fetch_default_app_specification!("1.5.2"),
-               Diffs.fetch_default_app_specification!("1.5.3")
-             )
-
-    assert diff =~
-             """
-             @@ -33,11 +33,11 @@
-                # Type `mix help deps` for examples and options.
-                defp deps do
-                  [
-             -      {:phoenix, "~> 1.5.2"},
-             +      {:phoenix, "~> 1.5.3"},
-                    {:phoenix_ecto, "~> 4.1"},
-                    {:ecto_sql, "~> 3.4"},
-                    {:postgrex, ">= 0.0.0"},
-             -      {:phoenix_live_view, "~> 0.12.0"},
-             +      {:phoenix_live_view, "~> 0.13.0"},
-                    {:floki, ">= 0.0.0", only: :test},
-                    {:phoenix_html, "~> 2.11"},
-                    {:phoenix_live_reload, "~> 1.2", only: :dev},
-             """
   end
 
-  test "the appropriate diff is returned when generating phoenix 1.4 apps" do
-    Gen.Sample.run(["1.4.16"])
+  @diffs_to_compare [
+    {"1.4.16", "1.4.17"},
+    {"1.5.2", "1.5.3"}
+  ]
 
-    assert_receive {:mix_shell, :info, [msg]}
+  describe "diff generation" do
+    for {version_1, version_2} <- @diffs_to_compare do
+      test "returns known diff comparing #{version_1} to #{version_2}" do
+        Gen.Sample.run([unquote(version_1)])
+        Gen.Sample.run([unquote(version_2)])
 
-    assert msg == """
+        assert {:ok, diff} =
+                 Diffs.get_diff(
+                   Diffs.fetch_default_app_specification!(unquote(version_1)),
+                   Diffs.fetch_default_app_specification!(unquote(version_2))
+                 )
 
-           Successfully generated sample app.
-
-           To add this to version control, run:
-
-               git add data/sample-app/1.4.16
-               git add -f data/sample-app/1.4.16/config/prod.secret.exs
-           """
-
-    Gen.Sample.run(["1.4.17"])
-
-    assert {:ok, diff} =
-             Diffs.get_diff(
-               Diffs.fetch_default_app_specification!("1.4.16"),
-               Diffs.fetch_default_app_specification!("1.4.17")
-             )
-
-    assert diff =~
-             """
-             @@ -33,7 +33,7 @@
-                # Type `mix help deps` for examples and options.
-                defp deps do
-                  [
-             -      {:phoenix, "~> 1.4.16"},
-             +      {:phoenix, "~> 1.4.17"},
-                    {:phoenix_pubsub, "~> 1.1"},
-                    {:phoenix_ecto, "~> 4.0"},
-                    {:ecto_sql, "~> 3.1"},
-             """
+        assert diff == DiffFixtures.known_diff_for!(unquote(version_1), unquote(version_2))
+      end
+    end
   end
 
   test "errors with an invalid version id" do
