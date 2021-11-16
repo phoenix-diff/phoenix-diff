@@ -59,19 +59,25 @@ defmodule PhxDiffWeb.PageLiveTest do
       |> live(Routes.page_path(conn, :index))
       |> follow_redirect(conn)
 
-    assert_display_type(view, "line-by-line")
+    assert display_mode_button_active?(view, "Line by line")
+    refute display_mode_button_active?(view, "Side by side")
+    assert diff_results_container_display_mode(view) == "line-by-line"
 
     view
     |> element("#diff-viewer-form-main-diff")
     |> render_change(%{"form" => %{"view_type" => "side-by-side"}})
 
-    assert_display_type(view, "side-by-side")
+    refute display_mode_button_active?(view, "Line by line")
+    assert display_mode_button_active?(view, "Side by side")
+    assert diff_results_container_display_mode(view) == "side-by-side"
 
     view
     |> element("#diff-viewer-form-main-diff")
     |> render_change(%{"form" => %{"view_type" => "line-by-line"}})
 
-    assert_display_type(view, "line-by-line")
+    assert display_mode_button_active?(view, "Line by line")
+    refute display_mode_button_active?(view, "Side by side")
+    assert diff_results_container_display_mode(view) == "line-by-line"
   end
 
   test "falls back to latest version when target url_param is invalid", %{conn: conn} do
@@ -158,12 +164,16 @@ defmodule PhxDiffWeb.PageLiveTest do
              strip_date_from_diff(expected_diff)
   end
 
-  defp assert_display_type(view, expected_display_type) do
-    assert element(view, ".diff-results-container")
-           |> render()
-           |> Floki.parse_fragment!()
-           |> Floki.attribute("data-view-type")
-           |> List.first() == expected_display_type
+  defp diff_results_container_display_mode(view) do
+    element(view, ".diff-results-container")
+    |> render()
+    |> Floki.parse_fragment!()
+    |> Floki.attribute("data-view-type")
+    |> List.first()
+  end
+
+  defp display_mode_button_active?(view, button_text) do
+    has_element?(view, "#diff-view-toggles .btn.active", button_text)
   end
 
   defp strip_date_from_diff(diff) do
