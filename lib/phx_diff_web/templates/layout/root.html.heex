@@ -18,22 +18,16 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/diff2html@2.10.0/dist/diff2html.min.css" />
+    <link rel="stylesheet" href={Routes.static_url(@conn, "/css/app.css")} />
 
-    <% font_awesome_version = "4.7.0" # https://www.jsdelivr.com/package/npm/font-awesome %>
-    <% jquery_version = "3.4.1" # https://www.jsdelivr.com/package/npm/jquery %>
-    <% diff2html_version = "2.10.0" # https://www.jsdelivr.com/package/npm/diff2html %>
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@<%= font_awesome_version %>/css/font-awesome.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/diff2html@<%= diff2html_version %>/dist/diff2html.min.css" />
-
-    <link rel="stylesheet" href="<%= Routes.static_url(@conn, "/css/app.css") %>" />
-
-    <script defer src="https://cdn.jsdelivr.net/npm/jquery@<%= jquery_version %>/dist/jquery.slim.min.js" ></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/diff2html@<%= diff2html_version %>/dist/diff2html.min.js" ></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/diff2html@<%= diff2html_version %>/dist/diff2html-ui.min.js" ></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.slim.min.js" ></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/diff2html@2.10.0/dist/diff2html.min.js" ></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/diff2html@2.10.0/dist/diff2html-ui.min.js" ></script>
 
     <%= csrf_meta_tag() %>
-    <script defer phx-track-static src="<%= Routes.static_url(@conn, "/js/app.js") %>"></script>
+    <script defer phx-track-static src={Routes.static_url(@conn, "/js/app.js")}></script>
 </head>
 
 <body>

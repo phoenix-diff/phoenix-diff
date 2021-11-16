@@ -1,13 +1,16 @@
-<div id="landing-page" class="<%= if @no_changes?, do: "phx-diff-loaded-diff" %>">
+<div id="landing-page" class={if @no_changes?, do: "phx-diff-loaded-diff"}>
   <section id="input-section">
     <div class="container-fluid">
       <h3>See the changes needed to upgrade your Phoenix application</h3>
 
-      <%= f = form_for @changeset, "#",
-          id: "diff-selector-form",
-          as: :diff_selection,
-          phx_change: "diff-changed",
-          phx_hook: "DiffSelectorComponent" %>
+      <.form
+        let={f}
+        for={@changeset}
+        as="diff_selection"
+        id="diff-selector-form"
+        phx_change="diff-changed"
+        phx_hook="DiffSelectorComponent">
+
         <div class="version-selectors">
           <div class="version-selector version-selector-source">
             <div class="field-group">
@@ -33,7 +36,7 @@
             <% end %>
           </div>
         </div>
-      </form>
+      </.form>
 
       <span class="star-message">
         If you found this tool useful, please <i class="fa fa-star"></i> our
