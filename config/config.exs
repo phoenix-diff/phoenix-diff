@@ -23,13 +23,6 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-config :phoenix, :template_engines,
-  slim: PhoenixSlime.Engine,
-  slime: PhoenixSlime.Engine,
-  slimleex: PhoenixSlime.LiveViewEngine
-
-config :phoenix_slime, :use_slim_extension, true
-
 config :honeybadger,
   environment_name: System.get_env("HONEYBADGER_ENV_NAME", to_string(Mix.env()))
 

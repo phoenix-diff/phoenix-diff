@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <%= live_title_tag assigns[:page_title] || "", prefix: "PhoenixDiff · " %>
+    <meta name="description" content="See the changes needed to upgrade your Phoenix application" />
+    <meta name="keywords" content="Elixir,Phoenix,PhoenixFramework,Upgrade,Diff,PhoenixDiff" />
+    <meta name="author" content="Navin Peiris @navinpeiris" />
+
+    <base href="/">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" />
+
+    <% font_awesome_version = "4.7.0" # https://www.jsdelivr.com/package/npm/font-awesome %>
+    <% jquery_version = "3.4.1" # https://www.jsdelivr.com/package/npm/jquery %>
+    <% diff2html_version = "2.10.0" # https://www.jsdelivr.com/package/npm/diff2html %>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@<%= font_awesome_version %>/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/diff2html@<%= diff2html_version %>/dist/diff2html.min.css" />
+
+    <link rel="stylesheet" href="<%= Routes.static_url(@conn, "/css/app.css") %>" />
+
+    <script defer src="https://cdn.jsdelivr.net/npm/jquery@<%= jquery_version %>/dist/jquery.slim.min.js" ></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/diff2html@<%= diff2html_version %>/dist/diff2html.min.js" ></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/diff2html@<%= diff2html_version %>/dist/diff2html-ui.min.js" ></script>
+
+    <%= csrf_meta_tag() %>
+    <script defer phx-track-static src="<%= Routes.static_url(@conn, "/js/app.js") %>"></script>
+</head>
+
+<body>
+    <header>
+        <nav class="navbar" role="navigation">
+            <a class="navbar-brand" href="/">PhoenixDiff</a>
+
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/navinpeiris/phoenix-diff" target="_blank">
+                        View on GitHub
+                        <i class="fa fa-github"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main role="main">
+        <%= @inner_content %>
+    </main>
+
+    <footer class="footer">
+        <div class="container py-3">
+            <div class="text-center">
+                To all alchemists with
+                <i class="fa fa-heart"></i>
+                by Navin Peiris
+                <a class="ml-1" href="https://github.com/navinpeiris" target="_blank">GitHub</a>
+                |
+                <a href="https://twitter.com/navinpeiris" target="_blank">Twitter</a>
+                |
+                <a class="mr-1" href="https://www.linkedin.com/in/navinpeiris" target="_blank">LinkedIn</a>
+            </div>
+        </div>
+
+        <%= if Mix.env == :prod do %>
+        <%= render "_tracking_scripts.html" %>
+        <% end %>
+
+    </footer>
+</body>
+
+</html>

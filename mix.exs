@@ -40,7 +40,6 @@ defmodule PhxDiff.MixProject do
       {:phoenix, "1.5.13"},
       {:phoenix_pubsub, "~> 2.0"},
       {:phoenix_html, "~> 2.11"},
-      {:phoenix_slime, "~> 0.10"},
       {:phoenix_live_view, "~> 0.15.7"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:ecto, "~> 3.7.1"},
