@@ -4245,7 +4245,7 @@ performance-now@^2.1.0:
   version "3.1.0"
 
 "phoenix_live_view@file:../deps/phoenix_live_view":
-  version "0.16.4"
+  version "0.17.5"
 
 picocolors@^0.2.1:
   version "0.2.1"
