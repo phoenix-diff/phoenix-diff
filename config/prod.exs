@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 # For production, don't forget to configure the url host
 # to something meaningful, Phoenix uses this information
@@ -26,7 +26,7 @@ config :logger, level: :info
 # to the previous section and set your `:url` port to 443:
 #
 #     config :phx_diff, PhxDiffWeb.Endpoint,
-#       ...
+#       ...,
 #       url: [host: "example.com", port: 443],
 #       https: [
 #         :inet6,
@@ -53,22 +53,3 @@ config :logger, level: :info
 #       force_ssl: [hsts: true]
 #
 # Check `Plug.SSL` for all available options in `force_ssl`.
-
-# ## Using releases (distillery)
-#
-# If you are doing OTP releases, you need to instruct Phoenix
-# to start the server for all endpoints:
-#
-#     config :phoenix, :serve_endpoints, true
-#
-# Alternatively, you can configure exactly which server to
-# start per endpoint:
-#
-#     config :phx_diff, PhxDiffWeb.Endpoint, server: true
-#
-# Note you can't rely on `System.get_env/1` when using releases.
-# See the releases documentation accordingly.
-
-# Finally import the config/prod.secret.exs which should be versioned
-# separately.
-# import_config "prod.secret.exs"
