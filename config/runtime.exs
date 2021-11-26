@@ -58,3 +58,7 @@ if config_env() == :prod do
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 end
+
+# Set the honeybadger environment name for all envs
+config :honeybadger,
+  environment_name: System.get_env("HONEYBADGER_ENV_NAME", to_string(config_env()))
