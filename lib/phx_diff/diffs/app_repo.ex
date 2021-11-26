@@ -55,9 +55,8 @@ defmodule PhxDiff.Diffs.AppRepo do
   @spec generate_sample_app(Config.t(), AppSpecification.t()) ::
           {:ok, String.t()} | {:error, :unknown_version}
   def generate_sample_app(%Config{} = config, %AppSpecification{} = app_spec) do
-    with {:ok, app_dir} <- AppGenerator.generate(config, app_spec),
-         {:ok, path_in_storage} <- store_generated_app(config, app_spec, app_dir) do
-      {:ok, path_in_storage}
+    with {:ok, app_dir} <- AppGenerator.generate(config, app_spec) do
+      store_generated_app(config, app_spec, app_dir)
     end
   end
 
