@@ -14,7 +14,13 @@ defmodule PhxDiffWeb.Endpoint do
     websocket: true,
     longpoll: false
 
-  socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
+  socket "/live", Phoenix.LiveView.Socket,
+    websocket: [
+      # Changed to 45 seconds because heroku has a 55 second idle connection
+      # limit
+      timeout: 45_000,
+      connect_info: [session: @session_options]
+    ]
 
   # Serve at "/" the static files from "priv/static" directory.
   #
