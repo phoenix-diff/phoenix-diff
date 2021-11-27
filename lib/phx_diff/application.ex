@@ -9,6 +9,8 @@ defmodule PhxDiff.Application do
   def start(_type, _args) do
     # List all child processes to be supervised
     children = [
+      # Start the Telemetry supervisor
+      PhxDiffWeb.Telemetry,
       # Start the PubSub system
       {Phoenix.PubSub, name: PhxDiff.PubSub},
       # Start the endpoint when the application starts
