@@ -37,7 +37,7 @@ defmodule PhxDiff.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "1.6.2"},
+      {:phoenix, "1.6.5"},
       {:phoenix_pubsub, "~> 2.0"},
       {:phoenix_html, "~> 3.0"},
       {:phoenix_live_view, "~> 0.17.5"},
