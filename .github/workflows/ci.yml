@@ -8,7 +8,7 @@ jobs:
       - uses: erlef/setup-elixir@v1
         with:
           otp-version: '23.3.2'
-          elixir-version: '1.12.3'
+          elixir-version: '1.13.1'
       - uses: actions/cache@v2
         with:
           path: |
