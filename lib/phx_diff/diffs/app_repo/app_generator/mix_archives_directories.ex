@@ -1,18 +1,13 @@
 defmodule PhxDiff.Diffs.AppRepo.AppGenerator.MixArchivesDirectories do
   @moduledoc false
 
-  @type version :: String.t()
+  @type version :: Version.t()
   @type path :: String.t()
 
   @spec fetch_path_for_phoenix_version(path, version) ::
           {:ok, path} | {:error, :unknown_version}
   def fetch_path_for_phoenix_version(workspace_path, version) do
-    validate_version!(version)
     find_or_create_mix_archives_path_for_phoenix_version(workspace_path, version)
-  end
-
-  defp validate_version!(version) do
-    Version.parse!(version)
   end
 
   defp find_or_create_mix_archives_path_for_phoenix_version(workspace_path, version) do
@@ -48,7 +43,7 @@ defmodule PhxDiff.Diffs.AppRepo.AppGenerator.MixArchivesDirectories do
 
   @spec install_phx_new(String.t(), String.t()) :: :ok | {:error, :unknown_version} | no_return
   defp install_phx_new(working_dir, version) do
-    case System.cmd("mix", ["archive.install", "hex", "phx_new", version, "--force"],
+    case System.cmd("mix", ["archive.install", "hex", "phx_new", to_string(version), "--force"],
            env: [{"MIX_ARCHIVES", working_dir}],
            stderr_to_stdout: true
          ) do
@@ -83,7 +78,7 @@ defmodule PhxDiff.Diffs.AppRepo.AppGenerator.MixArchivesDirectories do
   defp archives_repo_path_for_phoenix_version(workspace_path, version) do
     workspace_path
     |> archives_repo_path()
-    |> Path.join(version)
+    |> Path.join(to_string(version))
   end
 
   defp archives_repo_path(workspace_path) do

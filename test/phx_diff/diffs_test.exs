@@ -2,6 +2,7 @@ defmodule PhxDiff.DiffsTest do
   use ExUnit.Case, async: true
 
   import PhxDiff.TestSupport.FileHelpers
+  import PhxDiff.TestSupport.Sigils
 
   alias PhxDiff.Diffs
 
@@ -14,10 +15,10 @@ defmodule PhxDiff.DiffsTest do
     test "returns all versions" do
       versions = Diffs.all_versions()
 
-      assert versions |> length() > 25
+      assert length(versions) > 25
 
-      assert versions |> Enum.member?("1.3.0")
-      assert versions |> Enum.member?("1.4.0-rc.2")
+      assert Enum.member?(versions, ~V[1.3.0])
+      assert Enum.member?(versions, ~V[1.4.0-rc.2])
     end
 
     test "returns an empty list when no apps have been generated" do
@@ -33,10 +34,10 @@ defmodule PhxDiff.DiffsTest do
     test "returns all versions" do
       versions = Diffs.release_versions()
 
-      assert versions |> length() > 20
+      assert length(versions) > 20
 
-      assert versions |> Enum.member?("1.3.0")
-      refute versions |> Enum.member?("1.4.0-rc.2")
+      assert Enum.member?(versions, ~V[1.3.0])
+      refute Enum.member?(versions, ~V[1.4.0-rc.2])
     end
 
     test "returns an empty list when no apps have been generated" do
@@ -50,8 +51,8 @@ defmodule PhxDiff.DiffsTest do
 
   describe "get_diff/3" do
     test "returns content when versions are valid" do
-      source = Diffs.fetch_default_app_specification!("1.3.1")
-      target = Diffs.fetch_default_app_specification!("1.3.2")
+      source = Diffs.default_app_specification(~V[1.3.1])
+      target = Diffs.default_app_specification(~V[1.3.2])
 
       {:ok, diff} = Diffs.get_diff(source, target)
 
@@ -59,8 +60,8 @@ defmodule PhxDiff.DiffsTest do
     end
 
     test "returns empty when versions are the same" do
-      source = Diffs.fetch_default_app_specification!("1.3.1")
-      target = Diffs.fetch_default_app_specification!("1.3.1")
+      source = Diffs.default_app_specification(~V[1.3.1])
+      target = Diffs.default_app_specification(~V[1.3.1])
 
       {:ok, diff} = Diffs.get_diff(source, target)
 
@@ -71,8 +72,8 @@ defmodule PhxDiff.DiffsTest do
       with_tmp(fn path ->
         config = build_config(path)
 
-        source = Diffs.fetch_default_app_specification!("1.3.1")
-        target = Diffs.fetch_default_app_specification!("1.4.2")
+        source = Diffs.default_app_specification(~V[1.3.1])
+        target = Diffs.default_app_specification(~V[1.4.2])
 
         assert {:error, :invalid_versions} = Diffs.get_diff(source, target, config: config)
       end)
@@ -85,8 +86,8 @@ defmodule PhxDiff.DiffsTest do
         config = build_config(path)
 
         assert {:ok, storage_dir} =
-                 "1.5.3"
-                 |> Diffs.fetch_default_app_specification!()
+                 ~V[1.5.3]
+                 |> Diffs.default_app_specification()
                  |> Diffs.generate_sample_app(config: config)
 
         assert storage_dir == Path.join(config.app_repo_path, "1.5.3")
@@ -106,7 +107,7 @@ defmodule PhxDiff.DiffsTest do
           assert file =~ ~s|signing_salt: "aaaaaaaa"|
         end)
 
-        assert ["1.5.3"] = Diffs.all_versions(config: config)
+        assert [~V[1.5.3]] = Diffs.all_versions(config: config)
 
         assert_temp_dirs_cleaned_up(config)
       end)
@@ -117,7 +118,7 @@ defmodule PhxDiff.DiffsTest do
         config = build_config(path)
 
         assert {:error, :unknown_version} =
-                 Diffs.fetch_default_app_specification!("0.1.10")
+                 Diffs.default_app_specification(~V[0.1.10])
                  |> Diffs.generate_sample_app(config: config)
 
         assert_temp_dirs_cleaned_up(config)
@@ -125,53 +126,23 @@ defmodule PhxDiff.DiffsTest do
     end
   end
 
-  describe "fetch_default_app_specification!/1" do
+  describe "default_app_specification/1" do
     test "returns an app spec with no arguments for versions less than 1.5.0" do
-      assert Diffs.fetch_default_app_specification!("1.4.16") ==
+      assert Diffs.default_app_specification(~V[1.4.16]) ==
                %AppSpecification{
-                 phoenix_version: "1.4.16",
+                 phoenix_version: ~V[1.4.16],
                  phx_new_arguments: []
                }
     end
 
     test "returns an app spec with --live argument for versions >= 1.5.0" do
-      for version <- ["1.5.0-rc.0", "1.5.0", "1.5.1"] do
-        assert Diffs.fetch_default_app_specification!(version) ==
+      for version <- [~V[1.5.0-rc.0], ~V[1.5.0], ~V[1.5.1]] do
+        assert Diffs.default_app_specification(version) ==
                  %AppSpecification{
                    phoenix_version: version,
                    phx_new_arguments: ["--live"]
                  }
       end
-    end
-
-    test "raises on an invalid version number" do
-      assert_raise Version.InvalidVersionError, fn ->
-        Diffs.fetch_default_app_specification!("foo")
-      end
-    end
-  end
-
-  describe "fetch_default_app_specification/1" do
-    test "returns an app spec with no arguments for versions less than 1.5.0" do
-      assert {:ok,
-              %AppSpecification{
-                phoenix_version: "1.4.16",
-                phx_new_arguments: []
-              }} = Diffs.fetch_default_app_specification("1.4.16")
-    end
-
-    test "returns an app spec with --live argument for versions >= 1.5.0" do
-      for version <- ["1.5.0-rc.0", "1.5.0", "1.5.1"] do
-        assert {:ok,
-                %AppSpecification{
-                  phoenix_version: ^version,
-                  phx_new_arguments: ["--live"]
-                }} = Diffs.fetch_default_app_specification(version)
-      end
-    end
-
-    test "returns {:error, :invalid_version} on an invalid version number" do
-      assert {:error, :invalid_version} = Diffs.fetch_default_app_specification("foo")
     end
   end
 

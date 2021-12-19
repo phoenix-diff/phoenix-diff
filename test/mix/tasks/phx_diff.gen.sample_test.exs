@@ -35,11 +35,15 @@ defmodule Mix.Tasks.PhxDiff.Gen.SampleTest do
 
         assert {:ok, diff} =
                  Diffs.get_diff(
-                   Diffs.fetch_default_app_specification!(unquote(version_1)),
-                   Diffs.fetch_default_app_specification!(unquote(version_2))
+                   Diffs.default_app_specification(Version.parse!(unquote(version_1))),
+                   Diffs.default_app_specification(Version.parse!(unquote(version_2)))
                  )
 
-        assert diff == DiffFixtures.known_diff_for!(unquote(version_1), unquote(version_2))
+        assert diff ==
+                 DiffFixtures.known_diff_for!(
+                   Version.parse!(unquote(version_1)),
+                   Version.parse!(unquote(version_2))
+                 )
       end
     end
   end

@@ -15,7 +15,7 @@ defmodule PhxDiff.TestSupport.DiffFixtures do
   #     :ok
   #
 
-  def known_diff_for!(version_1, version_2) do
+  def known_diff_for!(%Version{} = version_1, %Version{} = version_2) do
     diff_path = file_path(version_1, version_2)
 
     case File.read(diff_path) do
@@ -27,10 +27,13 @@ defmodule PhxDiff.TestSupport.DiffFixtures do
   # NOTE: This function is only designed to be called from iEX
   def save_diff_fixture!(version_1, version_2)
       when is_binary(version_1) and is_binary(version_2) do
+    version_1 = Version.parse!(version_1)
+    version_2 = Version.parse!(version_2)
+
     {:ok, diff} =
       Diffs.get_diff(
-        Diffs.fetch_default_app_specification!(version_1),
-        Diffs.fetch_default_app_specification!(version_2)
+        Diffs.default_app_specification(version_1),
+        Diffs.default_app_specification(version_2)
       )
 
     file_path(version_1, version_2)
@@ -41,7 +44,7 @@ defmodule PhxDiff.TestSupport.DiffFixtures do
     Path.join([__DIR__, "diff_fixtures", diff_file_name(version_1, version_2)])
   end
 
-  defp diff_file_name(version_1, version_2) when is_binary(version_1) and is_binary(version_2) do
+  defp diff_file_name(%Version{} = version_1, %Version{} = version_2) do
     "#{version_1}-#{version_2}.diff"
   end
 end

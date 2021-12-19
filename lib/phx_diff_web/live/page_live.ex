@@ -12,7 +12,7 @@ defmodule PhxDiffWeb.PageLive do
     {:ok,
      socket
      |> assign(:no_changes?, false)
-     |> assign(:all_versions, Diffs.all_versions())
+     |> assign(:all_versions, Diffs.all_versions() |> Enum.map(&to_string/1))
      |> assign(:diff_selection, %DiffSelection{})}
   end
 
@@ -21,8 +21,8 @@ defmodule PhxDiffWeb.PageLive do
     case validate_form(socket.assigns.diff_selection, params) do
       {:ok, diff_selection} ->
         %DiffSelection{source: source, target: target} = diff_selection
-        source_app_spec = Diffs.fetch_default_app_specification!(source)
-        target_app_spec = Diffs.fetch_default_app_specification!(target)
+        source_app_spec = Diffs.default_app_specification(source)
+        target_app_spec = Diffs.default_app_specification(target)
 
         {:ok, diff} = Diffs.get_diff(source_app_spec, target_app_spec)
 

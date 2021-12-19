@@ -14,6 +14,6 @@ defmodule PhxDiff.Diffs.AppSpecification do
   @doc false
   @spec new(Version.t(), [String.t()]) :: t
   def new(%Version{} = phoenix_version, phx_new_arguments) when is_list(phx_new_arguments) do
-    %__MODULE__{phoenix_version: to_string(phoenix_version), phx_new_arguments: phx_new_arguments}
+    %__MODULE__{phoenix_version: phoenix_version, phx_new_arguments: phx_new_arguments}
   end
 end

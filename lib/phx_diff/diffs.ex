@@ -9,7 +9,7 @@ defmodule PhxDiff.Diffs do
   alias PhxDiff.Diffs.DiffEngine
 
   @type diff :: String.t()
-  @type version :: String.t()
+  @type version :: Version.t()
   @type option :: String.t()
 
   @type config_opt :: {:config, Config.t()}
@@ -42,30 +42,12 @@ defmodule PhxDiff.Diffs do
     |> AppRepo.previous_release_version()
   end
 
-  @spec fetch_default_app_specification!(version) :: AppSpecification.t() | no_return()
-  def fetch_default_app_specification!(version) when is_binary(version) do
-    case fetch_default_app_specification(version) do
-      {:ok, app_specification} -> app_specification
-      {:error, :invalid_version} -> raise Version.InvalidVersionError, version
-    end
-  end
-
-  @spec fetch_default_app_specification(version) ::
-          {:ok, AppSpecification.t()} | {:error, :invalid_version}
-  def fetch_default_app_specification(version) when is_binary(version) do
-    with {:ok, parsed_version} <- parse_version(version) do
-      if Version.match?(parsed_version, ">= 1.5.0-rc.0") do
-        {:ok, AppSpecification.new(parsed_version, ["--live"])}
-      else
-        {:ok, AppSpecification.new(parsed_version, [])}
-      end
-    end
-  end
-
-  defp parse_version(version_string) do
-    case Version.parse(version_string) do
-      {:ok, version} -> {:ok, version}
-      :error -> {:error, :invalid_version}
+  @spec default_app_specification(version) :: AppSpecification.t()
+  def default_app_specification(%Version{} = version) do
+    if Version.match?(version, ">= 1.5.0-rc.0") do
+      AppSpecification.new(version, ["--live"])
+    else
+      AppSpecification.new(version, [])
     end
   end
 

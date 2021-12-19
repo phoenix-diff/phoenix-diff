@@ -17,14 +17,14 @@ defmodule PhxDiff.Diffs.AppRepo do
     |> app_specifications_for_pre_generated_apps()
     |> MapSet.new(& &1.phoenix_version)
     |> MapSet.to_list()
-    |> Enum.sort_by(&Version.parse!/1, &(Version.compare(&1, &2) == :lt))
+    |> Enum.sort(&(Version.compare(&1, &2) == :lt))
   end
 
   @spec release_versions(Config.t()) :: [version]
   def release_versions(%Config{} = config),
     do: config |> all_versions() |> Enum.reject(&pre_release?/1)
 
-  defp pre_release?(version), do: !Enum.empty?(Version.parse!(version).pre)
+  defp pre_release?(version), do: !Enum.empty?(version.pre)
 
   @spec latest_version(Config.t()) :: version
   def latest_version(%Config{} = config),
@@ -79,13 +79,15 @@ defmodule PhxDiff.Diffs.AppRepo do
     %Config{app_repo_path: app_repo_path} = config
     %AppSpecification{phoenix_version: version} = app_spec
 
-    Path.join(app_repo_path, version)
+    Path.join(app_repo_path, to_string(version))
   end
 
   defp app_specifications_for_pre_generated_apps(%Config{app_repo_path: app_repo_path}) do
     case File.ls(app_repo_path) do
       {:ok, files} ->
-        Enum.map(files, &Diffs.fetch_default_app_specification!/1)
+        files
+        |> Enum.map(&Version.parse!/1)
+        |> Enum.map(&Diffs.default_app_specification/1)
 
       {:error, _reason} ->
         []

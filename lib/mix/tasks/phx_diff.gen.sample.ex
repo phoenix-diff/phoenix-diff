@@ -7,8 +7,8 @@ defmodule Mix.Tasks.PhxDiff.Gen.Sample do
   @shortdoc "Generate a sample app for a phoenix version"
 
   def run([arg]) do
-    with {:ok, app_spec} <- Diffs.fetch_default_app_specification(arg),
-         {:ok, app_path} <- Diffs.generate_sample_app(app_spec) do
+    with {:ok, version} <- parse_version(arg),
+         {:ok, app_path} <- generate_app_path(version) do
       Mix.shell().info("""
 
       Successfully generated sample app.
@@ -35,5 +35,18 @@ defmodule Mix.Tasks.PhxDiff.Gen.Sample do
 
   def run(_) do
     Mix.shell().error([:red, "A phoenix version must be specified"])
+  end
+
+  defp parse_version(arg) do
+    case Version.parse(arg) do
+      {:ok, version} -> {:ok, version}
+      :error -> {:error, :invalid_version}
+    end
+  end
+
+  def generate_app_path(version) do
+    version
+    |> Diffs.default_app_specification()
+    |> Diffs.generate_sample_app()
   end
 end

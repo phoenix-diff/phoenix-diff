@@ -4,18 +4,17 @@ defmodule PhxDiffWeb.PageLive.DiffSelection do
 
   import Ecto.Changeset
 
-  alias PhxDiff.Diffs
+  alias PhxDiffWeb.PageLive.DiffSelection.Fields
 
+  @primary_key false
   embedded_schema do
-    field :source, :string
-    field :target, :string
+    field :source, Fields.Version
+    field :target, Fields.Version
   end
 
   def changeset(data, params \\ %{}) do
     data
     |> cast(params, [:source, :target])
     |> validate_required([:source, :target])
-    |> validate_inclusion(:source, Diffs.all_versions())
-    |> validate_inclusion(:target, Diffs.all_versions())
   end
 end
