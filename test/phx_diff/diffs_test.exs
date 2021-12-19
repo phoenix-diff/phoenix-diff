@@ -1,6 +1,7 @@
 defmodule PhxDiff.DiffsTest do
   use ExUnit.Case, async: true
 
+  import ExUnit.CaptureLog
   import PhxDiff.TestSupport.FileHelpers
   import PhxDiff.TestSupport.Sigils
 
@@ -12,7 +13,7 @@ defmodule PhxDiff.DiffsTest do
     Config
   }
 
-  @unknown_phonenix_version ~V[0.0.99]
+  @unknown_phoenix_version ~V[0.0.99]
 
   describe "all_versions/1" do
     test "returns all versions" do
@@ -53,13 +54,53 @@ defmodule PhxDiff.DiffsTest do
   end
 
   describe "get_diff/3" do
+    @diff_start_event [:phx_diff, :diffs, :generate, :start]
+    @diff_stop_event [:phx_diff, :diffs, :generate, :stop]
+    @diff_exception_event [:phx_diff, :diffs, :generate, :exception]
+    @diff_events [
+      @diff_start_event,
+      @diff_stop_event,
+      @diff_exception_event
+    ]
+
+    setup context do
+      test_pid = self()
+
+      :telemetry.attach_many(
+        {__MODULE__, context.test},
+        @diff_events,
+        fn event, measures, metadata, config ->
+          send(test_pid, {:telemetry_event, event, {measures, metadata, config}})
+        end,
+        %{test_pid: test_pid}
+      )
+
+      :ok
+    end
+
     test "returns content when versions are valid" do
+      test_pid = self()
+
       source = Diffs.default_app_specification(~V[1.3.1])
       target = Diffs.default_app_specification(~V[1.3.2])
 
-      {:ok, diff} = Diffs.get_diff(source, target)
+      log_output =
+        capture_log(fn ->
+          {:ok, diff} = Diffs.get_diff(source, target)
 
-      assert diff =~ "config/config.exs config/config.exs"
+          assert diff =~ "config/config.exs config/config.exs"
+        end)
+
+      assert_received {:telemetry_event, @diff_start_event,
+                       {_, %{source_spec: ^source, target_spec: ^target}, %{test_pid: ^test_pid}}}
+
+      assert_received {:telemetry_event, @diff_stop_event,
+                       {_, %{source_spec: ^source, target_spec: ^target}, %{test_pid: ^test_pid}}}
+
+      refute_received {:telemetry_event, @diff_exception_event, {_, _, %{test_pid: ^test_pid}}}
+
+      assert log_output =~ ~S|Comparing "1.3.1" to "1.3.2"|
+      assert log_output =~ ~S|Generated in|
     end
 
     test "returns empty when versions are the same" do
@@ -72,16 +113,38 @@ defmodule PhxDiff.DiffsTest do
     end
 
     test "returns an error when the source is an unknown version" do
-      source = Diffs.default_app_specification(@unknown_phonenix_version)
+      test_pid = self()
+      source = Diffs.default_app_specification(@unknown_phoenix_version)
       target = Diffs.default_app_specification(~V[1.3.1])
 
-      assert {:error, error} = Diffs.get_diff(source, target)
+      {log_output, result} =
+        capture_log_with_result(fn ->
+          Diffs.get_diff(source, target)
+        end)
+
+      assert {:error, error} = result
       assert %ComparisonError{errors: [{:source, :unknown_version}]} = error
+
+      assert_received {:telemetry_event, @diff_start_event,
+                       {_, %{source_spec: ^source, target_spec: ^target}, %{test_pid: ^test_pid}}}
+
+      assert_received {:telemetry_event, @diff_stop_event,
+                       {_,
+                        %{
+                          source_spec: ^source,
+                          target_spec: ^target,
+                          error: ^error
+                        }, %{test_pid: ^test_pid}}}
+
+      refute_received {:telemetry_event, @diff_exception_event, {_, _, %{test_pid: ^test_pid}}}
+
+      assert log_output =~ ~s|Comparing "#{@unknown_phoenix_version}" to "1.3.1"|
+      assert log_output =~ ~S|Unable to generate diff|
     end
 
     test "returns an error when the target is an unknown version" do
       source = Diffs.default_app_specification(~V[1.3.1])
-      target = Diffs.default_app_specification(@unknown_phonenix_version)
+      target = Diffs.default_app_specification(@unknown_phoenix_version)
 
       assert {:error, error} = Diffs.get_diff(source, target)
       assert %ComparisonError{errors: [{:target, :unknown_version}]} = error
@@ -194,6 +257,21 @@ defmodule PhxDiff.DiffsTest do
 
       {:error, _} ->
         :ok
+    end
+  end
+
+  defp capture_log_with_result(function) when is_function(function, 0) do
+    test_pid = self()
+    ref = make_ref()
+
+    log_output =
+      capture_log(fn ->
+        result = function.()
+        send(test_pid, {:log_result, ref, result})
+      end)
+
+    receive do
+      {:log_result, ^ref, result} -> {log_output, result}
     end
   end
 end

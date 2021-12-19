@@ -49,7 +49,14 @@ defmodule PhxDiffWeb.Telemetry do
       summary("vm.memory.total", unit: {:byte, :kilobyte}),
       summary("vm.total_run_queue_lengths.total"),
       summary("vm.total_run_queue_lengths.cpu"),
-      summary("vm.total_run_queue_lengths.io")
+      summary("vm.total_run_queue_lengths.io"),
+
+      # Application metrics
+      summary("phx_diff.diffs.generate.stop.duration",
+        description: "How long it takes to generate a diff (excluding errors)",
+        unit: {:native, :millisecond},
+        drop: &match?(%{error: _}, &1)
+      )
     ]
   end
 

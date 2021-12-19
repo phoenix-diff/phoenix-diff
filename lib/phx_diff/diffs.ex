@@ -57,11 +57,18 @@ defmodule PhxDiff.Diffs do
   def get_diff(%AppSpecification{} = source_spec, %AppSpecification{} = target_spec, opts \\ [])
       when is_list(opts) do
     config = get_config(opts)
+    metadata = %{source_spec: source_spec, target_spec: target_spec}
 
-    with {:ok, source_path, target_path} <- fetch_app_paths(config, source_spec, target_spec) do
-      diff = DiffEngine.compute_diff(source_path, target_path)
-      {:ok, diff}
-    end
+    :telemetry.span([:phx_diff, :diffs, :generate], metadata, fn ->
+      case fetch_app_paths(config, source_spec, target_spec) do
+        {:ok, source_path, target_path} ->
+          diff = DiffEngine.compute_diff(source_path, target_path)
+          {{:ok, diff}, metadata}
+
+        {:error, %ComparisonError{} = error} ->
+          {{:error, error}, Map.put(metadata, :error, error)}
+      end
+    end)
   end
 
   @spec generate_sample_app(AppSpecification.t(), [config_opt]) ::

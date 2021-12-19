@@ -7,6 +7,8 @@ defmodule PhxDiff.Application do
 
   @impl true
   def start(_type, _args) do
+    PhxDiff.Logger.install()
+
     # List all child processes to be supervised
     children = [
       # Start the Telemetry supervisor
