@@ -8,8 +8,11 @@ defmodule PhxDiff.DiffsTest do
 
   alias PhxDiff.Diffs.{
     AppSpecification,
+    ComparisonError,
     Config
   }
+
+  @unknown_phonenix_version ~V[0.0.99]
 
   describe "all_versions/1" do
     test "returns all versions" do
@@ -68,15 +71,20 @@ defmodule PhxDiff.DiffsTest do
       assert diff == ""
     end
 
-    test "returns an error when an app hasn't been generated for the given version" do
-      with_tmp(fn path ->
-        config = build_config(path)
+    test "returns an error when the source is an unknown version" do
+      source = Diffs.default_app_specification(@unknown_phonenix_version)
+      target = Diffs.default_app_specification(~V[1.3.1])
 
-        source = Diffs.default_app_specification(~V[1.3.1])
-        target = Diffs.default_app_specification(~V[1.4.2])
+      assert {:error, error} = Diffs.get_diff(source, target)
+      assert %ComparisonError{errors: [{:source, :unknown_version}]} = error
+    end
 
-        assert {:error, :invalid_versions} = Diffs.get_diff(source, target, config: config)
-      end)
+    test "returns an error when the target is an unknown version" do
+      source = Diffs.default_app_specification(~V[1.3.1])
+      target = Diffs.default_app_specification(@unknown_phonenix_version)
+
+      assert {:error, error} = Diffs.get_diff(source, target)
+      assert %ComparisonError{errors: [{:target, :unknown_version}]} = error
     end
   end
 

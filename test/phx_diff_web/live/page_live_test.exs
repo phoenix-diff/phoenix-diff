@@ -108,6 +108,44 @@ defmodule PhxDiffWeb.PageLiveTest do
       )
   end
 
+  @unknown_phonenix_version "0.0.99"
+
+  test "falls back to latest version when target url_param is unknown", %{conn: conn} do
+    {:ok, _view, _html} =
+      conn
+      |> live(
+        Routes.page_path(conn, :index,
+          source: Diffs.previous_release_version(),
+          target: @unknown_phonenix_version
+        )
+      )
+      |> follow_redirect(
+        conn,
+        Routes.page_path(conn, :index,
+          source: Diffs.previous_release_version(),
+          target: Diffs.latest_version()
+        )
+      )
+  end
+
+  test "falls back to previous version when source url_param is unknown", %{conn: conn} do
+    {:ok, _view, _html} =
+      conn
+      |> live(
+        Routes.page_path(conn, :index,
+          source: @unknown_phonenix_version,
+          target: Diffs.latest_version()
+        )
+      )
+      |> follow_redirect(
+        conn,
+        Routes.page_path(conn, :index,
+          source: Diffs.previous_release_version(),
+          target: Diffs.latest_version()
+        )
+      )
+  end
+
   @version_with_live_default_option "1.5.0"
   @version_without_live_default_option "1.4.0"
 

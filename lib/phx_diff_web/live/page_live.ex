@@ -4,7 +4,7 @@ defmodule PhxDiffWeb.PageLive do
 
   alias Ecto.Changeset
   alias PhxDiff.Diffs
-  alias PhxDiff.Diffs.AppSpecification
+  alias PhxDiff.Diffs.{AppSpecification, ComparisonError}
   alias PhxDiffWeb.PageLive.DiffSelection
 
   @impl true
@@ -18,14 +18,8 @@ defmodule PhxDiffWeb.PageLive do
 
   @impl true
   def handle_params(params, _uri, socket) do
-    case validate_form(socket.assigns.diff_selection, params) do
-      {:ok, diff_selection} ->
-        %DiffSelection{source: source, target: target} = diff_selection
-        source_app_spec = Diffs.default_app_specification(source)
-        target_app_spec = Diffs.default_app_specification(target)
-
-        {:ok, diff} = Diffs.get_diff(source_app_spec, target_app_spec)
-
+    case fetch_diff(socket.assigns.diff_selection, params) do
+      {:ok, {diff_selection, source_app_spec, target_app_spec, diff}} ->
         {:noreply,
          socket
          |> assign(:diff_selection, diff_selection)
@@ -33,9 +27,9 @@ defmodule PhxDiffWeb.PageLive do
          |> assign(:page_title, page_title(source_app_spec, target_app_spec))
          |> assign(:no_changes?, diff == "")
          |> assign(:diff, diff)
-         |> assign(:source_version, source)
+         |> assign(:source_version, source_app_spec.phoenix_version)
          |> assign(:source_arguments, arguments_string(source_app_spec))
-         |> assign(:target_version, target)
+         |> assign(:target_version, target_app_spec.phoenix_version)
          |> assign(:target_arguments, arguments_string(target_app_spec))}
 
       {:error, _changeset} ->
@@ -52,7 +46,9 @@ defmodule PhxDiffWeb.PageLive do
 
   @impl true
   def handle_event("diff-changed", %{"diff_selection" => params}, socket) do
-    case validate_form(socket.assigns.diff_selection, params) do
+    changeset = DiffSelection.changeset(socket.assigns.diff_selection, params)
+
+    case Changeset.apply_action(changeset, :lookup) do
       {:ok, %{source: source, target: target}} ->
         {:noreply,
          push_patch(socket,
@@ -68,10 +64,30 @@ defmodule PhxDiffWeb.PageLive do
     end
   end
 
-  defp validate_form(%DiffSelection{} = diff_selection, params) do
-    diff_selection
-    |> DiffSelection.changeset(params)
-    |> Changeset.apply_action(:lookup)
+  @spec fetch_diff(DiffSelection.t(), map) ::
+          {:ok, {DiffSelection.t(), AppSpecification.t(), AppSpecification.t(), Diffs.diff()}}
+          | {:error, Changeset.t()}
+  defp fetch_diff(%DiffSelection{} = diff_selection, params) do
+    changeset = DiffSelection.changeset(diff_selection, params)
+
+    with {:ok, diff_selection} <- Changeset.apply_action(changeset, :lookup) do
+      %DiffSelection{source: source, target: target} = diff_selection
+      source_app_spec = Diffs.default_app_specification(source)
+      target_app_spec = Diffs.default_app_specification(target)
+
+      case Diffs.get_diff(source_app_spec, target_app_spec) do
+        {:ok, diff} ->
+          {:ok, {diff_selection, source_app_spec, target_app_spec, diff}}
+
+        {:error, %ComparisonError{} = error} ->
+          changeset =
+            Enum.reduce(error.errors, changeset, fn {field, :unknown_version}, changeset ->
+              Changeset.add_error(changeset, field, "is unknown")
+            end)
+
+          {:error, changeset}
+      end
+    end
   end
 
   defp page_title(%AppSpecification{} = source, %AppSpecification{} = target) do

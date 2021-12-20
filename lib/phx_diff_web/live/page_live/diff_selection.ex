@@ -6,6 +6,11 @@ defmodule PhxDiffWeb.PageLive.DiffSelection do
 
   alias PhxDiffWeb.PageLive.DiffSelection.Fields
 
+  @type t :: %__MODULE__{
+          source: Version.t() | nil,
+          target: Version.t() | nil
+        }
+
   @primary_key false
   embedded_schema do
     field :source, Fields.Version

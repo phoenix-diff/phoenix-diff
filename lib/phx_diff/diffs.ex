@@ -5,6 +5,7 @@ defmodule PhxDiff.Diffs do
 
   alias PhxDiff.Diffs.AppRepo
   alias PhxDiff.Diffs.AppSpecification
+  alias PhxDiff.Diffs.ComparisonError
   alias PhxDiff.Diffs.Config
   alias PhxDiff.Diffs.DiffEngine
 
@@ -52,17 +53,14 @@ defmodule PhxDiff.Diffs do
   end
 
   @spec get_diff(AppSpecification.t(), AppSpecification.t(), [config_opt]) ::
-          {:ok, diff} | {:error, :invalid_versions}
+          {:ok, diff} | {:error, ComparisonError.t()}
   def get_diff(%AppSpecification{} = source_spec, %AppSpecification{} = target_spec, opts \\ [])
       when is_list(opts) do
     config = get_config(opts)
 
-    with {:ok, source_path} <- AppRepo.fetch_app_path(config, source_spec),
-         {:ok, target_path} <- AppRepo.fetch_app_path(config, target_spec) do
+    with {:ok, source_path, target_path} <- fetch_app_paths(config, source_spec, target_spec) do
       diff = DiffEngine.compute_diff(source_path, target_path)
       {:ok, diff}
-    else
-      {:error, :invalid_version} -> {:error, :invalid_versions}
     end
   end
 
@@ -72,6 +70,27 @@ defmodule PhxDiff.Diffs do
     config = get_config(opts)
 
     AppRepo.generate_sample_app(config, app_spec)
+  end
+
+  defp fetch_app_paths(config, source_spec, target_spec) do
+    [{:source, source_spec}, {:target, target_spec}]
+    |> Enum.reduce({%{}, []}, fn {field, spec}, {paths, errors} ->
+      case AppRepo.fetch_app_path(config, spec) do
+        {:ok, path} ->
+          {Map.put(paths, field, path), errors}
+
+        {:error, :invalid_version} ->
+          {paths, Keyword.put(errors, field, :unknown_version)}
+      end
+    end)
+    |> case do
+      {%{source: source_path, target: target_path}, _} ->
+        {:ok, source_path, target_path}
+
+      {_, errors} ->
+        {:error,
+         ComparisonError.exception(source: source_spec, target: target_spec, errors: errors)}
+    end
   end
 
   defp get_config(opts) when is_list(opts) do
