@@ -58,6 +58,10 @@ defmodule PhxDiff.MixProject do
       {:opentelemetry, "~> 1.0.0-rc.4"},
       {:opentelemetry_exporter, "~> 1.0.0-rc.4"},
       {:opentelemetry_phoenix, "~> 1.0.0-rc.6"},
+      # Using fork temporarily until library is updated for opentelemetry_api 1.0.0-rc.4
+      {:opentelemetry_liveview,
+       github: "aaronrenner/opentelemetry_liveview",
+       branch: "ar-temp-upgrade-to-opentelemetry-api-rc4"},
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
