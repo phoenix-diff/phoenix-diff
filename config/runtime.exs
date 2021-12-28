@@ -62,3 +62,29 @@ end
 # Set the honeybadger environment name for all envs
 config :honeybadger,
   environment_name: System.get_env("HONEYBADGER_ENV_NAME", to_string(config_env()))
+
+# OpenTelemetry configuration
+case System.fetch_env("OTEL_EXPORTER") do
+  {:ok, "stdout"} ->
+    config :opentelemetry, :processors,
+      otel_batch_processor: %{
+        exporter: {:otel_exporter_stdout, []}
+      }
+
+  {:ok, "honeycomb"} ->
+    config :opentelemetry_exporter,
+      otlp_endpoint: "https://api.honeycomb.io:443",
+      otlp_headers: [
+        {"x-honeycomb-team", System.fetch_env!("OTEL_HONEYCOMB_API_KEY")},
+        {"x-honeycomb-dataset", System.fetch_env!("OTEL_HONEYCOMB_DATASET")}
+      ]
+
+    config :opentelemetry, :processors,
+      otel_batch_processor: %{
+        exporter: {:opentelemetry_exporter, %{}}
+      }
+
+  :error ->
+    # Disabled by default
+    nil
+end

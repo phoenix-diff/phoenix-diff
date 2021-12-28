@@ -7,6 +7,7 @@ defmodule PhxDiff.Application do
 
   @impl true
   def start(_type, _args) do
+    OpentelemetryPhoenix.setup()
     PhxDiff.Logger.install()
 
     # List all child processes to be supervised

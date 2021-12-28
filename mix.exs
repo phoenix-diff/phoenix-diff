@@ -52,6 +52,12 @@ defmodule PhxDiff.MixProject do
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
       {:honeybadger, "~> 0.18.1"},
+      # The following are dependencies are needed for OpenTelemetry
+      {:tls_certificate_check, "~> 1.11"},
+      {:opentelemetry_api, "~> 1.0.0-rc.4"},
+      {:opentelemetry, "~> 1.0.0-rc.4"},
+      {:opentelemetry_exporter, "~> 1.0.0-rc.4"},
+      {:opentelemetry_phoenix, "~> 1.0.0-rc.6"},
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
