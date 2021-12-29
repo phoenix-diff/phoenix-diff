@@ -5,6 +5,7 @@ defmodule PhxDiff.DiffsTest do
   import PhxDiff.TestSupport.FileHelpers
   import PhxDiff.TestSupport.OpenTelemetryTestExporter, only: [subscribe_to_otel_spans: 1]
   import PhxDiff.TestSupport.Sigils
+  import PhxDiff.TestSupport.TelemetryHelpers, only: :macros
 
   alias PhxDiff.Diffs
 
@@ -13,6 +14,8 @@ defmodule PhxDiff.DiffsTest do
     ComparisonError,
     Config
   }
+
+  alias PhxDiff.TestSupport.TelemetryHelpers
 
   @unknown_phoenix_version ~V[0.0.99]
 
@@ -67,23 +70,11 @@ defmodule PhxDiff.DiffsTest do
     setup [:subscribe_to_otel_spans]
 
     setup context do
-      test_pid = self()
-
-      :telemetry.attach_many(
-        {__MODULE__, context.test},
-        @diff_events,
-        fn event, measures, metadata, config ->
-          send(test_pid, {:telemetry_event, event, {measures, metadata, config}})
-        end,
-        %{test_pid: test_pid}
-      )
-
+      TelemetryHelpers.subscribe_to_telemetry_events(context, @diff_events)
       :ok
     end
 
     test "returns content when versions are valid" do
-      test_pid = self()
-
       source = Diffs.default_app_specification(~V[1.3.1])
       target = Diffs.default_app_specification(~V[1.3.2])
 
@@ -94,13 +85,17 @@ defmodule PhxDiff.DiffsTest do
           assert diff =~ "config/config.exs config/config.exs"
         end)
 
-      assert_received {:telemetry_event, @diff_start_event,
-                       {_, %{source_spec: ^source, target_spec: ^target}, %{test_pid: ^test_pid}}}
+      assert_received_telemetry_event(
+        @diff_start_event,
+        {_, %{source_spec: ^source, target_spec: ^target}}
+      )
 
-      assert_received {:telemetry_event, @diff_stop_event,
-                       {_, %{source_spec: ^source, target_spec: ^target}, %{test_pid: ^test_pid}}}
+      assert_received_telemetry_event(
+        @diff_stop_event,
+        {_, %{source_spec: ^source, target_spec: ^target}}
+      )
 
-      refute_received {:telemetry_event, @diff_exception_event, {_, _, %{test_pid: ^test_pid}}}
+      refute_received_telemetry_event(@diff_exception_event, _)
 
       assert log_output =~ ~S|Comparing "1.3.1" to "1.3.2"|
       assert log_output =~ ~S|Generated in|
@@ -125,7 +120,6 @@ defmodule PhxDiff.DiffsTest do
     end
 
     test "returns an error when the source is an unknown version" do
-      test_pid = self()
       source = Diffs.default_app_specification(@unknown_phoenix_version)
       target = Diffs.default_app_specification(~V[1.3.1])
 
@@ -137,18 +131,17 @@ defmodule PhxDiff.DiffsTest do
       assert {:error, error} = result
       assert %ComparisonError{errors: [{:source, :unknown_version}]} = error
 
-      assert_received {:telemetry_event, @diff_start_event,
-                       {_, %{source_spec: ^source, target_spec: ^target}, %{test_pid: ^test_pid}}}
+      assert_received_telemetry_event(
+        @diff_start_event,
+        {_, %{source_spec: ^source, target_spec: ^target}}
+      )
 
-      assert_received {:telemetry_event, @diff_stop_event,
-                       {_,
-                        %{
-                          source_spec: ^source,
-                          target_spec: ^target,
-                          error: ^error
-                        }, %{test_pid: ^test_pid}}}
+      assert_received_telemetry_event(
+        @diff_stop_event,
+        {_, %{source_spec: ^source, target_spec: ^target, error: ^error}}
+      )
 
-      refute_received {:telemetry_event, @diff_exception_event, {_, _, %{test_pid: ^test_pid}}}
+      refute_received_telemetry_event(@diff_exception_event, _)
 
       assert log_output =~ ~s|Comparing "#{@unknown_phoenix_version}" to "1.3.1"|
       assert log_output =~ ~S|Unable to generate diff|
