@@ -12,3 +12,11 @@ config :logger, level: :debug
 
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
+
+config :opentelemetry,
+  tracer: :otel_tracer_default,
+  processors: [
+    otel_batch_processor: %{
+      scheduled_delay_ms: 1
+    }
+  ]

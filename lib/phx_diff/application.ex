@@ -10,6 +10,7 @@ defmodule PhxDiff.Application do
     OpentelemetryPhoenix.setup()
     OpentelemetryLiveView.setup()
     PhxDiff.Logger.install()
+    PhxDiff.OpenTelemetry.setup()
 
     # List all child processes to be supervised
     children = [

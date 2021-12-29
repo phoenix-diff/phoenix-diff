@@ -3,6 +3,7 @@ defmodule PhxDiff.DiffsTest do
 
   import ExUnit.CaptureLog
   import PhxDiff.TestSupport.FileHelpers
+  import PhxDiff.TestSupport.OpenTelemetryTestExporter, only: [subscribe_to_otel_spans: 1]
   import PhxDiff.TestSupport.Sigils
 
   alias PhxDiff.Diffs
@@ -63,6 +64,8 @@ defmodule PhxDiff.DiffsTest do
       @diff_exception_event
     ]
 
+    setup [:subscribe_to_otel_spans]
+
     setup context do
       test_pid = self()
 
@@ -101,6 +104,15 @@ defmodule PhxDiff.DiffsTest do
 
       assert log_output =~ ~S|Comparing "1.3.1" to "1.3.2"|
       assert log_output =~ ~S|Generated in|
+
+      assert_receive {:otel_span,
+                      %{
+                        name: :"PhxDiff.Diffs.get_diff/3",
+                        attributes: %{
+                          "diff.source_phoenix_version": "1.3.1",
+                          "diff.target_phoenix_version": "1.3.2"
+                        }
+                      }}
     end
 
     test "returns empty when versions are the same" do

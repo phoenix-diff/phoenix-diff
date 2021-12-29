@@ -2,8 +2,11 @@ defmodule PhxDiffWeb.PageLiveTest do
   use PhxDiffWeb.ConnCase
 
   import Phoenix.LiveViewTest
+  import PhxDiff.TestSupport.OpenTelemetryTestExporter, only: [subscribe_to_otel_spans: 1]
 
   alias PhxDiff.Diffs
+
+  setup [:subscribe_to_otel_spans]
 
   test "redirects to include the source and target in url", %{conn: conn} do
     {:ok, view, _html} =
@@ -51,6 +54,23 @@ defmodule PhxDiffWeb.PageLiveTest do
            {:ecto_sql, "~> 3.4"},
            {:postgrex, ">= 0.0.0"},
     """)
+
+    assert_receive {:otel_span,
+                    %{
+                      instrumentation_library: %{name: "opentelemetry_phoenix"},
+                      attributes: %{"http.status_code": 200}
+                    }}
+
+    assert_receive {:otel_span,
+                    %{
+                      name: :"PhxDiff.Diffs.get_diff/3",
+                      attributes: %{
+                        "diff.source_phoenix_version": "1.5.0",
+                        "diff.target_phoenix_version": "1.5.1"
+                      }
+                    } = diff_span}
+
+    assert %{name: "phx_diff"} = diff_span.instrumentation_library
   end
 
   test "toggling line by line or side by side", %{conn: conn} do
@@ -144,6 +164,12 @@ defmodule PhxDiffWeb.PageLiveTest do
           target: Diffs.latest_version()
         )
       )
+
+    assert_received {:otel_span,
+                     %{
+                       instrumentation_library: %{name: "opentelemetry_phoenix"},
+                       attributes: %{"http.status_code": 302}
+                     }}
   end
 
   @version_with_live_default_option "1.5.0"
