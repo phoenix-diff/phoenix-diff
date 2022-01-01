@@ -6,24 +6,25 @@ defmodule PhxDiff.OpenTelemetry do
   require OpenTelemetry.Tracer
   alias OpenTelemetry.Span
 
-  def setup do
-    handlers = %{
-      [:phx_diff, :diffs, :generate, :start] => &__MODULE__.phx_diff_diffs_generate_start/4,
-      [:phx_diff, :diffs, :generate, :stop] => &__MODULE__.phx_diff_diffs_generate_stop/4
-    }
+  @diff_generate_start_event [:phx_diff, :diffs, :generate, :start]
+  @diff_generate_stop_event [:phx_diff, :diffs, :generate, :stop]
+  @diff_generate_exception_event [:phx_diff, :diffs, :generate, :exception]
 
-    for {event, handler} <- handlers do
-      :telemetry.attach(
-        {__MODULE__, event},
-        event,
-        handler,
-        :ok
-      )
-    end
+  def setup do
+    :telemetry.attach_many(
+      __MODULE__,
+      [
+        @diff_generate_start_event,
+        @diff_generate_stop_event,
+        @diff_generate_exception_event
+      ],
+      &__MODULE__.phx_diff_diffs_generate/4,
+      :ok
+    )
   end
 
   @doc false
-  def phx_diff_diffs_generate_start(_, _, metadata, _) do
+  def phx_diff_diffs_generate(@diff_generate_start_event, _, metadata, _) do
     %{source_spec: source, target_spec: target} = metadata
 
     attributes = [
@@ -42,10 +43,24 @@ defmodule PhxDiff.OpenTelemetry do
     )
   end
 
-  def phx_diff_diffs_generate_stop(_, %{duration: duration}, meta, _) do
+  def phx_diff_diffs_generate(@diff_generate_stop_event, %{duration: duration}, meta, _) do
     ctx = OpentelemetryTelemetry.set_current_telemetry_span(@tracer_id, meta)
 
     set_duration(ctx, duration)
+
+    OpentelemetryTelemetry.end_telemetry_span(@tracer_id, meta)
+  end
+
+  def phx_diff_diffs_generate(@diff_generate_exception_event, _, meta, _) do
+    ctx = OpentelemetryTelemetry.set_current_telemetry_span(@tracer_id, meta)
+    %{kind: kind, reason: reason, stacktrace: stacktrace} = meta
+
+    # try to normalize all errors to Elixir exceptions
+    exception = Exception.normalize(kind, reason, stacktrace)
+
+    # record exception and mark the span as errored
+    Span.record_exception(ctx, exception, stacktrace)
+    Span.set_status(ctx, OpenTelemetry.status(:error, ""))
 
     OpentelemetryTelemetry.end_telemetry_span(@tracer_id, meta)
   end

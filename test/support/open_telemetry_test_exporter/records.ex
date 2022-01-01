@@ -3,11 +3,15 @@ defmodule PhxDiff.TestSupport.OpenTelemetryTestExporter.Records do
 
   require Record
 
-  :span
-  |> Record.extract(from_lib: "opentelemetry/include/otel_span.hrl")
-  |> then(&Record.defrecord(:span, &1))
+  for record_name <- [:span, :event] do
+    record_name
+    |> Record.extract(from_lib: "opentelemetry/include/otel_span.hrl")
+    |> then(&Record.defrecord(record_name, &1))
+  end
 
-  :instrumentation_library
-  |> Record.extract(from_lib: "opentelemetry_api/include/opentelemetry.hrl")
-  |> then(&Record.defrecord(:instrumentation_library, &1))
+  for record_name <- [:instrumentation_library, :status] do
+    record_name
+    |> Record.extract(from_lib: "opentelemetry_api/include/opentelemetry.hrl")
+    |> then(&Record.defrecord(record_name, &1))
+  end
 end
