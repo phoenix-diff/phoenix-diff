@@ -106,7 +106,7 @@ defmodule PhxDiff.Diffs do
 
   defp default_config do
     %Config{
-      app_repo_path: "data/sample-app",
+      app_repo_path: Application.app_dir(:phx_diff, "priv/data/sample-app"),
       app_generator_workspace_path: "tmp"
     }
   end

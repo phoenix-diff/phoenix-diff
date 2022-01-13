@@ -9,6 +9,8 @@ defmodule Mix.Tasks.PhxDiff.Gen.Sample do
   def run([arg]) do
     with {:ok, version} <- parse_version(arg),
          {:ok, app_path} <- generate_app_path(version) do
+      app_path = Path.relative_to(app_path, Application.app_dir(:phx_diff))
+
       Mix.shell().info("""
 
       Successfully generated sample app.
