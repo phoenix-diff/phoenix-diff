@@ -72,16 +72,17 @@ case System.fetch_env("OTEL_EXPORTER") do
       }
 
   {:ok, "honeycomb"} ->
-    config :opentelemetry_exporter,
-      otlp_endpoint: "https://api.honeycomb.io:443",
-      otlp_headers: [
-        {"x-honeycomb-team", System.fetch_env!("OTEL_HONEYCOMB_API_KEY")},
-        {"x-honeycomb-dataset", System.fetch_env!("OTEL_HONEYCOMB_DATASET")}
-      ]
-
     config :opentelemetry, :processors,
       otel_batch_processor: %{
-        exporter: {:opentelemetry_exporter, %{}}
+        exporter:
+          {:opentelemetry_exporter,
+           %{
+             endpoints: ["https://api.honeycomb.io:443"],
+             headers: [
+               {"x-honeycomb-team", System.fetch_env!("OTEL_HONEYCOMB_API_KEY")},
+               {"x-honeycomb-dataset", System.fetch_env!("OTEL_HONEYCOMB_DATASET")}
+             ]
+           }}
       }
 
   :error ->
