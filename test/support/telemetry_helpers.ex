@@ -11,6 +11,15 @@ defmodule PhxDiff.TestSupport.TelemetryHelpers do
   * `assert_received_telemetry_event/2`
   * `refute_received_telemetry_event/2`
   """
+  def subscribe_to_telemetry_events(%{async: true}, _) do
+    raise ArgumentError, """
+    tests using `subscribe_to_telemetry_events/1` are not compatible with `async: true`
+
+      :telemetry is a global message bus which is shared between tests, so running
+      multiple tests concurrently can lead to unexpected results.
+    """
+  end
+
   def subscribe_to_telemetry_events(context, events) do
     test_pid = self()
 

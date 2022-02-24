@@ -1,5 +1,5 @@
 defmodule PhxDiff.OpenTelemetryTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
 
   import PhxDiff.TestSupport.OpenTelemetryTestExporter, only: [subscribe_to_otel_spans: 1]
   import PhxDiff.TestSupport.Sigils
