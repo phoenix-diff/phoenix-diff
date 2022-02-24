@@ -3,9 +3,12 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      MIX_ENV: test
     steps:
       - uses: actions/checkout@v2
-      - uses: erlef/setup-elixir@v1
+      - uses: erlef/setup-beam@v1
+        id: beam
         with:
           otp-version: '23.3.2'
           elixir-version: '1.13.1'
@@ -17,5 +20,24 @@ jobs:
           key: ${{ runner.os }}-cache-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
 
       - run: mix deps.get
-      - run: MIX_ENV=test mix dialyzer --plt
+      - name: Restore core plt cache
+        uses: actions/cache@v2
+        id: core-plt-cache
+        with:
+          path: .dialyzer/core
+          key:
+            ${{ runner.os }}-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-plt-core-v1
+      - name: Restore local plt cache
+        uses: actions/cache@v2
+        id: local-plt-cache
+        with:
+          path: .dialyzer/local
+          key:
+            ${{ runner.os }}-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-plt-local-${{ env.MIX_ENV || 'dev' }}-v1-${{ hashFiles('**/mix.lock')}}
+      - name: Compile dialyzer PLT
+        if: steps.local-plt-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p .dialyzer/core
+          mkdir -p .dialyzer/local
+          mix dialyzer --plt
       - run: mix ci

@@ -14,7 +14,7 @@ defmodule PhxDiff.MixProject do
       preferred_cli_env: [
         ci: :test
       ],
-      dialyzer: dialyzer()
+      dialyzer: dialyzer(System.get_env())
     ]
   end
 
@@ -85,6 +85,17 @@ defmodule PhxDiff.MixProject do
     ]
   end
 
+  # Environment specific dialyzer config
+  defp dialyzer(%{"CI" => "true"}) do
+    [
+      plt_core_path: ".dialyzer/core",
+      plt_local_path: ".dialyzer/local"
+    ] ++ dialyzer()
+  end
+
+  defp dialyzer(_), do: dialyzer()
+
+  # Common dialyzer config
   defp dialyzer do
     [plt_add_apps: [:mix, :ex_unit]]
   end
