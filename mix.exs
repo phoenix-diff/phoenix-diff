@@ -64,7 +64,7 @@ defmodule PhxDiff.MixProject do
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
-      {:ex_unit_notifier, "~> 0.1", only: :test, runtime: false},
+      {:ex_unit_notifier, "~> 1.2", only: :test, runtime: false},
       {:floki, ">= 0.30.0", only: :test}
     ]
   end
