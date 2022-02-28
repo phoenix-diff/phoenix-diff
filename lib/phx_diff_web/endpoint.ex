@@ -31,10 +31,9 @@ defmodule PhxDiffWeb.Endpoint do
     from: :phx_diff,
     gzip: false,
     only: ~w(
-      css
+      assets
       fonts
       images
-      js
       favicon.ico
       favicon-16x16.png
       favicon-32x32.png

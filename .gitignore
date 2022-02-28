@@ -22,23 +22,15 @@ erl_crash.dump
 # Ignore package tarball (built via "mix hex.build").
 phx_diff-*.tar
 
-# If NPM crashes, it generates a log, let's ignore it too.
-npm-debug.log
+# Ignore assets that are produced by build tools.
+/priv/static/assets/
 
-# The directory NPM downloads your dependencies sources to.
+# Ignore digested assets cache.
+/priv/static/cache_manifest.json
+
+# In case you use Node.js/npm, you want to ignore these.
+npm-debug.log
 /assets/node_modules/
 
-# Since we are building assets from assets/,
-# we ignore priv/static. You may want to comment
-# this depending on your deployment strategy.
-/priv/static/
-
-# Files matching config/*.secret.exs pattern contain sensitive
-# data and you should not commit them into version control.
-#
-# Alternatively, you may comment the line below and commit the
-# secrets files as long as you replace their contents by environment
-# variables.
-/config/*.secret.exs
-
+# Temporary files
 /tmp

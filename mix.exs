@@ -59,6 +59,8 @@ defmodule PhxDiff.MixProject do
       {:opentelemetry_exporter, "~> 1.0.0"},
       {:opentelemetry_phoenix, "~> 1.0.0-rc.7"},
       {:opentelemetry_liveview, "~> 1.0.0-rc.3"},
+      {:esbuild, "~> 0.3", runtime: Mix.env() == :dev},
+      {:dart_sass, "~> 0.4", runtime: Mix.env() == :dev},
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
@@ -81,6 +83,12 @@ defmodule PhxDiff.MixProject do
         "test --raise",
         "credo --strict --all",
         "dialyzer"
+      ],
+      setup: ["deps.get", "cmd --cd assets yarn install"],
+      "assets.deploy": [
+        "esbuild default --minify",
+        "sass default --no-source-map --style=compressed",
+        "phx.digest"
       ]
     ]
   end

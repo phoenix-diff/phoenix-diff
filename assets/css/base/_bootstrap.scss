@@ -1,6 +1,6 @@
 $primary: $main-brand-color;
 
-@import "~bootstrap/scss/bootstrap";
+@import "../../node_modules/bootstrap/scss/bootstrap";
 
 body {
   font-family: 'Open Sans', $font-family-sans-serif;
