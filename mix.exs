@@ -14,6 +14,8 @@ defmodule PhxDiff.MixProject do
       preferred_cli_env: [
         ci: :test
       ],
+      releases: releases(),
+      default_release: :phx_diff,
       dialyzer: dialyzer(System.get_env())
     ]
   end
@@ -106,5 +108,12 @@ defmodule PhxDiff.MixProject do
   # Common dialyzer config
   defp dialyzer do
     [plt_add_apps: [:mix, :ex_unit]]
+  end
+
+  defp releases do
+    [
+      phx_diff: [include_executables_for: [:unix]],
+      applications: [runtime_tools: :permanent]
+    ]
   end
 end

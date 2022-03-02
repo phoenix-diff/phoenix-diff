@@ -6,6 +6,12 @@ import Config
 # and secrets from environment variables or elsewhere. Do not define
 # any compile-time configuration in here, as it won't be applied.
 # The block below contains prod specific runtime configuration.
+
+# Start the phoenix server if environment is set and running in a release
+if System.get_env("PHX_SERVER") do
+  config :phx_diff, PhxDiffWeb.Endpoint, server: true
+end
+
 if config_env() == :prod do
   # The secret key base is used to sign/encrypt cookies and other secrets.
   # A default value is used in config/dev.exs and config/test.exs but you
@@ -19,6 +25,16 @@ if config_env() == :prod do
       You can generate one by calling: mix phx.gen.secret
       """
 
+  # Optional config settings for the asset host
+  static_url =
+    for {key, env_var} <- [scheme: "ASSET_SCHEME", host: "ASSET_HOST", port: "ASSET_PORT"],
+        env_val = System.get_env(env_var),
+        do: {key, env_val}
+
+  if Enum.any?(static_url) do
+    config :phx_diff, PhxDiffWeb.Endpoint, static_url: static_url
+  end
+
   config :phx_diff, PhxDiffWeb.Endpoint,
     http: [
       # Enable IPv6 and bind on all interfaces.
@@ -27,6 +43,11 @@ if config_env() == :prod do
       # for details about using IPv6 vs IPv4 and loopback vs public addresses.
       ip: {0, 0, 0, 0, 0, 0, 0, 0},
       port: String.to_integer(System.get_env("PORT") || "4000")
+    ],
+    url: [
+      scheme: System.get_env("URL_SCHEME", "https"),
+      host: System.get_env("URL_HOST", "www.phoenixdiff.org"),
+      port: String.to_integer(System.get_env("URL_PORT", "443"))
     ],
     secret_key_base: secret_key_base
 
