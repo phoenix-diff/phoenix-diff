@@ -2,6 +2,7 @@
 
 PhxDiff has several environment variables that need to be set to deploy to a production environment
 
+* `RENDER_TRACKING_SCRIPTS` - Render the google analytics tracking scripts in the template when `"true"`.
 * `OTEL_EXPORTER`
   * not set - Don't export otel metrics
   * `honeycomb` - Send the traces directly to honeycomb

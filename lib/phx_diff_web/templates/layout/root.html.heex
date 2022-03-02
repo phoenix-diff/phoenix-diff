@@ -64,7 +64,7 @@
             </div>
         </div>
 
-        <%= if Mix.env == :prod do %>
+        <%= if PhxDiffWeb.Config.render_tracking_scripts?() do %>
         <%= render "_tracking_scripts.html" %>
         <% end %>
 

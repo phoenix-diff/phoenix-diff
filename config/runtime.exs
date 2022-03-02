@@ -59,6 +59,11 @@ if config_env() == :prod do
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 end
 
+# Enables website analytics tracking scripts
+if System.get_env("RENDER_TRACKING_SCRIPTS") == "true" do
+  config :phx_diff, render_tracking_scripts: true
+end
+
 # Set the honeybadger environment name for all envs
 config :honeybadger,
   environment_name: System.get_env("HONEYBADGER_ENV_NAME", to_string(config_env()))
