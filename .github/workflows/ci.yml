@@ -52,7 +52,7 @@ jobs:
           otp-version: '24.3.2'
           elixir-version: '1.13.3'
       - run: mix deps.get
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '14.19.0'
       - name: Install dependencies
