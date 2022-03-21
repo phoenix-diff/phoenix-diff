@@ -10,8 +10,8 @@ jobs:
       - uses: erlef/setup-beam@v1
         id: beam
         with:
-          otp-version: '23.3.2'
-          elixir-version: '1.13.1'
+          otp-version: '24.3.2'
+          elixir-version: '1.13.3'
       - uses: actions/cache@v2
         with:
           path: |
@@ -49,8 +49,8 @@ jobs:
       # Download phoenix so we yarn install works correctly
       - uses: erlef/setup-beam@v1
         with:
-          otp-version: '23.3.2'
-          elixir-version: '1.13.1'
+          otp-version: '24.3.2'
+          elixir-version: '1.13.3'
       - run: mix deps.get
       - uses: actions/setup-node@v2
         with:
