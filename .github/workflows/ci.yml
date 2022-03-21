@@ -12,7 +12,7 @@ jobs:
         with:
           otp-version: '24.3.2'
           elixir-version: '1.13.3'
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: |
             _build
@@ -21,14 +21,14 @@ jobs:
 
       - run: mix deps.get
       - name: Restore core plt cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: core-plt-cache
         with:
           path: .dialyzer/core
           key:
             ${{ runner.os }}-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-plt-core-v1
       - name: Restore local plt cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: local-plt-cache
         with:
           path: .dialyzer/local
