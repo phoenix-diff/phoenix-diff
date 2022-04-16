@@ -7,7 +7,15 @@ import Config
 # any compile-time configuration in here, as it won't be applied.
 # The block below contains prod specific runtime configuration.
 
-# Start the phoenix server if environment is set and running in a release
+# ## Using releases
+#
+# If you use `mix release`, you need to explicitly enable the server
+# by passing the PHX_SERVER=true when you start it:
+#
+#     PHX_SERVER=true bin/phx_diff start
+#
+# Alternatively, you can use `mix phx.gen.release` to generate a `bin/server`
+# script that automatically sets the env var above.
 if System.get_env("PHX_SERVER") do
   config :phx_diff, PhxDiffWeb.Endpoint, server: true
 end
@@ -50,16 +58,6 @@ if config_env() == :prod do
       port: String.to_integer(System.get_env("URL_PORT", "443"))
     ],
     secret_key_base: secret_key_base
-
-  # ## Using releases
-  #
-  # If you are doing OTP releases, you need to instruct Phoenix
-  # to start each relevant endpoint:
-  #
-  #     config :phx_diff, PhxDiffWeb.Endpoint, server: true
-  #
-  # Then you can assemble a release by calling `mix release`.
-  # See `mix help release` for more information.
 
   # ## Configuring the mailer
   #

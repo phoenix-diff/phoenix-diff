@@ -39,7 +39,7 @@ defmodule PhxDiff.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "1.6.6"},
+      {:phoenix, "1.6.7"},
       {:phoenix_pubsub, "~> 2.0"},
       {:phoenix_html, "~> 3.0"},
       {:phoenix_live_view, "~> 0.17.5"},
@@ -61,7 +61,7 @@ defmodule PhxDiff.MixProject do
       {:opentelemetry_exporter, "~> 1.0.0"},
       {:opentelemetry_phoenix, "~> 1.0.0-rc.7"},
       {:opentelemetry_liveview, "~> 1.0.0-rc.3"},
-      {:esbuild, "~> 0.3", runtime: Mix.env() == :dev},
+      {:esbuild, "~> 0.4", runtime: Mix.env() == :dev},
       {:dart_sass, "~> 0.4", runtime: Mix.env() == :dev},
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
