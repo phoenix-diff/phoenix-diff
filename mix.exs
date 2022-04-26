@@ -45,7 +45,7 @@ defmodule PhxDiff.MixProject do
       {:phoenix_live_view, "~> 0.17.5"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_dashboard, "~> 0.6"},
-      {:ecto, "~> 3.7.1"},
+      {:ecto, "~> 3.8.0"},
       {:phoenix_ecto, "~> 4.4"},
       {:gettext, "~> 0.18"},
       {:jason, "~> 1.2"},
