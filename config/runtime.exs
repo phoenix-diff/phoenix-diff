@@ -109,6 +109,16 @@ case System.fetch_env("OTEL_EXPORTER") do
            }}
       }
 
+  {:ok, "signoz-local"} ->
+    config :opentelemetry, :processors,
+      otel_batch_processor: %{
+        exporter:
+          {:opentelemetry_exporter,
+           %{
+             endpoints: ["http://localhost:4318"]
+           }}
+      }
+
   :error ->
     # Disabled by default
     nil

@@ -6,6 +6,7 @@ PhxDiff has several environment variables that need to be set to deploy to a pro
 * `OTEL_EXPORTER`
   * not set - Don't export otel metrics
   * `honeycomb` - Send the traces directly to honeycomb
+  * `signoz-local` - Send the traces to a local instance of signoz
   * `stdout` - Output the traces to stdout. Useful for debugging locally.
 
 * `OTEL_HONEYCOMB_API_KEY` - The API key used to send data to honeycomb. Required when using the honeycomb OTEL exporter.
