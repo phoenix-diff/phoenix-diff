@@ -24,7 +24,7 @@ defmodule PhxDiff.TestSupport.OpenTelemetryTestExporter do
   end
 
   @impl :otel_exporter
-  def export(spans_tid, _Resource, _state) do
+  def export(_type, spans_tid, _Resource, _state) do
     :ets.foldl(
       fn span, _acc ->
         normalized_span = normalize_span(span)
@@ -74,8 +74,8 @@ defmodule PhxDiff.TestSupport.OpenTelemetryTestExporter do
       {:links, val} ->
         {:otel_links, :otel_links.list(val)}
 
-      {:instrumentation_library, val} ->
-        {:instrumentation_library, val |> Records.instrumentation_library() |> Map.new()}
+      {:instrumentation_scope, val} ->
+        {:instrumentation_scope, val |> Records.instrumentation_scope() |> Map.new()}
 
       {:status, val} ->
         {:status, val |> Records.status() |> Map.new()}

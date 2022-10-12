@@ -9,7 +9,7 @@ defmodule PhxDiff.TestSupport.OpenTelemetryTestExporter.Records do
     |> then(&Record.defrecord(record_name, &1))
   end
 
-  for record_name <- [:instrumentation_library, :status] do
+  for record_name <- [:instrumentation_scope, :status] do
     record_name
     |> Record.extract(from_lib: "opentelemetry_api/include/opentelemetry.hrl")
     |> then(&Record.defrecord(record_name, &1))

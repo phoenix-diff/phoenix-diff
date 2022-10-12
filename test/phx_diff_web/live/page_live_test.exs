@@ -57,7 +57,7 @@ defmodule PhxDiffWeb.PageLiveTest do
 
     assert_receive {:otel_span,
                     %{
-                      instrumentation_library: %{name: "opentelemetry_phoenix"},
+                      instrumentation_scope: %{name: "opentelemetry_phoenix"},
                       attributes: %{"http.status_code": 200}
                     }}
 
@@ -70,11 +70,11 @@ defmodule PhxDiffWeb.PageLiveTest do
                       }
                     } = diff_span}
 
-    assert %{name: "phx_diff"} = diff_span.instrumentation_library
+    assert %{name: "phx_diff"} = diff_span.instrumentation_scope
 
     assert_receive {:otel_span,
                     %{
-                      instrumentation_library: %{name: "opentelemetry_liveview"},
+                      instrumentation_scope: %{name: "opentelemetry_liveview"},
                       name: "PhxDiffWeb.PageLive.mount",
                       attributes: %{"liveview.callback": "mount"}
                     }}
@@ -174,7 +174,7 @@ defmodule PhxDiffWeb.PageLiveTest do
 
     assert_received {:otel_span,
                      %{
-                       instrumentation_library: %{name: "opentelemetry_phoenix"},
+                       instrumentation_scope: %{name: "opentelemetry_phoenix"},
                        attributes: %{"http.status_code": 302}
                      }}
   end
