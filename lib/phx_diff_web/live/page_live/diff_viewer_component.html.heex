@@ -2,10 +2,10 @@
   <.form
     let={f}
     for={@changeset}
-    as="form"
+    as={:form}
     id={"diff-viewer-form-#{@id}"}
-    phx-change="options-changed",
-    phx_target={@myself}>
+    phx-change="options-changed"
+    phx-target={@myself}>
 
     <div id="diff-view-toggles">
       <div class="header">Display mode:</div>

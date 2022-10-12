@@ -6,10 +6,10 @@
       <.form
         let={f}
         for={@changeset}
-        as="diff_selection"
+        as={:diff_selection}
         id="diff-selector-form"
-        phx_change="diff-changed"
-        phx_hook="DiffSelectorComponent">
+        phx-change="diff-changed"
+        phx-hook="DiffSelectorComponent">
 
         <div class="version-selectors">
           <div class="version-selector version-selector-source">
