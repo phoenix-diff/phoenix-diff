@@ -71,6 +71,13 @@ defmodule PhxDiffWeb.PageLiveTest do
                     } = diff_span}
 
     assert %{name: "phx_diff"} = diff_span.instrumentation_library
+
+    assert_receive {:otel_span,
+                    %{
+                      instrumentation_library: %{name: "opentelemetry_liveview"},
+                      name: "PhxDiffWeb.PageLive.mount",
+                      attributes: %{"liveview.callback": "mount"}
+                    }}
   end
 
   test "toggling line by line or side by side", %{conn: conn} do
