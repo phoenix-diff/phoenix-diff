@@ -6,7 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content={csrf_token_value()}>
-    <%= live_title_tag assigns[:page_title] || "", prefix: "PhoenixDiff · " %>
+    <.live_title prefix="PhoenixDiff · ">
+      <%= assigns[:page_title] || "" %>
+    </.live_title>
     <meta name="description" content="See the changes needed to upgrade your Phoenix application" />
     <meta name="keywords" content="Elixir,Phoenix,PhoenixFramework,Upgrade,Diff,PhoenixDiff" />
     <meta name="author" content="Navin Peiris @navinpeiris" />
