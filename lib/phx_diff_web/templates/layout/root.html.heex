@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="csrf-token" content={csrf_token_value()}>
+    <meta name="csrf-token" content={csrf_token_value()} />
     <.live_title prefix="PhoenixDiff · ">
       <%= assigns[:page_title] || "" %>
     </.live_title>
@@ -13,63 +12,70 @@
     <meta name="keywords" content="Elixir,Phoenix,PhoenixFramework,Upgrade,Diff,PhoenixDiff" />
     <meta name="author" content="Navin Peiris @navinpeiris" />
 
-    <base href="/">
+    <base href="/" />
 
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/diff2html@2.10.0/dist/diff2html.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/diff2html@2.10.0/dist/diff2html.min.css"
+    />
     <link rel="stylesheet" href={Routes.static_url(@conn, "/assets/app.css")} />
 
-    <script defer src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.slim.min.js" ></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/diff2html@2.10.0/dist/diff2html.min.js" ></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/diff2html@2.10.0/dist/diff2html-ui.min.js" ></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.slim.min.js">
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/diff2html@2.10.0/dist/diff2html.min.js">
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/diff2html@2.10.0/dist/diff2html-ui.min.js">
+    </script>
 
-    <script defer phx-track-static src={Routes.static_url(@conn, "/assets/app.js")}></script>
-</head>
+    <script defer phx-track-static src={Routes.static_url(@conn, "/assets/app.js")}>
+    </script>
+  </head>
 
-<body>
+  <body>
     <header>
-        <nav class="navbar" role="navigation">
-            <a class="navbar-brand" href="/">PhoenixDiff</a>
+      <nav class="navbar" role="navigation">
+        <a class="navbar-brand" href="/">PhoenixDiff</a>
 
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="https://github.com/navinpeiris/phoenix-diff" target="_blank">
-                        View on GitHub
-                        <i class="fa fa-github"></i>
-                    </a>
-                </li>
-            </ul>
-        </nav>
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="https://github.com/navinpeiris/phoenix-diff" target="_blank">
+              View on GitHub <i class="fa fa-github"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
     </header>
 
     <main role="main">
-        <%= @inner_content %>
+      <%= @inner_content %>
     </main>
 
     <footer class="footer">
-        <div class="container py-3">
-            <div class="text-center">
-                To all alchemists with
-                <i class="fa fa-heart"></i>
-                by Navin Peiris
-                <a class="ml-1" href="https://github.com/navinpeiris" target="_blank">GitHub</a>
-                |
-                <a href="https://twitter.com/navinpeiris" target="_blank">Twitter</a>
-                |
-                <a class="mr-1" href="https://www.linkedin.com/in/navinpeiris" target="_blank">LinkedIn</a>
-            </div>
+      <div class="container py-3">
+        <div class="text-center">
+          To all alchemists with <i class="fa fa-heart"></i>
+          by Navin Peiris
+          <a class="ml-1" href="https://github.com/navinpeiris" target="_blank">GitHub</a>
+          | <a href="https://twitter.com/navinpeiris" target="_blank">Twitter</a>
+          |
+          <a class="mr-1" href="https://www.linkedin.com/in/navinpeiris" target="_blank">
+            LinkedIn
+          </a>
         </div>
+      </div>
 
-        <%= if PhxDiffWeb.Config.render_tracking_scripts?() do %>
-        <%= render "_tracking_scripts.html" %>
-        <% end %>
-
+      <%= if PhxDiffWeb.Config.render_tracking_scripts?() do %>
+        <%= render("_tracking_scripts.html") %>
+      <% end %>
     </footer>
-</body>
-
+  </body>
 </html>

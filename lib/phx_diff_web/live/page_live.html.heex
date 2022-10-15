@@ -4,18 +4,18 @@
       <h3>See the changes needed to upgrade your Phoenix application</h3>
 
       <.form
-        let={f}
+        :let={f}
         for={@changeset}
         as={:diff_selection}
         id="diff-selector-form"
         phx-change="diff-changed"
-        phx-hook="DiffSelectorComponent">
-
+        phx-hook="DiffSelectorComponent"
+      >
         <div class="version-selectors">
           <div class="version-selector version-selector-source">
             <div class="field-group">
-              <%= label f, :source %>
-              <%= select f, :source, @all_versions, class: "form-control" %>
+              <%= label(f, :source) %>
+              <%= select(f, :source, @all_versions, class: "form-control") %>
             </div>
             <%= if @source_arguments do %>
               <div class="generator-options">
@@ -26,8 +26,8 @@
 
           <div class="version-selector version-selector-target">
             <div class="field-group">
-              <%= label f, :target %>
-              <%= select f, :target, @all_versions, class: "form-control" %>
+              <%= label(f, :target) %>
+              <%= select(f, :target, @all_versions, class: "form-control") %>
             </div>
             <%= if @target_arguments do %>
               <div class="generator-options">
@@ -39,8 +39,8 @@
       </.form>
 
       <span class="star-message">
-        If you found this tool useful, please <i class="fa fa-star"></i> our
-        <a href="https://github.com/navinpeiris/phoenix-diff" target="_blank"> GitHub repo</a>
+        If you found this tool useful, please <i class="fa fa-star"></i>
+        our <a href="https://github.com/navinpeiris/phoenix-diff" target="_blank"> GitHub repo</a>
       </span>
     </div>
   </section>
@@ -49,10 +49,16 @@
     <div class="container">
       <%= if @no_changes? do %>
         <div class="message-container">
-          <span class="text">There are no changes between version <%= @source_version %> and  <%= @target_version %>.</span>
+          <span class="text">
+            There are no changes between version <%= @source_version %> and <%= @target_version %>.
+          </span>
         </div>
       <% else %>
-          <.live_component module={PhxDiffWeb.PageLive.DiffViewerComponent} id="main-diff" diff={@diff} />
+        <.live_component
+          module={PhxDiffWeb.PageLive.DiffViewerComponent}
+          id="main-diff"
+          diff={@diff}
+        />
       <% end %>
 
       <div id="loading-container" class="message-container">

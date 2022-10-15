@@ -1,28 +1,33 @@
 <div>
   <.form
-    let={f}
+    :let={f}
     for={@changeset}
     as={:form}
     id={"diff-viewer-form-#{@id}"}
     phx-change="options-changed"
-    phx-target={@myself}>
-
+    phx-target={@myself}
+  >
     <div id="diff-view-toggles">
       <div class="header">Display mode:</div>
 
       <div class="btn-group btn-group-toggle" data-toggle="buttons">
         <label class={"btn btn-outline-primary #{if @view_type == "line-by-line", do: "active"}"}>
-          <%= radio_button(f, :view_type, "line-by-line") %>
-          Line by line
+          <%= radio_button(f, :view_type, "line-by-line") %> Line by line
         </label>
 
         <label class={"btn btn-outline-primary #{if @view_type == "side-by-side", do: "active"}"}>
-          <%= radio_button(f, :view_type, "side-by-side") %>
-            Side by side
+          <%= radio_button(f, :view_type, "side-by-side") %> Side by side
         </label>
       </div>
     </div>
 
-    <div id="diff-results-container" class="diff-results-container" phx-hook="DiffViewerComponent" data-view-type={@view_type} data-diff={@diff}></div>
+    <div
+      id="diff-results-container"
+      class="diff-results-container"
+      phx-hook="DiffViewerComponent"
+      data-view-type={@view_type}
+      data-diff={@diff}
+    >
+    </div>
   </.form>
 </div>
