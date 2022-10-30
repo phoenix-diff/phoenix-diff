@@ -51,7 +51,8 @@ defmodule PhxDiff.Diffs.AppRepo.AppGenerator.MixArchivesDirectories do
         :ok
 
       {output, 1} ->
-        if String.match?(output, ~r/no matching version/i) do
+        if String.match?(output, ~r/no matching version/i) ||
+             String.match?(output, ~r/doesn't match any versions/i) do
           {:error, :unknown_version}
         else
           raise """
