@@ -45,7 +45,7 @@ defmodule PhxDiffWeb do
   def live_view do
     quote do
       use Phoenix.LiveView,
-        layout: {PhxDiffWeb.LayoutView, "live.html"}
+        layout: {PhxDiffWeb.LayoutView, :live}
 
       unquote(view_helpers())
     end
