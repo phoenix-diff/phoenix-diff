@@ -18,3 +18,4 @@ PhxDiff has several environment variables that need to be set to deploy to a pro
 * `ASSET_SCHEME` - Overrides scheme of asset urls. Defaults to the same as `URL_SCHEME`.
 * `ASSET_HOST` - Overrides host of asset urls. Defaults to the same as `URL_HOST`.
 * `ASSET_PORT` - Overrides port of asset urls. Defaults to the same as `URL_PORT`.
+* `ALLOWED_ORIGINS` - Sets the list of allowed origins. If not set, the allowed origins are based off `URL_HOST`

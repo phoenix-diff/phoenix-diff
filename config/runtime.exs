@@ -43,6 +43,13 @@ if config_env() == :prod do
     config :phx_diff, PhxDiffWeb.Endpoint, static_url: static_url
   end
 
+  # Configure the allowed origins
+  check_origin =
+    case System.get_env("ALLOWED_ORIGINS", "") |> String.split() do
+      [_ | _] = origins -> origins
+      _ -> true
+    end
+
   config :phx_diff, PhxDiffWeb.Endpoint,
     http: [
       # Enable IPv6 and bind on all interfaces.
@@ -57,6 +64,7 @@ if config_env() == :prod do
       host: System.get_env("URL_HOST", "www.phoenixdiff.org"),
       port: String.to_integer(System.get_env("URL_PORT", "443"))
     ],
+    check_origin: check_origin,
     secret_key_base: secret_key_base
 
   # ## Configuring the mailer

@@ -7,6 +7,7 @@ processes = []
 
 [env]
   PORT = "8080"
+  ALLOWED_ORIGINS= "//phoenixdiff.org //*.phoenixdiff.org"
 
 [experimental]
   allowed_public_ports = []
