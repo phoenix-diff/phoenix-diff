@@ -61,3 +61,21 @@ jobs:
       - name: Build assets
         run: yarn run deploy
         working-directory: assets
+
+  deploy_staging:
+    name: Staging
+    needs: [test, test_javascript]
+    if: github.repository == 'phoenix-diff/phoenix-diff' && github.ref_name == 'master'
+    uses: ./.github/workflows/cd.yaml
+    with:
+      environment: Staging
+    secrets: inherit
+
+  deploy_production:
+    name: Production
+    needs: [deploy_staging]
+    if: github.repository == 'phoenix-diff/phoenix-diff' && github.ref_name == 'master'
+    uses: ./.github/workflows/cd.yaml
+    with:
+      environment: Production
+    secrets: inherit

@@ -9,9 +9,16 @@ on:
         type: environment
         required: true
 
+  workflow_call:
+    inputs:
+      environment:
+        description: "The environment to deploy"
+        type: string
+        required: true
+
 jobs:
   deploy:
-    name: Deploy app
+    name: Deploy
     runs-on: ubuntu-latest
     environment:
       name: ${{ inputs.environment }}
