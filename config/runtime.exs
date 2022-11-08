@@ -129,5 +129,5 @@ case System.fetch_env("OTEL_EXPORTER") do
 
   :error ->
     # Disabled by default
-    nil
+    config :opentelemetry, traces_exporter: :none
 end
