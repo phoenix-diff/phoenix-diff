@@ -1,3 +1,5 @@
+import { Diff2HtmlUI } from 'diff2html/lib/ui/js/diff2html-ui-slim';
+
 const DiffViewerComponent = {
   mounted() {
     this._renderDiff();
@@ -6,16 +8,15 @@ const DiffViewerComponent = {
     this._renderDiff();
   },
   _renderDiff() {
-    const diff2htmlUi = new Diff2HtmlUI({ diff: this.el.getAttribute("data-diff") });
-
-    diff2htmlUi.draw($(this.el), {
-        inputFormat: "diff",
+    const diff2htmlUi = new Diff2HtmlUI(this.el, this.el.getAttribute("data-diff"),{
+        drawFileList: true,
         outputFormat: this.el.getAttribute("data-view-type"),
-        showFiles: true,
-        matching: "lines"
+        highlight: true,
+        fileContentToggle: false,
+        matching: 'words'
     });
 
-    diff2htmlUi.fileListCloseable($(this.el), false);
+    diff2htmlUi.draw();
 
     this._updateDiffFileLinks();
 
