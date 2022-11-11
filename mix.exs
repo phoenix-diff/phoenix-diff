@@ -82,7 +82,7 @@ defmodule PhxDiff.MixProject do
       ci: [
         "compile --warnings-as-errors --force",
         "format --check-formatted",
-        "test --raise",
+        "test --raise --all-warnings --warnings-as-errors",
         "credo --strict --all",
         "dialyzer"
       ],
