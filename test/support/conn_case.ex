@@ -17,15 +17,15 @@ defmodule PhxDiffWeb.ConnCase do
 
   using do
     quote do
+      # The default endpoint for testing
+      @endpoint PhxDiffWeb.Endpoint
+
+      use PhxDiffWeb, :verified_routes
+
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
       import PhxDiffWeb.ConnCase
-
-      alias PhxDiffWeb.Router.Helpers, as: Routes
-
-      # The default endpoint for testing
-      @endpoint PhxDiffWeb.Endpoint
     end
   end
 

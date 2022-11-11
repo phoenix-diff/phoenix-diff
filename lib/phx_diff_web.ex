@@ -17,13 +17,16 @@ defmodule PhxDiffWeb do
   and import those modules here.
   """
 
+  def static_paths do
+    ~w(assets fonts images favicon.ico favicon-16x16.png favicon-32x32.png favicon-96x96.png robots.txt)
+  end
+
   def controller do
     quote do
       use Phoenix.Controller, namespace: PhxDiffWeb
 
       import Plug.Conn
       import PhxDiffWeb.Gettext
-      alias PhxDiffWeb.Router.Helpers, as: Routes
     end
   end
 
@@ -89,7 +92,18 @@ defmodule PhxDiffWeb do
 
       import PhxDiffWeb.ErrorHelpers
       import PhxDiffWeb.Gettext
-      alias PhxDiffWeb.Router.Helpers, as: Routes
+
+      # Routes generation with the ~p sigil
+      unquote(verified_routes())
+    end
+  end
+
+  def verified_routes do
+    quote do
+      use Phoenix.VerifiedRoutes,
+        endpoint: PhxDiffWeb.Endpoint,
+        router: PhxDiffWeb.Router,
+        statics: PhxDiffWeb.static_paths()
     end
   end
 

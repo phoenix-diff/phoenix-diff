@@ -11,13 +11,10 @@ defmodule PhxDiffWeb.PageLiveTest do
   test "redirects to include the source and target in url", %{conn: conn} do
     {:ok, view, _html} =
       conn
-      |> live(Routes.page_path(conn, :index))
+      |> live(~p"/")
       |> follow_redirect(
         conn,
-        Routes.page_path(conn, :index,
-          source: Diffs.previous_release_version(),
-          target: Diffs.latest_version()
-        )
+        ~p"/?source=#{Diffs.previous_release_version()}&target=#{Diffs.latest_version()}"
       )
 
     assert has_element?(
@@ -37,7 +34,7 @@ defmodule PhxDiffWeb.PageLiveTest do
       "diff_selection" => %{"source" => "1.5.0", "target" => "1.5.1"}
     })
 
-    assert_patched(view, Routes.page_path(conn, :index, source: "1.5.0", target: "1.5.1"))
+    assert_patched(view, ~p"/?source=1.5.0&target=1.5.1")
     assert page_title(view) =~ "v1.5.0 to v1.5.1"
 
     assert_diff_rendered(view, """
@@ -83,7 +80,7 @@ defmodule PhxDiffWeb.PageLiveTest do
   test "toggling line by line or side by side", %{conn: conn} do
     {:ok, view, _html} =
       conn
-      |> live(Routes.page_path(conn, :index))
+      |> live(~p"/")
       |> follow_redirect(conn)
 
     assert display_mode_button_active?(view, "Line by line")
@@ -110,66 +107,42 @@ defmodule PhxDiffWeb.PageLiveTest do
   test "falls back to latest version when target url_param is invalid", %{conn: conn} do
     {:ok, _view, _html} =
       conn
-      |> live(
-        Routes.page_path(conn, :index, source: Diffs.previous_release_version(), target: "invalid")
-      )
+      |> live(~p"/?source=#{Diffs.previous_release_version()}&target=invalid")
       |> follow_redirect(
         conn,
-        Routes.page_path(conn, :index,
-          source: Diffs.previous_release_version(),
-          target: Diffs.latest_version()
-        )
+        ~p"/?source=#{Diffs.previous_release_version()}&target=#{Diffs.latest_version()}"
       )
   end
 
   test "falls back to previous version when source url_param is invalid", %{conn: conn} do
     {:ok, _view, _html} =
       conn
-      |> live(Routes.page_path(conn, :index, source: "invalid", target: Diffs.latest_version()))
+      |> live(~p"/?source=invalid&target=#{Diffs.latest_version()}")
       |> follow_redirect(
         conn,
-        Routes.page_path(conn, :index,
-          source: Diffs.previous_release_version(),
-          target: Diffs.latest_version()
-        )
+        ~p"/?source=#{Diffs.previous_release_version()}&target=#{Diffs.latest_version()}"
       )
   end
 
-  @unknown_phonenix_version "0.0.99"
+  @unknown_phoenix_version "0.0.99"
 
   test "falls back to latest version when target url_param is unknown", %{conn: conn} do
     {:ok, _view, _html} =
       conn
-      |> live(
-        Routes.page_path(conn, :index,
-          source: Diffs.previous_release_version(),
-          target: @unknown_phonenix_version
-        )
-      )
+      |> live(~p"/?source=#{Diffs.previous_release_version()}&target=#{@unknown_phoenix_version}")
       |> follow_redirect(
         conn,
-        Routes.page_path(conn, :index,
-          source: Diffs.previous_release_version(),
-          target: Diffs.latest_version()
-        )
+        ~p"/?source=#{Diffs.previous_release_version()}&target=#{Diffs.latest_version()}"
       )
   end
 
   test "falls back to previous version when source url_param is unknown", %{conn: conn} do
     {:ok, _view, _html} =
       conn
-      |> live(
-        Routes.page_path(conn, :index,
-          source: @unknown_phonenix_version,
-          target: Diffs.latest_version()
-        )
-      )
+      |> live(~p"/?source=#{@unknown_phoenix_version}&target=#{Diffs.latest_version()}")
       |> follow_redirect(
         conn,
-        Routes.page_path(conn, :index,
-          source: Diffs.previous_release_version(),
-          target: Diffs.latest_version()
-        )
+        ~p"/?source=#{Diffs.previous_release_version()}&target=#{Diffs.latest_version()}"
       )
 
     assert_received {:otel_span,
@@ -185,7 +158,7 @@ defmodule PhxDiffWeb.PageLiveTest do
   test "indicates the options used to generate the source and target apps", %{conn: conn} do
     {:ok, view, _html} =
       conn
-      |> live(Routes.page_path(conn, :index))
+      |> live(~p"/")
       |> follow_redirect(conn)
 
     view

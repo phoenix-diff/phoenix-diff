@@ -35,11 +35,7 @@ defmodule PhxDiffWeb.PageLive do
       {:error, _changeset} ->
         {:noreply,
          push_patch(socket,
-           to:
-             Routes.page_path(socket, :index,
-               source: Diffs.previous_release_version(),
-               target: Diffs.latest_version()
-             )
+           to: ~p"/?source=#{Diffs.previous_release_version()}&target=#{Diffs.latest_version()}"
          )}
     end
   end
@@ -50,14 +46,7 @@ defmodule PhxDiffWeb.PageLive do
 
     case Changeset.apply_action(changeset, :lookup) do
       {:ok, %{source: source, target: target}} ->
-        {:noreply,
-         push_patch(socket,
-           to:
-             Routes.page_path(socket, :index,
-               source: source,
-               target: target
-             )
-         )}
+        {:noreply, push_patch(socket, to: ~p"/?source=#{source}&target=#{target}")}
 
       {:error, changeset} ->
         {:noreply, assign(socket, :changeset, changeset)}
