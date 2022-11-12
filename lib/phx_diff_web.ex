@@ -29,6 +29,7 @@ defmodule PhxDiffWeb do
       import Plug.Conn
       import Phoenix.Controller
       import Phoenix.LiveView.Router
+      import PhxDiffWeb.Analytics
     end
   end
 

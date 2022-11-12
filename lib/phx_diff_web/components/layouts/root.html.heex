@@ -60,10 +60,10 @@
           </a>
         </div>
       </div>
-
-      <%= if PhxDiffWeb.Config.render_tracking_scripts?() do %>
-        <%= _tracking_scripts(assigns) %>
-      <% end %>
     </footer>
+
+    <%= if @analytics.enabled? do %>
+      <.google_analytics tracking_id={@analytics.ga_tracking_id} />
+    <% end %>
   </body>
 </html>
