@@ -62,7 +62,7 @@
       </div>
 
       <%= if PhxDiffWeb.Config.render_tracking_scripts?() do %>
-        <%= render("_tracking_scripts.html") %>
+        <%= _tracking_scripts(assigns) %>
       <% end %>
     </footer>
   </body>
