@@ -13,10 +13,7 @@
       >
         <div class="version-selectors">
           <div class="version-selector version-selector-source">
-            <div class="field-group">
-              <%= label(f, :source) %>
-              <%= select(f, :source, @all_versions, class: "form-control") %>
-            </div>
+            <.input field={{f, :source}} type="select" label="Source" options={@all_versions} />
             <%= if @source_arguments do %>
               <div class="generator-options">
                 Generated with <%= @source_arguments %>
@@ -25,10 +22,7 @@
           </div>
 
           <div class="version-selector version-selector-target">
-            <div class="field-group">
-              <%= label(f, :target) %>
-              <%= select(f, :target, @all_versions, class: "form-control") %>
-            </div>
+            <.input field={{f, :target}} type="select" label="Target" options={@all_versions} />
             <%= if @target_arguments do %>
               <div class="generator-options">
                 Generated with <%= @target_arguments %>

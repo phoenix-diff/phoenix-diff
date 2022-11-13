@@ -91,7 +91,8 @@ defmodule PhxDiffWeb do
       # Temporary
       use Phoenix.HTML
 
-      # Translation
+      # Core UI components and translation
+      import PhxDiffWeb.CoreComponents
       import PhxDiffWeb.Gettext
 
       # Shortcut for generating JS commands
