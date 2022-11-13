@@ -10,15 +10,10 @@
     <div id="diff-view-toggles">
       <div class="header">Display mode:</div>
 
-      <div class="btn-group btn-group-toggle" data-toggle="buttons">
-        <label class={"btn btn-outline-primary #{if @view_type == "line-by-line", do: "active"}"}>
-          <%= radio_button(f, :view_type, "line-by-line") %> Line by line
-        </label>
-
-        <label class={"btn btn-outline-primary #{if @view_type == "side-by-side", do: "active"}"}>
-          <%= radio_button(f, :view_type, "side-by-side") %> Side by side
-        </label>
-      </div>
+      <.button_group_toggle field={{f, :view_type}}>
+        <:option value="line-by-line">Line by line</:option>
+        <:option value="side-by-side">Side by side</:option>
+      </.button_group_toggle>
     </div>
 
     <div

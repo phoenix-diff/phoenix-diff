@@ -145,6 +145,51 @@ defmodule PhxDiffWeb.CoreComponents do
   end
 
   @doc """
+  Generates a button group where we can toggle between the options
+  """
+
+  attr :field, :any, doc: "a %Phoenix.HTML.Form{}/field name tuple, for example: {f, :email}"
+
+  slot :option, required: true do
+    attr :value, :string, required: true
+  end
+
+  def button_group_toggle(assigns) do
+    ~H"""
+    <div class="btn-group btn-group-toggle">
+      <.button_group_toggle_button :for={option <- @option} field={@field} value={option.value}>
+        <%= render_slot(option) %>
+      </.button_group_toggle_button>
+    </div>
+    """
+  end
+
+  attr :field, :any, doc: "a %Phoenix.HTML.Form{}/field name tuple, for example: {f, :email}"
+  attr :value, :string, required: true
+  slot :inner_block, required: true
+
+  defp button_group_toggle_button(%{field: {f, field}} = assigns) do
+    field_value = Phoenix.HTML.Form.input_value(f, field)
+    checked? = input_equals?(assigns.value, field_value)
+    assigns = assign_new(assigns, :checked?, fn -> checked? end)
+
+    assigns =
+      assigns
+      |> assign(field: nil)
+      |> assign_new(:name, fn -> Phoenix.HTML.Form.input_name(f, field) end)
+      |> assign_new(:id, fn -> Phoenix.HTML.Form.input_id(f, field, assigns.value) end)
+      |> assign(:active_class, if(checked?, do: ["active"]))
+
+    ~H"""
+    <label class={"btn btn-outline-primary #{@active_class}"}>
+      <input type="radio" name={@name} id={@id} autocomplete="off" value={@value} checked={@checked?} /> <%= render_slot(
+        @inner_block
+      ) %>
+    </label>
+    """
+  end
+
+  @doc """
   Generates a generic error message.
   """
   slot :inner_block, required: true
