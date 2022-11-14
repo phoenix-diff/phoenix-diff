@@ -11,10 +11,5 @@ Currently hosted at [http://www.phoenixdiff.org](http://www.phoenixdiff.org)
 To add a new version of phoenix, run the following mix command
 
 ```
-mix phx_diff.add <phoenix-version>
+mix phx_diff.gen.sample <phoenix_version>
 ```
-
-The above mix task uses the following two tasks behind the hood:
-
-- `mix phx_diff.gen.sample` - Generates a sample app for the given version
-- `mix phx_diff.gen.diffs` - Generates the diff files between all the different versions

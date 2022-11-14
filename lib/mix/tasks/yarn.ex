@@ -1,6 +1,7 @@
 defmodule Mix.Tasks.Yarn do
   @moduledoc false
   use Mix.Task
+  use Boundary
 
   @shortdoc "Run yarn within assets directory"
 

@@ -4,16 +4,16 @@ defmodule PhxDiff.Application do
   @moduledoc false
 
   use Application
+  use Boundary, top_level?: true, deps: [PhxDiff, PhxDiffWeb]
 
   @impl true
   def start(_type, _args) do
     OpentelemetryPhoenix.setup()
     OpentelemetryLiveView.setup()
-    PhxDiff.Logger.install()
-    PhxDiff.OpenTelemetry.setup()
 
     # List all child processes to be supervised
     children = [
+      PhxDiff,
       # Start the Telemetry supervisor
       PhxDiffWeb.Telemetry,
       # Start the PubSub system
@@ -26,7 +26,7 @@ defmodule PhxDiff.Application do
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: PhxDiff.Supervisor]
+    opts = [strategy: :one_for_one, name: PhxDiff.ApplicationSupervisor]
     Supervisor.start_link(children, opts)
   end
 

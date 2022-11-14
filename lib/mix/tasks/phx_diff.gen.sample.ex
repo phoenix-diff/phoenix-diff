@@ -2,6 +2,8 @@ defmodule Mix.Tasks.PhxDiff.Gen.Sample do
   @moduledoc false
   use Mix.Task
 
+  use Boundary, deps: [PhxDiff]
+
   @shortdoc "Generate a sample app for a phoenix version"
 
   def run([arg]) do

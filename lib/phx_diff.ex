@@ -3,11 +3,21 @@ defmodule PhxDiff do
   Primary API for interacting with PhxDiff
   """
 
+  use Boundary,
+    deps: [],
+    exports: [
+      AppSpecification,
+      ComparisonError
+    ]
+
   alias PhxDiff.AppSpecification
   alias PhxDiff.ComparisonError
 
   @type diff :: String.t()
   @type version :: Version.t()
+
+  @doc false
+  defdelegate child_spec(opts), to: PhxDiff.Supervisor
 
   @doc """
   List all Phoenix versions

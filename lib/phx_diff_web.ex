@@ -17,6 +17,8 @@ defmodule PhxDiffWeb do
   those modules here.
   """
 
+  use Boundary, deps: [PhxDiff], exports: [Endpoint]
+
   def static_paths do
     ~w(assets fonts images favicon.ico favicon-16x16.png favicon-32x32.png favicon-96x96.png robots.txt)
   end
