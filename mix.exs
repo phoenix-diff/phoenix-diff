@@ -15,7 +15,8 @@ defmodule PhxDiff.MixProject do
       ],
       releases: releases(),
       default_release: :phx_diff,
-      dialyzer: dialyzer(System.get_env())
+      dialyzer: dialyzer(System.get_env()),
+      docs: docs()
     ]
   end
 
@@ -62,6 +63,7 @@ defmodule PhxDiff.MixProject do
       {:opentelemetry_liveview, "~> 1.0.0-rc.4"},
       {:esbuild, "~> 0.4", runtime: Mix.env() == :dev},
       {:dart_sass, "~> 0.4", runtime: Mix.env() == :dev},
+      {:ex_doc, "~> 0.27", only: :dev, runtime: false},
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
@@ -107,6 +109,13 @@ defmodule PhxDiff.MixProject do
   # Common dialyzer config
   defp dialyzer do
     [plt_add_apps: [:mix, :ex_unit]]
+  end
+
+  defp docs do
+    [
+      formatters: ["html"],
+      filter_modules: ~r/^Elixir\.PhxDiff(?!Web)/
+    ]
   end
 
   defp releases do
