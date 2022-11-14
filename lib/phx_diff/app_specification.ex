@@ -1,11 +1,11 @@
-defmodule PhxDiff.Diffs.AppSpecification do
+defmodule PhxDiff.AppSpecification do
   @moduledoc """
   A specification for the application that should be compared
   """
 
   defstruct [:phoenix_version, :phx_new_arguments]
 
-  @type version :: PhxDiff.Diffs.version()
+  @type version :: PhxDiff.version()
   @type t :: %__MODULE__{
           phoenix_version: version,
           phx_new_arguments: [String.t()]

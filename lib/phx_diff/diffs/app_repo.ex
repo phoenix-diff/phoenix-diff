@@ -1,11 +1,11 @@
 defmodule PhxDiff.Diffs.AppRepo do
   @moduledoc false
 
+  alias PhxDiff.AppSpecification
   alias PhxDiff.Diffs
 
   alias PhxDiff.Diffs.{
     AppRepo.AppGenerator,
-    AppSpecification,
     Config
   }
 

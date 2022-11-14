@@ -1,9 +1,9 @@
-defmodule PhxDiff.Diffs.ComparisonError do
+defmodule PhxDiff.ComparisonError do
   @moduledoc """
   Indicates there were error(s) compariong two app specs
   """
 
-  alias PhxDiff.Diffs.AppSpecification
+  alias PhxDiff.AppSpecification
 
   @type field :: :source | :target
   @type error :: :unknown_version

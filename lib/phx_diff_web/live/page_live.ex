@@ -3,8 +3,8 @@ defmodule PhxDiffWeb.PageLive do
   use PhxDiffWeb, :live_view
 
   alias Ecto.Changeset
-  alias PhxDiff.Diffs
-  alias PhxDiff.Diffs.{AppSpecification, ComparisonError}
+  alias PhxDiff.AppSpecification
+  alias PhxDiff.ComparisonError
   alias PhxDiffWeb.PageLive.DiffSelection
 
   @impl true
@@ -12,7 +12,7 @@ defmodule PhxDiffWeb.PageLive do
     {:ok,
      socket
      |> assign(:no_changes?, false)
-     |> assign(:all_versions, Diffs.all_versions() |> Enum.map(&to_string/1))
+     |> assign(:all_versions, PhxDiff.all_versions() |> Enum.map(&to_string/1))
      |> assign(:diff_selection, %DiffSelection{})}
   end
 
@@ -35,7 +35,8 @@ defmodule PhxDiffWeb.PageLive do
       {:error, _changeset} ->
         {:noreply,
          push_patch(socket,
-           to: ~p"/?source=#{Diffs.previous_release_version()}&target=#{Diffs.latest_version()}"
+           to:
+             ~p"/?source=#{PhxDiff.previous_release_version()}&target=#{PhxDiff.latest_version()}"
          )}
     end
   end
@@ -54,17 +55,17 @@ defmodule PhxDiffWeb.PageLive do
   end
 
   @spec fetch_diff(DiffSelection.t(), map) ::
-          {:ok, {DiffSelection.t(), AppSpecification.t(), AppSpecification.t(), Diffs.diff()}}
+          {:ok, {DiffSelection.t(), AppSpecification.t(), AppSpecification.t(), PhxDiff.diff()}}
           | {:error, Changeset.t()}
   defp fetch_diff(%DiffSelection{} = diff_selection, params) do
     changeset = DiffSelection.changeset(diff_selection, params)
 
     with {:ok, diff_selection} <- Changeset.apply_action(changeset, :lookup) do
       %DiffSelection{source: source, target: target} = diff_selection
-      source_app_spec = Diffs.default_app_specification(source)
-      target_app_spec = Diffs.default_app_specification(target)
+      source_app_spec = PhxDiff.default_app_specification(source)
+      target_app_spec = PhxDiff.default_app_specification(target)
 
-      case Diffs.get_diff(source_app_spec, target_app_spec) do
+      case PhxDiff.fetch_diff(source_app_spec, target_app_spec) do
         {:ok, diff} ->
           {:ok, {diff_selection, source_app_spec, target_app_spec, diff}}
 

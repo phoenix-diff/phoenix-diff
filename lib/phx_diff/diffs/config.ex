@@ -1,7 +1,5 @@
 defmodule PhxDiff.Diffs.Config do
-  @moduledoc """
-  Configuration for PhxDiff
-  """
+  @moduledoc false
 
   defstruct [:app_repo_path, :app_generator_workspace_path]
 

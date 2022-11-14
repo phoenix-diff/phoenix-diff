@@ -1,11 +1,9 @@
 defmodule PhxDiff.Diffs do
-  @moduledoc """
-  Primary API for retrieving diffs
-  """
+  @moduledoc false
 
+  alias PhxDiff.AppSpecification
+  alias PhxDiff.ComparisonError
   alias PhxDiff.Diffs.AppRepo
-  alias PhxDiff.Diffs.AppSpecification
-  alias PhxDiff.Diffs.ComparisonError
   alias PhxDiff.Diffs.Config
   alias PhxDiff.Diffs.DiffEngine
 

@@ -1,9 +1,9 @@
 defmodule PhxDiff.Diffs.AppRepo.AppGenerator do
   @moduledoc false
 
+  alias PhxDiff.AppSpecification
   alias PhxDiff.Diffs.AppRepo.AppGenerator.MixArchivesDirectories
   alias PhxDiff.Diffs.AppRepo.AppGenerator.MixTaskRunner
-  alias PhxDiff.Diffs.AppSpecification
   alias PhxDiff.Diffs.Config
 
   @type dir :: String.t()

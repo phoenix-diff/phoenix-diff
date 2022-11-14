@@ -1,7 +1,7 @@
 defmodule PhxDiff.Logger do
   @moduledoc false
 
-  alias PhxDiff.Diffs.AppSpecification
+  alias PhxDiff.AppSpecification
 
   require Logger
 

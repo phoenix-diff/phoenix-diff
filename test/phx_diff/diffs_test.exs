@@ -7,13 +7,10 @@ defmodule PhxDiff.DiffsTest do
   import PhxDiff.TestSupport.Sigils
   import PhxDiff.TestSupport.TelemetryHelpers, only: :macros
 
+  alias PhxDiff.AppSpecification
+  alias PhxDiff.ComparisonError
   alias PhxDiff.Diffs
-
-  alias PhxDiff.Diffs.{
-    AppSpecification,
-    ComparisonError,
-    Config
-  }
+  alias PhxDiff.Diffs.Config
 
   alias PhxDiff.TestSupport.TelemetryHelpers
 

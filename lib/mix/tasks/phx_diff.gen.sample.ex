@@ -2,8 +2,6 @@ defmodule Mix.Tasks.PhxDiff.Gen.Sample do
   @moduledoc false
   use Mix.Task
 
-  alias PhxDiff.Diffs
-
   @shortdoc "Generate a sample app for a phoenix version"
 
   def run([arg]) do
@@ -48,7 +46,7 @@ defmodule Mix.Tasks.PhxDiff.Gen.Sample do
 
   def generate_app_path(version) do
     version
-    |> Diffs.default_app_specification()
-    |> Diffs.generate_sample_app()
+    |> PhxDiff.default_app_specification()
+    |> PhxDiff.generate_sample_app()
   end
 end
