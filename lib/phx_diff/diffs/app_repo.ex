@@ -4,64 +4,58 @@ defmodule PhxDiff.Diffs.AppRepo do
   alias PhxDiff.AppSpecification
   alias PhxDiff.Diffs
 
-  alias PhxDiff.Diffs.{
-    AppRepo.AppGenerator,
-    Config
-  }
+  alias PhxDiff.Diffs.AppRepo.AppGenerator
 
   @type version :: PhxDiff.Diffs.version()
 
-  @spec all_versions(Config.t()) :: [version]
-  def all_versions(%Config{} = config) do
-    config
-    |> app_specifications_for_pre_generated_apps()
+  @spec all_versions() :: [version]
+  def all_versions do
+    app_specifications_for_pre_generated_apps()
     |> MapSet.new(& &1.phoenix_version)
     |> MapSet.to_list()
     |> Enum.sort(&(Version.compare(&1, &2) == :lt))
   end
 
-  @spec release_versions(Config.t()) :: [version]
-  def release_versions(%Config{} = config),
-    do: config |> all_versions() |> Enum.reject(&pre_release?/1)
+  @spec release_versions() :: [version]
+  def release_versions, do: all_versions() |> Enum.reject(&pre_release?/1)
 
   defp pre_release?(version), do: !Enum.empty?(version.pre)
 
-  @spec latest_version(Config.t()) :: version
-  def latest_version(%Config{} = config),
-    do: config |> all_versions() |> List.last()
+  @spec latest_version() :: version
+  def latest_version, do: all_versions() |> List.last()
 
-  @spec previous_release_version(Config.t()) :: version
-  def previous_release_version(%Config{} = config) do
-    releases = release_versions(config)
+  @spec previous_release_version() :: version
+  def previous_release_version do
+    releases = release_versions()
     latest_release = releases |> List.last()
 
-    if latest_version(config) == latest_release do
+    if latest_version() == latest_release do
       releases |> Enum.at(-2)
     else
       latest_release
     end
   end
 
-  @spec fetch_app_path(Config.t(), AppSpecification.t()) ::
+  @spec fetch_app_path(AppSpecification.t()) ::
           {:ok, String.t()} | {:error, :invalid_version}
-  def fetch_app_path(%Config{} = config, %AppSpecification{} = app_specification) do
-    if app_generated_for_specification?(config, app_specification) do
-      {:ok, app_path(config, app_specification)}
+  def fetch_app_path(%AppSpecification{} = app_specification) do
+    if app_generated_for_specification?(app_specification) do
+      {:ok, app_path(app_specification)}
     else
       {:error, :invalid_version}
     end
   end
 
-  @spec generate_sample_app(Config.t(), AppSpecification.t()) ::
+  @spec generate_sample_app(AppSpecification.t()) ::
           {:ok, String.t()} | {:error, :unknown_version}
-  def generate_sample_app(%Config{} = config, %AppSpecification{} = app_spec) do
-    with {:ok, app_dir} <- AppGenerator.generate(config, app_spec) do
-      store_generated_app(config, app_spec, app_dir)
+  def generate_sample_app(%AppSpecification{} = app_spec) do
+    with {:ok, app_dir} <- AppGenerator.generate(app_spec) do
+      store_generated_app(app_spec, app_dir)
     end
   end
 
-  defp store_generated_app(config, app_spec, source_path) do
-    destination_path = app_path(config, app_spec)
+  defp store_generated_app(app_spec, source_path) do
+    destination_path = app_path(app_spec)
 
     File.rm_rf(destination_path)
     File.mkdir_p!(destination_path)
@@ -71,19 +65,21 @@ defmodule PhxDiff.Diffs.AppRepo do
     {:ok, destination_path}
   end
 
-  defp app_generated_for_specification?(config, app_spec) do
-    app_spec in app_specifications_for_pre_generated_apps(config)
+  defp app_generated_for_specification?(app_spec) do
+    app_spec in app_specifications_for_pre_generated_apps()
   end
 
-  defp app_path(config, app_spec) do
-    %Config{app_repo_path: app_repo_path} = config
+  defp app_path(app_spec) do
     %AppSpecification{phoenix_version: version} = app_spec
 
-    Path.join(app_repo_path, to_string(version))
+    PhxDiff.Config.app_repo_path()
+    |> Path.join(to_string(version))
   end
 
-  defp app_specifications_for_pre_generated_apps(%Config{app_repo_path: app_repo_path}) do
-    case File.ls(app_repo_path) do
+  defp app_specifications_for_pre_generated_apps do
+    PhxDiff.Config.app_repo_path()
+    |> File.ls()
+    |> case do
       {:ok, files} ->
         files
         |> Enum.map(&Version.parse!/1)

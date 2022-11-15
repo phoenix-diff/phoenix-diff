@@ -22,6 +22,8 @@ defmodule PhxDiffWeb.ConnCase do
 
       use PhxDiffWeb, :verified_routes
 
+      use PhxDiff.MockedConfigCase
+
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest

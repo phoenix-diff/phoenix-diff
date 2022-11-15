@@ -70,6 +70,7 @@ defmodule PhxDiff.MixProject do
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
       {:ex_unit_notifier, "~> 1.2", only: :test, runtime: false},
+      {:mox, "~> 1.0", only: :test},
       {:floki, ">= 0.30.0", only: :test}
     ]
   end

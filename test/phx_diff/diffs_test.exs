@@ -1,22 +1,22 @@
 defmodule PhxDiff.DiffsTest do
-  use ExUnit.Case, async: false
+  use PhxDiff.MockedConfigCase, async: false
 
   import ExUnit.CaptureLog
   import PhxDiff.TestSupport.FileHelpers
   import PhxDiff.TestSupport.OpenTelemetryTestExporter, only: [subscribe_to_otel_spans: 1]
   import PhxDiff.TestSupport.Sigils
   import PhxDiff.TestSupport.TelemetryHelpers, only: :macros
+  import Mox
 
   alias PhxDiff.AppSpecification
   alias PhxDiff.ComparisonError
   alias PhxDiff.Diffs
-  alias PhxDiff.Diffs.Config
 
   alias PhxDiff.TestSupport.TelemetryHelpers
 
   @unknown_phoenix_version ~V[0.0.99]
 
-  describe "all_versions/1" do
+  describe "all_versions/0" do
     test "returns all versions" do
       versions = Diffs.all_versions()
 
@@ -28,13 +28,13 @@ defmodule PhxDiff.DiffsTest do
 
     @tag :tmp_dir
     test "returns an empty list when no apps have been generated", %{tmp_dir: tmp_dir} do
-      config = build_config(tmp_dir)
+      stub_repo_paths(tmp_dir)
 
-      assert [] = Diffs.all_versions(config: config)
+      assert [] = Diffs.all_versions()
     end
   end
 
-  describe "release_versions/1" do
+  describe "release_versions/0" do
     test "returns all versions" do
       versions = Diffs.release_versions()
 
@@ -46,13 +46,13 @@ defmodule PhxDiff.DiffsTest do
 
     @tag :tmp_dir
     test "returns an empty list when no apps have been generated", %{tmp_dir: tmp_dir} do
-      config = build_config(tmp_dir)
+      stub_repo_paths(tmp_dir)
 
-      assert [] = Diffs.release_versions(config: config)
+      assert [] = Diffs.release_versions()
     end
   end
 
-  describe "get_diff/3" do
+  describe "get_diff/2" do
     @diff_start_event [:phx_diff, :diffs, :generate, :start]
     @diff_stop_event [:phx_diff, :diffs, :generate, :stop]
     @diff_exception_event [:phx_diff, :diffs, :generate, :exception]
@@ -151,17 +151,17 @@ defmodule PhxDiff.DiffsTest do
     end
   end
 
-  describe "generate_sample_app/2" do
+  describe "generate_sample_app/1" do
     @tag :tmp_dir
     test "stores the newly generated sample app in config.app_repo_path", %{tmp_dir: tmp_dir} do
-      config = build_config(tmp_dir)
+      stub_repo_paths(tmp_dir)
 
       assert {:ok, storage_dir} =
                ~V[1.5.3]
                |> Diffs.default_app_specification()
-               |> Diffs.generate_sample_app(config: config)
+               |> Diffs.generate_sample_app()
 
-      assert storage_dir == Path.join(config.app_repo_path, "1.5.3")
+      assert storage_dir == PhxDiff.Config.app_repo_path() |> Path.join("1.5.3")
 
       assert_file(Path.join(storage_dir, "mix.exs"))
 
@@ -178,21 +178,21 @@ defmodule PhxDiff.DiffsTest do
         assert file =~ ~s|signing_salt: "aaaaaaaa"|
       end)
 
-      assert [~V[1.5.3]] = Diffs.all_versions(config: config)
+      assert [~V[1.5.3]] = Diffs.all_versions()
 
-      assert_temp_dirs_cleaned_up(config)
+      assert_temp_dirs_cleaned_up()
     end
 
     @tag :tmp_dir
     test "returns {:error, :unknown_version} when phoenix does not have the given version number",
          %{tmp_dir: tmp_dir} do
-      config = build_config(tmp_dir)
+      stub_repo_paths(tmp_dir)
 
       assert {:error, :unknown_version} =
                Diffs.default_app_specification(~V[0.1.10])
-               |> Diffs.generate_sample_app(config: config)
+               |> Diffs.generate_sample_app()
 
-      assert_temp_dirs_cleaned_up(config)
+      assert_temp_dirs_cleaned_up()
     end
   end
 
@@ -216,17 +216,18 @@ defmodule PhxDiff.DiffsTest do
     end
   end
 
-  defp build_config(tmp_path) do
-    %Config{
-      app_repo_path: Path.join(tmp_path, "app_repo"),
-      app_generator_workspace_path: Path.join(tmp_path, "generator_workspace")
-    }
+  defp stub_repo_paths(tmp_dir) do
+    PhxDiff.Config.Mock
+    |> stub(:app_repo_path, fn -> Path.join(tmp_dir, "app_repo") end)
+    |> stub(:app_generator_workspace_path, fn -> Path.join(tmp_dir, "generator_workspace") end)
   end
 
-  defp assert_temp_dirs_cleaned_up(config) do
+  defp assert_temp_dirs_cleaned_up do
+    app_generator_workspace_path = PhxDiff.Config.app_generator_workspace_path()
+
     mix_archives_tmp_path =
       Path.join([
-        config.app_generator_workspace_path,
+        app_generator_workspace_path,
         "mix_archives",
         "tmp"
       ])
@@ -235,7 +236,7 @@ defmodule PhxDiff.DiffsTest do
 
     generated_apps_path =
       Path.join([
-        config.app_generator_workspace_path,
+        app_generator_workspace_path,
         "generated_apps"
       ])
 

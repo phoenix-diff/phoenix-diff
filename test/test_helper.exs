@@ -6,4 +6,8 @@ Mix.shell(Mix.Shell.Process)
 
 :otel_batch_processor.set_exporter(PhxDiff.TestSupport.OpenTelemetryTestExporter)
 
+# Set up the mock config adapter
+Mox.defmock(PhxDiff.Config.Mock, for: PhxDiff.Config.Adapter)
+Application.put_env(:phx_diff, :config_adapter, PhxDiff.Config.Mock)
+
 ExUnit.start()

@@ -4,16 +4,15 @@ defmodule PhxDiff.Diffs.AppRepo.AppGenerator do
   alias PhxDiff.AppSpecification
   alias PhxDiff.Diffs.AppRepo.AppGenerator.MixArchivesDirectories
   alias PhxDiff.Diffs.AppRepo.AppGenerator.MixTaskRunner
-  alias PhxDiff.Diffs.Config
 
   @type dir :: String.t()
 
   @type generate_opt :: {:workspace_path, String.t()}
 
-  @spec generate(Config.t(), AppSpecification.t()) ::
+  @spec generate(AppSpecification.t()) ::
           {:ok, dir} | {:error, :unknown_version}
-  def generate(%Config{} = config, %AppSpecification{} = app_specification) do
-    %Config{app_generator_workspace_path: workspace_path} = config
+  def generate(%AppSpecification{} = app_specification) do
+    workspace_path = PhxDiff.Config.app_generator_workspace_path()
     %AppSpecification{phoenix_version: version} = app_specification
 
     with {:ok, mix_archives_path} <-

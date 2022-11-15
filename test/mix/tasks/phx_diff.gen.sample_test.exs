@@ -1,5 +1,5 @@
 defmodule Mix.Tasks.PhxDiff.Gen.SampleTest do
-  use ExUnit.Case, async: true
+  use PhxDiff.MockedConfigCase, async: true
 
   alias Mix.Tasks.PhxDiff.Gen
   alias PhxDiff.Diffs
