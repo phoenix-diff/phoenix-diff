@@ -1,4 +1,4 @@
-defmodule PhxDiff.DiffsTest do
+defmodule PhxDiffTest do
   use PhxDiff.MockedConfigCase, async: false
 
   import ExUnit.CaptureLog
@@ -10,7 +10,6 @@ defmodule PhxDiff.DiffsTest do
 
   alias PhxDiff.AppSpecification
   alias PhxDiff.ComparisonError
-  alias PhxDiff.Diffs
 
   alias PhxDiff.TestSupport.TelemetryHelpers
 
@@ -18,7 +17,7 @@ defmodule PhxDiff.DiffsTest do
 
   describe "all_versions/0" do
     test "returns all versions" do
-      versions = Diffs.all_versions()
+      versions = PhxDiff.all_versions()
 
       assert length(versions) > 25
 
@@ -30,13 +29,13 @@ defmodule PhxDiff.DiffsTest do
     test "returns an empty list when no apps have been generated", %{tmp_dir: tmp_dir} do
       stub_repo_paths(tmp_dir)
 
-      assert [] = Diffs.all_versions()
+      assert [] = PhxDiff.all_versions()
     end
   end
 
   describe "release_versions/0" do
     test "returns all versions" do
-      versions = Diffs.release_versions()
+      versions = PhxDiff.release_versions()
 
       assert length(versions) > 20
 
@@ -48,11 +47,11 @@ defmodule PhxDiff.DiffsTest do
     test "returns an empty list when no apps have been generated", %{tmp_dir: tmp_dir} do
       stub_repo_paths(tmp_dir)
 
-      assert [] = Diffs.release_versions()
+      assert [] = PhxDiff.release_versions()
     end
   end
 
-  describe "get_diff/2" do
+  describe "fetch_diff/2" do
     @diff_start_event [:phx_diff, :diffs, :generate, :start]
     @diff_stop_event [:phx_diff, :diffs, :generate, :stop]
     @diff_exception_event [:phx_diff, :diffs, :generate, :exception]
@@ -70,12 +69,12 @@ defmodule PhxDiff.DiffsTest do
     end
 
     test "returns content when versions are valid" do
-      source = Diffs.default_app_specification(~V[1.3.1])
-      target = Diffs.default_app_specification(~V[1.3.2])
+      source = PhxDiff.default_app_specification(~V[1.3.1])
+      target = PhxDiff.default_app_specification(~V[1.3.2])
 
       log_output =
         capture_log(fn ->
-          {:ok, diff} = Diffs.get_diff(source, target)
+          {:ok, diff} = PhxDiff.fetch_diff(source, target)
 
           assert diff =~ "config/config.exs config/config.exs"
         end)
@@ -106,21 +105,21 @@ defmodule PhxDiff.DiffsTest do
     end
 
     test "returns empty when versions are the same" do
-      source = Diffs.default_app_specification(~V[1.3.1])
-      target = Diffs.default_app_specification(~V[1.3.1])
+      source = PhxDiff.default_app_specification(~V[1.3.1])
+      target = PhxDiff.default_app_specification(~V[1.3.1])
 
-      {:ok, diff} = Diffs.get_diff(source, target)
+      {:ok, diff} = PhxDiff.fetch_diff(source, target)
 
       assert diff == ""
     end
 
     test "returns an error when the source is an unknown version" do
-      source = Diffs.default_app_specification(@unknown_phoenix_version)
-      target = Diffs.default_app_specification(~V[1.3.1])
+      source = PhxDiff.default_app_specification(@unknown_phoenix_version)
+      target = PhxDiff.default_app_specification(~V[1.3.1])
 
       {log_output, result} =
         capture_log_with_result(fn ->
-          Diffs.get_diff(source, target)
+          PhxDiff.fetch_diff(source, target)
         end)
 
       assert {:error, error} = result
@@ -143,10 +142,10 @@ defmodule PhxDiff.DiffsTest do
     end
 
     test "returns an error when the target is an unknown version" do
-      source = Diffs.default_app_specification(~V[1.3.1])
-      target = Diffs.default_app_specification(@unknown_phoenix_version)
+      source = PhxDiff.default_app_specification(~V[1.3.1])
+      target = PhxDiff.default_app_specification(@unknown_phoenix_version)
 
-      assert {:error, error} = Diffs.get_diff(source, target)
+      assert {:error, error} = PhxDiff.fetch_diff(source, target)
       assert %ComparisonError{errors: [{:target, :unknown_version}]} = error
     end
   end
@@ -158,8 +157,8 @@ defmodule PhxDiff.DiffsTest do
 
       assert {:ok, storage_dir} =
                ~V[1.5.3]
-               |> Diffs.default_app_specification()
-               |> Diffs.generate_sample_app()
+               |> PhxDiff.default_app_specification()
+               |> PhxDiff.generate_sample_app()
 
       assert storage_dir == PhxDiff.Config.app_repo_path() |> Path.join("1.5.3")
 
@@ -178,7 +177,7 @@ defmodule PhxDiff.DiffsTest do
         assert file =~ ~s|signing_salt: "aaaaaaaa"|
       end)
 
-      assert [~V[1.5.3]] = Diffs.all_versions()
+      assert [~V[1.5.3]] = PhxDiff.all_versions()
 
       assert_temp_dirs_cleaned_up()
     end
@@ -189,8 +188,8 @@ defmodule PhxDiff.DiffsTest do
       stub_repo_paths(tmp_dir)
 
       assert {:error, :unknown_version} =
-               Diffs.default_app_specification(~V[0.1.10])
-               |> Diffs.generate_sample_app()
+               PhxDiff.default_app_specification(~V[0.1.10])
+               |> PhxDiff.generate_sample_app()
 
       assert_temp_dirs_cleaned_up()
     end
@@ -198,7 +197,7 @@ defmodule PhxDiff.DiffsTest do
 
   describe "default_app_specification/1" do
     test "returns an app spec with no arguments for versions less than 1.5.0" do
-      assert Diffs.default_app_specification(~V[1.4.16]) ==
+      assert PhxDiff.default_app_specification(~V[1.4.16]) ==
                %AppSpecification{
                  phoenix_version: ~V[1.4.16],
                  phx_new_arguments: []
@@ -207,7 +206,7 @@ defmodule PhxDiff.DiffsTest do
 
     test "returns an app spec with --live argument for versions >= 1.5.0" do
       for version <- [~V[1.5.0-rc.0], ~V[1.5.0], ~V[1.5.1]] do
-        assert Diffs.default_app_specification(version) ==
+        assert PhxDiff.default_app_specification(version) ==
                  %AppSpecification{
                    phoenix_version: version,
                    phx_new_arguments: ["--live"]

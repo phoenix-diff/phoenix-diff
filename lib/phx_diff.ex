@@ -26,6 +26,12 @@ defmodule PhxDiff do
   defdelegate all_versions, to: PhxDiff.Diffs
 
   @doc """
+  List all non-prerelease Phoenix versions
+  """
+  @spec release_versions() :: [version]
+  defdelegate release_versions, to: PhxDiff.Diffs
+
+  @doc """
   Get the latest Phoenix version
   """
   @spec latest_version() :: version
