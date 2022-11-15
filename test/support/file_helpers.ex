@@ -27,24 +27,4 @@ defmodule PhxDiff.TestSupport.FileHelpers do
         raise inspect({file, match})
     end
   end
-
-  def tmp_path do
-    Path.expand("../../tmp/test/", __DIR__)
-  end
-
-  defp random_string(len) do
-    len |> :crypto.strong_rand_bytes() |> Base.encode64() |> binary_part(0, len)
-  end
-
-  def with_tmp(function) do
-    path = Path.join([tmp_path(), random_string(10)])
-
-    try do
-      File.rm_rf!(path)
-      File.mkdir_p!(path)
-      function.(path)
-    after
-      File.rm_rf!(path)
-    end
-  end
 end
