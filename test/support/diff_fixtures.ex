@@ -1,8 +1,6 @@
 defmodule PhxDiff.TestSupport.DiffFixtures do
   @moduledoc false
 
-  alias PhxDiff.Diffs
-
   # This module manages known diff fixtures for our test suite.
   #
   # To add a new diff fixture, run the following commands
@@ -31,9 +29,9 @@ defmodule PhxDiff.TestSupport.DiffFixtures do
     version_2 = Version.parse!(version_2)
 
     {:ok, diff} =
-      Diffs.get_diff(
-        Diffs.default_app_specification(version_1),
-        Diffs.default_app_specification(version_2)
+      PhxDiff.fetch_diff(
+        PhxDiff.default_app_specification(version_1),
+        PhxDiff.default_app_specification(version_2)
       )
 
     file_path(version_1, version_2)

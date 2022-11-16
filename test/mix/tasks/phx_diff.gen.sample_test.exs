@@ -2,7 +2,6 @@ defmodule Mix.Tasks.PhxDiff.Gen.SampleTest do
   use PhxDiff.MockedConfigCase, async: true
 
   alias Mix.Tasks.PhxDiff.Gen
-  alias PhxDiff.Diffs
   alias PhxDiff.TestSupport.DiffFixtures
 
   test "outputs the appropriate instructions after generating an app" do
@@ -34,9 +33,9 @@ defmodule Mix.Tasks.PhxDiff.Gen.SampleTest do
         Gen.Sample.run([unquote(version_2)])
 
         assert {:ok, diff} =
-                 Diffs.get_diff(
-                   Diffs.default_app_specification(Version.parse!(unquote(version_1))),
-                   Diffs.default_app_specification(Version.parse!(unquote(version_2)))
+                 PhxDiff.fetch_diff(
+                   PhxDiff.default_app_specification(Version.parse!(unquote(version_1))),
+                   PhxDiff.default_app_specification(Version.parse!(unquote(version_2)))
                  )
 
         assert diff ==

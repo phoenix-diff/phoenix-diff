@@ -4,8 +4,6 @@ defmodule PhxDiff.OpenTelemetryTest do
   import PhxDiff.TestSupport.OpenTelemetryTestExporter, only: [subscribe_to_otel_spans: 1]
   import PhxDiff.TestSupport.Sigils
 
-  alias PhxDiff.Diffs
-
   describe "diff events" do
     @diff_event_prefix [:phx_diff, :diffs, :generate]
 
@@ -13,8 +11,8 @@ defmodule PhxDiff.OpenTelemetryTest do
 
     test "an exception is reported properly" do
       metadata = %{
-        source_spec: Diffs.default_app_specification(~V[1.3.1]),
-        target_spec: Diffs.default_app_specification(~V[1.3.2])
+        source_spec: PhxDiff.default_app_specification(~V[1.3.1]),
+        target_spec: PhxDiff.default_app_specification(~V[1.3.2])
       }
 
       assert_raise RuntimeError, fn ->
@@ -38,8 +36,8 @@ defmodule PhxDiff.OpenTelemetryTest do
 
     test "when something is thrown" do
       metadata = %{
-        source_spec: Diffs.default_app_specification(~V[1.3.1]),
-        target_spec: Diffs.default_app_specification(~V[1.3.2])
+        source_spec: PhxDiff.default_app_specification(~V[1.3.1]),
+        target_spec: PhxDiff.default_app_specification(~V[1.3.2])
       }
 
       catch_throw(

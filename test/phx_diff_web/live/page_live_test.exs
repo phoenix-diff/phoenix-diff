@@ -4,8 +4,6 @@ defmodule PhxDiffWeb.PageLiveTest do
   import Phoenix.LiveViewTest
   import PhxDiff.TestSupport.OpenTelemetryTestExporter, only: [subscribe_to_otel_spans: 1]
 
-  alias PhxDiff.Diffs
-
   setup [:subscribe_to_otel_spans]
 
   test "redirects to include the source and target in url", %{conn: conn} do
@@ -14,19 +12,19 @@ defmodule PhxDiffWeb.PageLiveTest do
       |> live(~p"/")
       |> follow_redirect(
         conn,
-        ~p"/?source=#{Diffs.previous_release_version()}&target=#{Diffs.latest_version()}"
+        ~p"/?source=#{PhxDiff.previous_release_version()}&target=#{PhxDiff.latest_version()}"
       )
 
     assert has_element?(
              view,
              ~S|#[name="diff_selection[source]"] [selected=selected]|,
-             Diffs.previous_release_version() |> to_string()
+             PhxDiff.previous_release_version() |> to_string()
            )
 
     assert has_element?(
              view,
              ~S|#[name="diff_selection[target]"] [selected=selected]|,
-             Diffs.latest_version() |> to_string()
+             PhxDiff.latest_version() |> to_string()
            )
 
     view
@@ -107,20 +105,20 @@ defmodule PhxDiffWeb.PageLiveTest do
   test "falls back to latest version when target url_param is invalid", %{conn: conn} do
     {:ok, _view, _html} =
       conn
-      |> live(~p"/?source=#{Diffs.previous_release_version()}&target=invalid")
+      |> live(~p"/?source=#{PhxDiff.previous_release_version()}&target=invalid")
       |> follow_redirect(
         conn,
-        ~p"/?source=#{Diffs.previous_release_version()}&target=#{Diffs.latest_version()}"
+        ~p"/?source=#{PhxDiff.previous_release_version()}&target=#{PhxDiff.latest_version()}"
       )
   end
 
   test "falls back to previous version when source url_param is invalid", %{conn: conn} do
     {:ok, _view, _html} =
       conn
-      |> live(~p"/?source=invalid&target=#{Diffs.latest_version()}")
+      |> live(~p"/?source=invalid&target=#{PhxDiff.latest_version()}")
       |> follow_redirect(
         conn,
-        ~p"/?source=#{Diffs.previous_release_version()}&target=#{Diffs.latest_version()}"
+        ~p"/?source=#{PhxDiff.previous_release_version()}&target=#{PhxDiff.latest_version()}"
       )
   end
 
@@ -129,20 +127,22 @@ defmodule PhxDiffWeb.PageLiveTest do
   test "falls back to latest version when target url_param is unknown", %{conn: conn} do
     {:ok, _view, _html} =
       conn
-      |> live(~p"/?source=#{Diffs.previous_release_version()}&target=#{@unknown_phoenix_version}")
+      |> live(
+        ~p"/?source=#{PhxDiff.previous_release_version()}&target=#{@unknown_phoenix_version}"
+      )
       |> follow_redirect(
         conn,
-        ~p"/?source=#{Diffs.previous_release_version()}&target=#{Diffs.latest_version()}"
+        ~p"/?source=#{PhxDiff.previous_release_version()}&target=#{PhxDiff.latest_version()}"
       )
   end
 
   test "falls back to previous version when source url_param is unknown", %{conn: conn} do
     {:ok, _view, _html} =
       conn
-      |> live(~p"/?source=#{@unknown_phoenix_version}&target=#{Diffs.latest_version()}")
+      |> live(~p"/?source=#{@unknown_phoenix_version}&target=#{PhxDiff.latest_version()}")
       |> follow_redirect(
         conn,
-        ~p"/?source=#{Diffs.previous_release_version()}&target=#{Diffs.latest_version()}"
+        ~p"/?source=#{PhxDiff.previous_release_version()}&target=#{PhxDiff.latest_version()}"
       )
 
     assert_received {:otel_span,
