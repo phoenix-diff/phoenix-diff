@@ -22,6 +22,9 @@ defmodule PhxDiff.Diffs do
   @spec previous_release_version() :: version
   defdelegate previous_release_version, to: AppRepo
 
+  @spec list_sample_apps_for_version(version) :: [AppSpecification.t()]
+  defdelegate list_sample_apps_for_version(version), to: AppRepo
+
   @spec generate_sample_app(AppSpecification.t()) ::
           {:ok, String.t()} | {:error, :unknown_version}
   defdelegate generate_sample_app(app_spec), to: AppRepo

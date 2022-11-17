@@ -10,10 +10,33 @@ defmodule PhxDiffTest do
 
   alias PhxDiff.AppSpecification
   alias PhxDiff.ComparisonError
+  alias PhxDiff.TestSupport.DiffFixtures
 
   alias PhxDiff.TestSupport.TelemetryHelpers
 
   @unknown_phoenix_version ~V[0.0.99]
+
+  describe "integration tests" do
+    @tag :tmp_dir
+    test "generating and comparing the same version with different options", %{tmp_dir: tmp_dir} do
+      stub_repo_paths(tmp_dir)
+
+      assert [] = PhxDiff.list_sample_apps_for_version(~V|1.5.9|)
+
+      default_spec = %AppSpecification{phoenix_version: ~V|1.5.9|, phx_new_arguments: []}
+      live_spec = %AppSpecification{phoenix_version: ~V|1.5.9|, phx_new_arguments: ["--live"]}
+
+      {:ok, _} = PhxDiff.generate_sample_app(default_spec)
+      {:ok, _} = PhxDiff.generate_sample_app(live_spec)
+
+      assert {:ok, diff} = PhxDiff.fetch_diff(default_spec, live_spec)
+
+      assert diff == DiffFixtures.known_diff_for!(default_spec, live_spec)
+
+      assert PhxDiff.list_sample_apps_for_version(~V|1.5.9|) ==
+               [default_spec, live_spec]
+    end
+  end
 
   describe "all_versions/0" do
     test "returns all versions" do
@@ -160,7 +183,7 @@ defmodule PhxDiffTest do
                |> PhxDiff.default_app_specification()
                |> PhxDiff.generate_sample_app()
 
-      assert storage_dir == PhxDiff.Config.app_repo_path() |> Path.join("1.5.3")
+      assert storage_dir == PhxDiff.Config.app_repo_path() |> Path.join("1.5.3/live")
 
       assert_file(Path.join(storage_dir, "mix.exs"))
 

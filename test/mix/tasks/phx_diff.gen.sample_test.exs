@@ -16,8 +16,8 @@ defmodule Mix.Tasks.PhxDiff.Gen.SampleTest do
 
            To add this to version control, run:
 
-               git add priv/data/sample-app/1.5.2
-               git add -f priv/data/sample-app/1.5.2/config/prod.secret.exs
+               git add priv/data/sample-app/1.5.2/live
+               git add -f priv/data/sample-app/1.5.2/live/config/prod.secret.exs
            """
   end
 

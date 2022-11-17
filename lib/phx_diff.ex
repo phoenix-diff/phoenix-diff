@@ -64,4 +64,10 @@ defmodule PhxDiff do
   @spec generate_sample_app(AppSpecification.t()) ::
           {:ok, String.t()} | {:error, :unknown_version}
   defdelegate generate_sample_app(app_spec), to: PhxDiff.Diffs
+
+  @doc """
+  Lists the known app specs for a specific phoenix version
+  """
+  @spec list_sample_apps_for_version(Version.t()) :: [AppSpecification.t()]
+  defdelegate list_sample_apps_for_version(version), to: PhxDiff.Diffs
 end
