@@ -204,12 +204,22 @@ defmodule PhxDiffTest do
                }
     end
 
-    test "returns an app spec with --live argument for versions >= 1.5.0" do
+    test "returns an app spec with --live argument for versions ~> 1.5.0" do
       for version <- [~V[1.5.0-rc.0], ~V[1.5.0], ~V[1.5.1]] do
         assert PhxDiff.default_app_specification(version) ==
                  %AppSpecification{
                    phoenix_version: version,
                    phx_new_arguments: ["--live"]
+                 }
+      end
+    end
+
+    test "returns an app spec without --live argument for versions >=  1.6.0" do
+      for version <- [~V[1.6.0-rc.0], ~V[1.6.0], ~V[1.7.0-rc.0]] do
+        assert PhxDiff.default_app_specification(version) ==
+                 %AppSpecification{
+                   phoenix_version: version,
+                   phx_new_arguments: []
                  }
       end
     end

@@ -28,7 +28,7 @@ defmodule PhxDiff.Diffs do
 
   @spec default_app_specification(version) :: AppSpecification.t()
   def default_app_specification(%Version{} = version) do
-    if Version.match?(version, ">= 1.5.0-rc.0") do
+    if Version.match?(version, "~> 1.5.0-rc.0", allow_pre: true) do
       AppSpecification.new(version, ["--live"])
     else
       AppSpecification.new(version, [])
