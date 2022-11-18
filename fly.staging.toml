@@ -7,6 +7,7 @@ processes = []
 
 [env]
   URL_HOST = "phoenixdiff-web-staging.fly.dev"
+  HONEYBADGER_ENV_NAME="Staging"
   PORT = "8080"
 
 [experimental]

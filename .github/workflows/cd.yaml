@@ -36,3 +36,8 @@ jobs:
           echo "base_url=https://$(flyctl info --config $FLY_CONFIG_PATH -j | jq -r 'if .Hostname == "phoenixdiff-web-prod.fly.dev" then "phoenixdiff.org" else .Hostname end')" >> $GITHUB_OUTPUT
       - name: Deploy to fly
         run: flyctl deploy -c "$FLY_CONFIG_PATH" --remote-only
+      - name: Notify Honeybadger
+        uses: honeybadger-io/github-notify-deploy-action@v1
+        with:
+          api_key: ${{ secrets.HONEYBADGER_API_KEY }}
+          environment: ${{ secrets.HONEYBADGER_ENV_NAME || inputs.environment }}
