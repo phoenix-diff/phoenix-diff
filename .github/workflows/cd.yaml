@@ -33,6 +33,6 @@ jobs:
       - name: Look up environment url
         id: lookup_environment_url
         run: |
-          echo "base_url=https://$(flyctl info --config $FLY_CONFIG_PATH -j | jq -r 'if .App.Hostname == "phoenixdiff-web-prod.fly.dev" then "phoenixdiff.org" else .App.Hostname end')" >> $GITHUB_OUTPUT
+          echo "base_url=https://$(flyctl info --config $FLY_CONFIG_PATH -j | jq -r 'if .Hostname == "phoenixdiff-web-prod.fly.dev" then "phoenixdiff.org" else .Hostname end')" >> $GITHUB_OUTPUT
       - name: Deploy to fly
         run: flyctl deploy -c "$FLY_CONFIG_PATH" --remote-only
