@@ -91,9 +91,19 @@ if System.get_env("RENDER_TRACKING_SCRIPTS") == "true" do
   config :phx_diff, render_tracking_scripts: true
 end
 
+git_sha =
+  with {:ok, "ref: " <> contents} <- File.read(".git/HEAD"),
+       path = String.trim(contents),
+       {:ok, sha} <- File.read(".git/#{path}") do
+    String.trim(sha)
+  else
+    _ -> nil
+  end
+
 # Set the honeybadger environment name for all envs
 config :honeybadger,
-  environment_name: System.get_env("HONEYBADGER_ENV_NAME", to_string(config_env()))
+  environment_name: System.get_env("HONEYBADGER_ENV_NAME", to_string(config_env())),
+  revision: git_sha
 
 # OpenTelemetry configuration
 case System.fetch_env("OTEL_EXPORTER") do
