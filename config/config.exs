@@ -10,7 +10,10 @@ import Config
 # Configures the endpoint
 config :phx_diff, PhxDiffWeb.Endpoint,
   url: [host: "localhost"],
-  render_errors: [view: PhxDiffWeb.ErrorView, accepts: ~w(html json)],
+  render_errors: [
+    formats: [html: PhxDiffWeb.ErrorHTML],
+    layout: false
+  ],
   pubsub_server: PhxDiff.PubSub,
   live_view: [signing_salt: "NpCfQvr9hr3z/LRwF8WZL5LmKP0wC9e3"]
 
