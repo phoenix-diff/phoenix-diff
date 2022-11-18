@@ -30,16 +30,7 @@ defmodule PhxDiffWeb.Endpoint do
     at: "/",
     from: :phx_diff,
     gzip: false,
-    only: ~w(
-      assets
-      fonts
-      images
-      favicon.ico
-      favicon-16x16.png
-      favicon-32x32.png
-      favicon-96x96.png
-      robots.txt
-    )
+    only: PhxDiffWeb.static_paths()
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
