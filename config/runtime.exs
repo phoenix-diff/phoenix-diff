@@ -106,6 +106,11 @@ config :honeybadger,
   revision: git_sha
 
 # OpenTelemetry configuration
+config :opentelemetry, :resource,
+  service: %{
+    version: git_sha
+  }
+
 case System.fetch_env("OTEL_EXPORTER") do
   {:ok, "stdout"} ->
     config :opentelemetry, :processors,
