@@ -11,7 +11,11 @@ defmodule PhxDiff.TestSupport.DiffFixtures do
   #     Erlang/OTP 23 [erts-11.2.2.4] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:1] [hipe]
   #
   #     Interactive Elixir (1.12.3) - press Ctrl+C to exit (type h() ENTER for help)
-  #     iex(1)> PhxDiff.TestSupport.DiffFixtures.save_diff_fixture!("1.5.5", "1.5.6")
+  #     iex(1)> import PhxDiff.TestSupport.Sigils
+  #     iex(2)> PhxDiff.TestSupport.DiffFixtures.save_diff_fixture!(
+  #     ...(2)>   PhxDiff.AppSpecification.new(~V|1.5.9|, ["--live"]),
+  #     ...(2)>   PhxDiff.AppSpecification.new(~V|1.6.0|, [])
+  #     ...(2)> )
   #     :ok
   #
 
@@ -30,6 +34,10 @@ defmodule PhxDiff.TestSupport.DiffFixtures do
     app_spec_1 = PhxDiff.default_app_specification(Version.parse!(version_1))
     app_spec_2 = PhxDiff.default_app_specification(Version.parse!(version_2))
 
+    save_diff_fixture!(app_spec_1, app_spec_2)
+  end
+
+  def save_diff_fixture!(%AppSpecification{} = app_spec_1, %AppSpecification{} = app_spec_2) do
     {:ok, diff} = PhxDiff.fetch_diff(app_spec_1, app_spec_2)
 
     file_path(app_spec_1, app_spec_2)
