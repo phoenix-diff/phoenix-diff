@@ -2,6 +2,7 @@ defmodule Mix.Tasks.PhxDiff.Gen.SampleTest do
   use PhxDiff.MockedConfigCase, async: true
 
   alias Mix.Tasks.PhxDiff.Gen
+  alias PhxDiff.AppSpecification
   alias PhxDiff.TestSupport.DiffFixtures
 
   test "outputs the appropriate instructions after generating an app" do
@@ -21,28 +22,32 @@ defmodule Mix.Tasks.PhxDiff.Gen.SampleTest do
   end
 
   @diffs_to_compare [
-    {"1.4.16", "1.4.17"},
-    {"1.5.2", "1.5.3"},
-    {"1.6.0-rc.1", "1.6.0"}
+    {{"1.4.16", []}, {"1.4.17", []}},
+    {{"1.5.2", ["--live"]}, {"1.5.3", ["--live"]}},
+    {{"1.6.0-rc.1", []}, "1.6.0", []}
   ]
 
   describe "diff generation" do
-    for {version_1, version_2} <- @diffs_to_compare do
-      test "returns known diff comparing #{version_1} to #{version_2}" do
+    for {{version_1, v1_opts}, {version_2, v2_opts}} <- @diffs_to_compare do
+      test "returns known diff comparing #{version_1} #{Enum.join(v1_opts, " ")} to #{version_2} #{Enum.join(v2_opts, " ")}" do
+        v1_app_spec =
+          AppSpecification.new(
+            Version.parse!(unquote(version_1)),
+            unquote(v1_opts)
+          )
+
+        v2_app_spec =
+          AppSpecification.new(
+            Version.parse!(unquote(version_2)),
+            unquote(v2_opts)
+          )
+
         Gen.Sample.run([unquote(version_1)])
         Gen.Sample.run([unquote(version_2)])
 
-        assert {:ok, diff} =
-                 PhxDiff.fetch_diff(
-                   PhxDiff.default_app_specification(Version.parse!(unquote(version_1))),
-                   PhxDiff.default_app_specification(Version.parse!(unquote(version_2)))
-                 )
+        assert {:ok, diff} = PhxDiff.fetch_diff(v1_app_spec, v2_app_spec)
 
-        assert diff ==
-                 DiffFixtures.known_diff_for!(
-                   Version.parse!(unquote(version_1)),
-                   Version.parse!(unquote(version_2))
-                 )
+        assert diff == DiffFixtures.known_diff_for!(v1_app_spec, v2_app_spec)
       end
     end
   end

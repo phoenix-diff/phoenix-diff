@@ -1,6 +1,8 @@
 defmodule PhxDiff.TestSupport.DiffFixtures do
   @moduledoc false
 
+  alias PhxDiff.AppSpecification
+
   # This module manages known diff fixtures for our test suite.
   #
   # To add a new diff fixture, run the following commands
@@ -13,8 +15,8 @@ defmodule PhxDiff.TestSupport.DiffFixtures do
   #     :ok
   #
 
-  def known_diff_for!(%Version{} = version_1, %Version{} = version_2) do
-    diff_path = file_path(version_1, version_2)
+  def known_diff_for!(%AppSpecification{} = app_spec_1, %AppSpecification{} = app_spec_2) do
+    diff_path = file_path(app_spec_1, app_spec_2)
 
     case File.read(diff_path) do
       {:ok, diff} -> diff
@@ -25,16 +27,12 @@ defmodule PhxDiff.TestSupport.DiffFixtures do
   # NOTE: This function is only designed to be called from iEX
   def save_diff_fixture!(version_1, version_2)
       when is_binary(version_1) and is_binary(version_2) do
-    version_1 = Version.parse!(version_1)
-    version_2 = Version.parse!(version_2)
+    app_spec_1 = PhxDiff.default_app_specification(Version.parse!(version_1))
+    app_spec_2 = PhxDiff.default_app_specification(Version.parse!(version_2))
 
-    {:ok, diff} =
-      PhxDiff.fetch_diff(
-        PhxDiff.default_app_specification(version_1),
-        PhxDiff.default_app_specification(version_2)
-      )
+    {:ok, diff} = PhxDiff.fetch_diff(app_spec_1, app_spec_2)
 
-    file_path(version_1, version_2)
+    file_path(app_spec_1, app_spec_2)
     |> File.write!(diff)
   end
 
@@ -42,7 +40,7 @@ defmodule PhxDiff.TestSupport.DiffFixtures do
     Path.join([__DIR__, "diff_fixtures", diff_file_name(version_1, version_2)])
   end
 
-  defp diff_file_name(%Version{} = version_1, %Version{} = version_2) do
-    "#{version_1}-#{version_2}.diff"
+  defp diff_file_name(%AppSpecification{} = app_spec_1, %AppSpecification{} = app_spec_2) do
+    "#{app_spec_1.phoenix_version}-#{app_spec_2.phoenix_version}.diff"
   end
 end
