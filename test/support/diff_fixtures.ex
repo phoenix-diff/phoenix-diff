@@ -41,6 +41,9 @@ defmodule PhxDiff.TestSupport.DiffFixtures do
   end
 
   defp diff_file_name(%AppSpecification{} = app_spec_1, %AppSpecification{} = app_spec_2) do
-    "#{app_spec_1.phoenix_version}-#{app_spec_2.phoenix_version}.diff"
+    "#{app_spec_1.phoenix_version}-#{serialize_phx_new_args(app_spec_1.phx_new_arguments)}-#{app_spec_2.phoenix_version}-#{serialize_phx_new_args(app_spec_2.phx_new_arguments)}.diff"
   end
+
+  defp serialize_phx_new_args([]), do: "default"
+  defp serialize_phx_new_args(["--live"]), do: "live"
 end
