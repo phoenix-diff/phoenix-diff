@@ -8,7 +8,8 @@ defmodule PhxDiff.Diffs.AppRepo do
 
   @args_to_path_mappings [
     {[], "default"},
-    {["--live"], "live"}
+    {["--live"], "live"},
+    {["--no-ecto"], "no-ecto"}
   ]
 
   @spec all_versions() :: [version]

@@ -212,6 +212,18 @@ defmodule PhxDiffWeb.PageLiveTest do
         AppSpecification.new(~V|1.5.9|, ["--live"])
       )
     )
+
+    {:ok, view, _html} =
+      conn
+      |> live(~p"/?source=1.7.0-rc.0&source_variant=no-ecto&target=1.7.0-rc.0")
+
+    assert_diff_rendered(
+      view,
+      DiffFixtures.known_diff_for!(
+        AppSpecification.new(~V|1.7.0-rc.0|, ["--no-ecto"]),
+        AppSpecification.new(~V|1.7.0-rc.0|, [])
+      )
+    )
   end
 
   defp assert_diff_rendered(view, expected_diff) do

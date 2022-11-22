@@ -54,4 +54,5 @@ defmodule PhxDiff.TestSupport.DiffFixtures do
 
   defp serialize_phx_new_args([]), do: "default"
   defp serialize_phx_new_args(["--live"]), do: "live"
+  defp serialize_phx_new_args(["--no-ecto"]), do: "no-ecto"
 end

@@ -9,6 +9,7 @@ defmodule PhxDiffWeb.PageLive.DiffSelection.Fields.Variant do
   @impl true
   def cast("default"), do: {:ok, []}
   def cast("live"), do: {:ok, ["--live"]}
+  def cast("no-ecto"), do: {:ok, ["--no-ecto"]}
   def cast(_), do: :error
 
   @impl true
