@@ -3,6 +3,10 @@ defmodule PhxDiffWeb.PageLiveTest do
 
   import Phoenix.LiveViewTest
   import PhxDiff.TestSupport.OpenTelemetryTestExporter, only: [subscribe_to_otel_spans: 1]
+  import PhxDiff.TestSupport.Sigils
+
+  alias PhxDiff.AppSpecification
+  alias PhxDiff.TestSupport.DiffFixtures
 
   setup [:subscribe_to_otel_spans]
 
@@ -194,6 +198,20 @@ defmodule PhxDiffWeb.PageLiveTest do
     assert view
            |> element(".version-selector-target")
            |> render() =~ "Generated with --live"
+  end
+
+  test "allows comparing variants of the same version", %{conn: conn} do
+    {:ok, view, _html} =
+      conn
+      |> live(~p"/?source=1.5.9&source_variant=default&target=1.5.9&target_variant=live")
+
+    assert_diff_rendered(
+      view,
+      DiffFixtures.known_diff_for!(
+        AppSpecification.new(~V|1.5.9|, []),
+        AppSpecification.new(~V|1.5.9|, ["--live"])
+      )
+    )
   end
 
   defp assert_diff_rendered(view, expected_diff) do

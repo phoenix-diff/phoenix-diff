@@ -61,9 +61,8 @@ defmodule PhxDiffWeb.PageLive do
     changeset = DiffSelection.changeset(diff_selection, params)
 
     with {:ok, diff_selection} <- Changeset.apply_action(changeset, :lookup) do
-      %DiffSelection{source: source, target: target} = diff_selection
-      source_app_spec = PhxDiff.default_app_specification(source)
-      target_app_spec = PhxDiff.default_app_specification(target)
+      source_app_spec = build_app_spec(diff_selection.source, diff_selection.source_variant)
+      target_app_spec = build_app_spec(diff_selection.target, diff_selection.target_variant)
 
       case PhxDiff.fetch_diff(source_app_spec, target_app_spec) do
         {:ok, diff} ->
@@ -83,6 +82,9 @@ defmodule PhxDiffWeb.PageLive do
   defp page_title(%AppSpecification{} = source, %AppSpecification{} = target) do
     "v#{source.phoenix_version} to v#{target.phoenix_version}"
   end
+
+  defp build_app_spec(version, nil), do: PhxDiff.default_app_specification(version)
+  defp build_app_spec(version, args), do: AppSpecification.new(version, args)
 
   defp arguments_string(%AppSpecification{phx_new_arguments: []}), do: nil
 
