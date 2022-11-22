@@ -6,7 +6,7 @@ defmodule Mix.Tasks.PhxDiff.Gen.SampleTest do
   alias PhxDiff.TestSupport.DiffFixtures
 
   test "outputs the appropriate instructions after generating an app" do
-    Gen.Sample.run(["1.5.2"])
+    Gen.Sample.run(["1.5.2", "--live"])
 
     assert_receive {:mix_shell, :info, [msg]}
 
@@ -24,6 +24,7 @@ defmodule Mix.Tasks.PhxDiff.Gen.SampleTest do
   @diffs_to_compare [
     {{"1.4.16", []}, {"1.4.17", []}},
     {{"1.5.2", ["--live"]}, {"1.5.3", ["--live"]}},
+    {{"1.5.9", []}, {"1.5.9", ["--live"]}},
     {{"1.6.0-rc.1", []}, "1.6.0", []}
   ]
 
@@ -42,8 +43,8 @@ defmodule Mix.Tasks.PhxDiff.Gen.SampleTest do
             unquote(v2_opts)
           )
 
-        Gen.Sample.run([unquote(version_1)])
-        Gen.Sample.run([unquote(version_2)])
+        Gen.Sample.run([unquote(version_1)] ++ unquote(v1_opts))
+        Gen.Sample.run([unquote(version_2)] ++ unquote(v2_opts))
 
         assert {:ok, diff} = PhxDiff.fetch_diff(v1_app_spec, v2_app_spec)
 
