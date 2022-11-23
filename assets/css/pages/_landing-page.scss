@@ -97,7 +97,7 @@
     .message-container {
       text-align: center;
 
-      color: $main-brand-color;
+      color: var(--main-brand-color);
 
       margin-top: 30px;
       margin-bottom: 30px;
@@ -116,7 +116,7 @@
     .d2h-file-list-header {
       a.d2h-file-switch {
         font-size: 14px;
-        color: $main-brand-color;
+        color: var(--main-brand-color);
         font-weight: bold;
       }
     }
