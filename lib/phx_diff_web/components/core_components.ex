@@ -156,7 +156,7 @@ defmodule PhxDiffWeb.CoreComponents do
 
   def button_group_toggle(assigns) do
     ~H"""
-    <div class="btn-group btn-group-toggle">
+    <div class="btn-group" role="group">
       <.button_group_toggle_button :for={option <- @option} field={@field} value={option.value}>
         <%= render_slot(option) %>
       </.button_group_toggle_button>
@@ -178,14 +178,18 @@ defmodule PhxDiffWeb.CoreComponents do
       |> assign(field: nil)
       |> assign_new(:name, fn -> Phoenix.HTML.Form.input_name(f, field) end)
       |> assign_new(:id, fn -> Phoenix.HTML.Form.input_id(f, field, assigns.value) end)
-      |> assign(:active_class, if(checked?, do: ["active"]))
 
     ~H"""
-    <label class={"btn btn-outline-primary #{@active_class}"}>
-      <input type="radio" name={@name} id={@id} autocomplete="off" value={@value} checked={@checked?} /> <%= render_slot(
-        @inner_block
-      ) %>
-    </label>
+    <input
+      type="radio"
+      name={@name}
+      id={@id}
+      autocomplete="off"
+      value={@value}
+      checked={@checked?}
+      class="btn-check"
+    />
+    <label class="btn btn-outline-primary" for={@id}><%= render_slot(@inner_block) %></label>
     """
   end
 

@@ -1,7 +1,25 @@
-$primary: $main-brand-color;
-
-@import "../../node_modules/bootstrap/scss/bootstrap";
+@import "bootstrap/scss/bootstrap";
 
 body {
   font-family: 'Open Sans', $font-family-sans-serif;
+}
+
+:root {
+  --main-brand-color: rgb(238, 85, 47);
+  --bs-primary: var(--main-brand-color);
+  --bs-primary-rgb: var(--main-brand-color);
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--bs-primary);
+  --bs-btn-color: var(--bs-white);
+}
+
+.btn-outline-primary {
+  --bs-btn-active-bg: var(--bs-primary);
+  --bs-btn-active-color: var(--bs-white);
+  --bs-btn-active-border-color: var(--bs-primary);
+  --bs-btn-bg: var(--bs-white);
+  --bs-btn-color: var(--bs-primary);
+  --bs-btn-border-color: var(--bs-primary);
 }

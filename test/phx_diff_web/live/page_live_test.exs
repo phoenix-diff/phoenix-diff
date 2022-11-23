@@ -247,7 +247,7 @@ defmodule PhxDiffWeb.PageLiveTest do
   end
 
   defp display_mode_button_active?(view, button_text) do
-    has_element?(view, "#diff-view-toggles .btn.active", button_text)
+    has_element?(view, "#diff-view-toggles .btn-check:checked + .btn", button_text)
   end
 
   defp strip_date_from_diff(diff) do
