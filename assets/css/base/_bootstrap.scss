@@ -1,13 +1,11 @@
-@import "bootstrap/scss/bootstrap";
-
-body {
-  font-family: 'Open Sans', $font-family-sans-serif;
-}
-
 :root {
   --main-brand-color: rgb(238, 85, 47);
   --bs-primary: var(--main-brand-color);
   --bs-primary-rgb: var(--main-brand-color);
+}
+
+body {
+  font-family: 'Open Sans', var(--bs-font-sans-serif);
 }
 
 .btn-primary {
