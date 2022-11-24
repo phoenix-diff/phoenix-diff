@@ -64,7 +64,6 @@ defmodule PhxDiff.MixProject do
       {:opentelemetry_liveview, "~> 1.0.0-rc.4"},
       {:boundary, "~> 0.9", runtime: false},
       {:esbuild, "~> 0.4", runtime: Mix.env() == :dev},
-      {:dart_sass, "~> 0.4", runtime: Mix.env() == :dev},
       {:ex_doc, "~> 0.27", only: :dev, runtime: false},
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
@@ -93,7 +92,6 @@ defmodule PhxDiff.MixProject do
       setup: ["deps.get", "cmd --cd assets yarn install"],
       "assets.deploy": [
         "esbuild default --minify",
-        "sass default --no-source-map --style=compressed",
         "phx.digest"
       ]
     ]

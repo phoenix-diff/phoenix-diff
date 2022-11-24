@@ -1,0 +1,114 @@
+#landing-page #input-section {
+  background-image: radial-gradient(circle, #f67938, #ef4734);
+  padding: 60px 15px 10px;
+  color: white;
+  text-align: center;
+}
+
+#landing-page #input-section h3, #landing-page #input-section .h3 {
+  margin-top: 0;
+  margin-bottom: 40px;
+  font-size: 22px;
+  font-weight: 300;
+}
+
+#landing-page #input-section .version-selectors {
+  justify-content: center;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#landing-page #input-section .version-selector {
+  flex: 0 0 150px;
+  margin: 10px 6px;
+  text-align: center;
+}
+
+#landing-page #input-section .version-selector label {
+  margin: 0 6px 2px;
+  text-transform: uppercase;
+  text-decoration: underline;
+  font-size: 14px;
+}
+
+#landing-page #input-section .version-selector select {
+  font-size: 14px;
+  width: 100px;
+  margin: 0 auto 2px;
+}
+
+#landing-page #input-section .version-selector .generator-options {
+  font-size: 12px;
+}
+
+@media (min-width: 576px) {
+  #landing-page #input-section .version-selector .field-group {
+    display: flex;
+    align-items: center;
+  }
+}
+
+#landing-page #input-section .star-message {
+  display: inline-block;
+  margin-top: 40px;
+  margin-bottom: 40px;
+  padding: 10px 15px;
+  font-size: 16px;
+  border: 1px solid white;
+}
+
+#landing-page #input-section .star-message a {
+  color: white;
+  text-decoration: underline;
+}
+
+#landing-page #diff-view-toggles {
+  margin-top: 30px;
+  text-align: center;
+}
+
+#landing-page #diff-view-toggles .header {
+  display: inline-block;
+  margin-right: 8px;
+  font-weight: bold;
+}
+
+#landing-page #diff-view-toggles .btn:focus, #landing-page #diff-view-toggles .btn:active, #landing-page #diff-view-toggles .btn.focus {
+  outline: none;
+  box-shadow: none;
+}
+
+#landing-page #results-section .message-container {
+  text-align: center;
+  color: var(--main-brand-color);
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+#landing-page #results-section .message-container .text {
+  font-size: 24px;
+  padding-left: 6px;
+}
+
+#landing-page .diff-results-container {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+#landing-page .diff-results-container .d2h-file-list-header a.d2h-file-switch {
+  font-size: 14px;
+  color: var(--main-brand-color);
+  font-weight: bold;
+}
+
+#landing-page .diff-results-container {
+  display: none;
+}
+
+#landing-page.phx-diff-loaded-diff #loading-container {
+  display: none;
+}
+
+#landing-page.phx-diff-loaded-diff .diff-results-container {
+  display: block;
+}

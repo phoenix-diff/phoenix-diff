@@ -1,0 +1,12 @@
+@import "bootstrap/dist/css/bootstrap.css";
+@import "highlight.js/styles/github.css";
+@import "diff2html/bundles/css/diff2html.min";
+
+@import "base/variables.css";
+@import "base/bootstrap.css";
+
+@import "components/navbar.css";
+@import "components/footer.css";
+@import "components/sticky-footer.css";
+
+@import "pages/landing-page.css";

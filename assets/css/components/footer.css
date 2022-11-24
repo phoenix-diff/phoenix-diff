@@ -1,0 +1,19 @@
+footer {
+  font-size: 13px;
+  color: #898989;
+  background-color: #343434;
+
+}
+
+footer p {
+  margin: 0;
+}
+
+footer a, footer a:focus, footer a:visited {
+  color: #b7b7b7;
+}
+
+footer a:hover {
+  color: #eeeeee;
+  text-decoration: none;
+}
