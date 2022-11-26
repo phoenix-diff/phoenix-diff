@@ -175,11 +175,11 @@ defmodule PhxDiffWeb.PageLiveTest do
     })
 
     assert view
-           |> element(".version-selector-source")
+           |> element("#source-selector")
            |> render() =~ "Generated with --live"
 
     refute view
-           |> element(".version-selector-target")
+           |> element("#target-selector")
            |> render() =~ "Generated with --live"
 
     view
@@ -192,11 +192,11 @@ defmodule PhxDiffWeb.PageLiveTest do
     })
 
     refute view
-           |> element(".version-selector-source")
+           |> element("#source-selector")
            |> render() =~ "Generated with --live"
 
     assert view
-           |> element(".version-selector-target")
+           |> element("#target-selector")
            |> render() =~ "Generated with --live"
   end
 
@@ -247,7 +247,7 @@ defmodule PhxDiffWeb.PageLiveTest do
   end
 
   defp display_mode_button_active?(view, button_text) do
-    has_element?(view, "#diff-view-toggles .btn-check:checked + .btn", button_text)
+    has_element?(view, "#diff-view-toggles input:checked + label", button_text)
   end
 
   defp strip_date_from_diff(diff) do

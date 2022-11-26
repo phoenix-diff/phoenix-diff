@@ -87,6 +87,9 @@ defmodule PhxDiffWeb.CoreComponents do
   attr :id, :any
   attr :name, :any
   attr :label, :string, default: nil
+  attr :label_class, :string, default: nil
+  attr :input_class, :string, default: nil
+  attr :wrapper_class, :string, default: nil
 
   attr :type, :string,
     default: "text",
@@ -119,9 +122,15 @@ defmodule PhxDiffWeb.CoreComponents do
 
   def input(%{type: "select"} = assigns) do
     ~H"""
-    <div phx-feedback-for={@name} class="field-group">
-      <.label for={@id}><%= @label %></.label>
-      <select id={@id} name={@name} multiple={@multiple} class="form-control" {@rest}>
+    <div phx-feedback-for={@name} class={@wrapper_class}>
+      <.label for={@id} class={@label_class}><%= @label %></.label>
+      <select
+        id={@id}
+        name={@name}
+        multiple={@multiple}
+        class={"mt-1 block w-full py-2 px-3 pr-8 bg-white border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-zinc-500 focus:border-zinc-500 sm:text-sm text-black #{@input_class}"}
+        {@rest}
+      >
         <option :if={@prompt}><%= @prompt %></option>
         <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
       </select>
@@ -135,10 +144,11 @@ defmodule PhxDiffWeb.CoreComponents do
   """
   attr :for, :string, default: nil
   slot :inner_block, required: true
+  attr :rest, :global, include: ~w(class)
 
   def label(assigns) do
     ~H"""
-    <label for={@for}>
+    <label for={@for} {@rest}>
       <%= render_slot(@inner_block) %>
     </label>
     """
@@ -149,6 +159,7 @@ defmodule PhxDiffWeb.CoreComponents do
   """
 
   attr :field, :any, doc: "a %Phoenix.HTML.Form{}/field name tuple, for example: {f, :email}"
+  attr :class, :string, default: "", doc: "CSS classes to add to wrapper"
 
   slot :option, required: true do
     attr :value, :string, required: true
@@ -156,7 +167,7 @@ defmodule PhxDiffWeb.CoreComponents do
 
   def button_group_toggle(assigns) do
     ~H"""
-    <div class="btn-group" role="group">
+    <div class={"button-group-toggle inline-flex rounded-md shadow-sm #{@class}"} role="group">
       <.button_group_toggle_button :for={option <- @option} field={@field} value={option.value}>
         <%= render_slot(option) %>
       </.button_group_toggle_button>
@@ -187,9 +198,14 @@ defmodule PhxDiffWeb.CoreComponents do
       autocomplete="off"
       value={@value}
       checked={@checked?}
-      class="btn-check"
+      class="sr-only"
     />
-    <label class="btn btn-outline-primary" for={@id}><%= render_slot(@inner_block) %></label>
+    <label
+      for={@id}
+      class="border border-brand px-4 py-2 first-of-type:rounded-l-md last-of-type:rounded-r-md text-brand bg-white"
+    >
+      <%= render_slot(@inner_block) %>
+    </label>
     """
   end
 

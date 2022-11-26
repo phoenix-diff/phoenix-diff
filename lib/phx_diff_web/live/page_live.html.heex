@@ -1,8 +1,9 @@
-<div id="landing-page" class={if @no_changes?, do: "phx-diff-loaded-diff"}>
-  <section id="input-section">
-    <div class="container-fluid">
-      <h3>See the changes needed to upgrade your Phoenix application</h3>
-
+<div id="landing-page" class={"group #{if @no_changes?, do: "phx-diff-loaded-diff"}"}>
+  <section id="input-section" class="bg-gradient-radial from-orange-500 to-red-500 text-white">
+    <div class="container mx-auto p-8 pt-10 text-center">
+      <h3 class="text-2xl font-light">
+        See the changes needed to upgrade your Phoenix application
+      </h3>
       <.form
         :let={f}
         for={@changeset}
@@ -10,42 +11,44 @@
         id="diff-selector-form"
         phx-change="diff-changed"
         phx-hook="DiffSelectorComponent"
+        class="mt-8 mb-11 sm:my-12 sm:inline-grid gap-4 grid-cols-2 grid-rows-1"
       >
-        <div class="version-selectors">
-          <div class="version-selector version-selector-source">
-            <.input field={{f, :source}} type="select" label="Source" options={@all_versions} />
-            <%= if @source_arguments do %>
-              <div class="generator-options">
-                Generated with <%= @source_arguments %>
-              </div>
-            <% end %>
-          </div>
+        <div id="source-selector" class="mb-3 sm:mb-0">
+          <.version_select field={{f, :source}} label="Source" versions={@all_versions} />
+          <%= if @source_arguments do %>
+            <div class="mt-1  text-xs">
+              Generated with <%= @source_arguments %>
+            </div>
+          <% end %>
+        </div>
 
-          <div class="version-selector version-selector-target">
-            <.input field={{f, :target}} type="select" label="Target" options={@all_versions} />
-            <%= if @target_arguments do %>
-              <div class="generator-options">
-                Generated with <%= @target_arguments %>
-              </div>
-            <% end %>
-          </div>
+        <div id="target-selector" class="mb-3 sm:mb-0">
+          <.version_select field={{f, :target}} label="Target" versions={@all_versions} />
+          <%= if @target_arguments do %>
+            <div class="mt-1 text-xs">
+              Generated with <%= @target_arguments %>
+            </div>
+          <% end %>
         </div>
       </.form>
 
-      <span class="star-message">
-        If you found this tool useful, please <i class="fa fa-star"></i>
-        our <a href="https://github.com/navinpeiris/phoenix-diff" target="_blank"> GitHub repo</a>
-      </span>
+      <div>
+        <div class="inline-block border border-white px-5 py-2 text-xs sm:text-base">
+          If you found this tool useful, please <i class="fa fa-star"></i>
+          our
+          <a class="underline" href="https://github.com/navinpeiris/phoenix-diff" target="_blank">
+            GitHub repo
+          </a>
+        </div>
+      </div>
     </div>
   </section>
 
   <section id="results-section">
-    <div class="container">
+    <div class="container mx-auto p-4">
       <%= if @no_changes? do %>
-        <div class="message-container">
-          <span class="text">
-            There are no changes between version <%= @source_version %> and <%= @target_version %>.
-          </span>
+        <div class="text-brand text-center text-xl mt-8">
+          There are no changes between version <%= @source_version %> and <%= @target_version %>.
         </div>
       <% else %>
         <.live_component
@@ -55,9 +58,14 @@
         />
       <% end %>
 
-      <div id="loading-container" class="message-container">
-        <i class="fa fa-spinner fa-spin fa-2x"></i>
-        <span class="text">Loading diff</span>
+      <div class="text-center">
+        <div
+          id="loading-container"
+          class="inline-flex text-brand text-center text-xl items-center mt-8 group-[.phx-diff-loaded-diff]:hidden"
+        >
+          <i class="fa fa-spinner fa-spin fa-2x mr-3"></i>
+          <span class="text">Loading diff</span>
+        </div>
       </div>
     </div>
   </section>

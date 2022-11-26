@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="min-h-screen">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -28,34 +28,37 @@
     </script>
   </head>
 
-  <body>
-    <header>
-      <nav class="navbar" role="navigation">
-        <a class="navbar-brand" href="/">PhoenixDiff</a>
+  <body class="min-h-screen flex flex-col">
+    <nav role="navigation">
+      <div class="p-4 flex text-brand justify-between items-center">
+        <a class="text-2xl font-bold" href="/">PhoenixDiff</a>
 
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="https://github.com/navinpeiris/phoenix-diff" target="_blank">
+        <ul>
+          <li>
+            <a href="https://github.com/navinpeiris/phoenix-diff" target="_blank">
               View on GitHub <i class="fa fa-github"></i>
             </a>
           </li>
         </ul>
-      </nav>
-    </header>
+      </div>
+    </nav>
 
-    <main role="main">
+    <main role="main" class="flex-1">
       <%= @inner_content %>
     </main>
 
-    <footer class="footer">
-      <div class="container py-3">
-        <div class="text-center">
-          To all alchemists with <i class="fa fa-heart"></i>
-          by Navin Peiris
-          <a class="ml-1" href="https://github.com/navinpeiris" target="_blank">GitHub</a>
-          | <a href="https://twitter.com/navinpeiris" target="_blank">Twitter</a>
+    <footer class="bg-zinc-700 text-zinc-400">
+      <div class="container mx-auto px-3 py-4 text-center text-sm">
+        To all alchemists with <i class="fa fa-heart"></i>
+        by Navin Peiris
+        <div class="sm:inline">
+          <a class="ml-1 underline" href="https://github.com/navinpeiris" target="_blank">
+            GitHub
+          </a>
           |
-          <a class="mr-1" href="https://www.linkedin.com/in/navinpeiris" target="_blank">
+          <a class="underline" href="https://twitter.com/navinpeiris" target="_blank">Twitter</a>
+          |
+          <a class="mr-1 underline" href="https://www.linkedin.com/in/navinpeiris" target="_blank">
             LinkedIn
           </a>
         </div>

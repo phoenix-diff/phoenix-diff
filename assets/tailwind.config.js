@@ -2,6 +2,7 @@
 // https://tailwindcss.com/docs/configuration
 
 const plugin = require("tailwindcss/plugin")
+const defaultTheme = require("tailwindcss/defaultTheme")
 
 module.exports = {
     content: [
@@ -13,6 +14,12 @@ module.exports = {
         extend: {
             colors: {
                 brand: "#FD4F00",
+            },
+            fontFamily: {
+                'sans': ['Open Sans', ...defaultTheme.fontFamily.sans]
+            },
+            backgroundImage: {
+                'gradient-radial': 'radial-gradient(circle, var(--tw-gradient-stops))'
             }
         },
     },

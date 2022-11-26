@@ -2,15 +2,13 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-@import "bootstrap/dist/css/bootstrap.css";
 @import "highlight.js/styles/github.css";
 @import "diff2html/bundles/css/diff2html.min";
 
-@import "base/variables.css";
-@import "base/bootstrap.css";
+a.d2h-file-switch {
+  @apply text-brand text-sm font-bold;
+}
 
-@import "components/navbar.css";
-@import "components/footer.css";
-@import "components/sticky-footer.css";
-
-@import "pages/landing-page.css";
+.button-group-toggle input:checked + label{
+  @apply text-white bg-brand;
+}

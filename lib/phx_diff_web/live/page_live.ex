@@ -7,6 +7,30 @@ defmodule PhxDiffWeb.PageLive do
   alias PhxDiff.ComparisonError
   alias PhxDiffWeb.PageLive.DiffSelection
 
+  @doc """
+  Version selector on the homepage
+  """
+  attr :field, :any,
+    doc: "a %Phoenix.HTML.Form{}/field name tuple, for example: {f, :source}",
+    required: true
+
+  attr :versions, :list, doc: "List of available versions", required: true
+  attr :label, :string, doc: "The label to use on this component", required: true
+
+  def version_select(assigns) do
+    ~H"""
+    <.input
+      field={@field}
+      type="select"
+      label={@label}
+      options={@versions}
+      label_class="uppercase underline text-sm pr-2 sm:text-base"
+      wrapper_class="inline-block sm:inline-flex sm:items-center"
+      input_class="text-sm sm:mt-0"
+    />
+    """
+  end
+
   @impl true
   def mount(_params, _session, socket) do
     {:ok,

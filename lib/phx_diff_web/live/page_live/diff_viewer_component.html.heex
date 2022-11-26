@@ -4,13 +4,12 @@
     for={@changeset}
     as={:form}
     id={"diff-viewer-form-#{@id}"}
-    phx-change="options-changed"
-    phx-target={@myself}
+    phx-change={JS.push("options-changed", target: @myself, loading: "#diff-results-container")}
   >
-    <div id="diff-view-toggles">
-      <div class="header">Display mode:</div>
+    <div id="diff-view-toggles" class="text-center mb-4">
+      <div class="font-bold inline">Display mode:</div>
 
-      <.button_group_toggle field={{f, :view_type}}>
+      <.button_group_toggle field={{f, :view_type}} class="m-2">
         <:option value="line-by-line">Line by line</:option>
         <:option value="side-by-side">Side by side</:option>
       </.button_group_toggle>
@@ -18,7 +17,7 @@
 
     <div
       id="diff-results-container"
-      class="diff-results-container"
+      class="diff-results-container hidden group-[.phx-diff-loaded-diff]:block"
       phx-hook="DiffViewerComponent"
       data-view-type={@view_type}
       data-diff={@diff}
