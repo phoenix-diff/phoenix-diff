@@ -20,6 +20,11 @@ if System.get_env("PHX_SERVER") do
   config :phx_diff, PhxDiffWeb.Endpoint, server: true
 end
 
+if config_env() == :dev && System.get_env("ALLOW_EXTERNAL_ACCESS") == "true" do
+  # Allow access beyond localhost
+  config :phx_diff, PhxDiffWeb.Endpoint, http: [ip: {0, 0, 0, 0}, port: 4000]
+end
+
 if config_env() == :prod do
   # The secret key base is used to sign/encrypt cookies and other secrets.
   # A default value is used in config/dev.exs and config/test.exs but you
