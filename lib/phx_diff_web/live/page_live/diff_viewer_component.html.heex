@@ -4,7 +4,8 @@
     for={@changeset}
     as={:form}
     id={"diff-viewer-form-#{@id}"}
-    phx-change={JS.push("options-changed", target: @myself, loading: "#diff-results-container")}
+    phx-change="options-changed"
+    phx-target={@myself}
   >
     <div id="diff-view-toggles" class="text-center mb-4">
       <div class="font-bold inline">Display mode:</div>
