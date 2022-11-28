@@ -18,4 +18,19 @@ defmodule PhxDiffWeb.AnalyticsComponents do
     </script>
     """
   end
+
+  def honeybadger_error_tracking(assigns) do
+    ~H"""
+    <script src="//js.honeybadger.io/v4.7/honeybadger.min.js" type="text/javascript">
+    </script>
+
+    <script type="text/javascript">
+      Honeybadger.configure({
+        apiKey: '<%= @honeybadger.api_key %>',
+        environment: '<%= @honeybadger.environment_name %>',
+        revision: '<%= @honeybadger.revision %>'
+      });
+    </script>
+    """
+  end
 end

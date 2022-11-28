@@ -13,4 +13,13 @@ defmodule PhxDiffWeb.Analytics do
 
     assign(conn, :analytics, config)
   end
+
+  def fetch_honeybadger_config(conn, _opts) do
+    config =
+      for key <- [:api_key, :environment_name, :revision], into: %{} do
+        {key, Honeybadger.get_env(key)}
+      end
+
+    assign(conn, :honeybadger, config)
+  end
 end

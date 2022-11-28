@@ -9,6 +9,7 @@ defmodule PhxDiffWeb.Router do
     plug :put_root_layout, {PhxDiffWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :fetch_honeybadger_config
     plug :fetch_analytics_config
   end
 
