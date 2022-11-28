@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "deploy": "cd .. && mix assets.deploy && rm -f _build/esbuild* _build/sass*"
+    "deploy": "cd .. && mix assets.deploy && rm -f _build/esbuild*"
   },
   "dependencies": {
     "diff2html": "^3.4.22",
