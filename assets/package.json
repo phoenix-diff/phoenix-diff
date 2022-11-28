@@ -4,7 +4,7 @@
   },
   "dependencies": {
     "diff2html": "^3.4.22",
-    "highlight.js": "^11.6.0",
+    "highlight.js": "^11.7.0",
     "topbar": "^1.0.1"
   }
 }
