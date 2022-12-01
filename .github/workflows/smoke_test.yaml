@@ -1,0 +1,43 @@
+name: Smoke tests
+run-name: Smoke testing ${{ inputs.environment }} by ${{ github.actor }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "The environment to test"
+        type: environment
+        required: true
+
+  workflow_call:
+    inputs:
+      environment:
+        description: "The environment to test"
+        type: string
+        required: true
+
+jobs:
+  rainforest:
+    name: Rainforest
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ inputs.environment }}
+      url: ${{ steps.lookup_environment_url.outputs.base_url}}
+    concurrency: ${{ inputs.environment }}
+    env:
+      FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      FLY_CONFIG_PATH: ${{ secrets.FLY_CONFIG_PATH }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Look up environment url
+        id: lookup_environment_url
+        run: |
+          echo "base_url=https://$(flyctl info --config $FLY_CONFIG_PATH -j | jq -r 'if .Hostname == "phoenixdiff-web-prod.fly.dev" then "phoenixdiff.org" else .Hostname end')" >> $GITHUB_OUTPUT
+      - name: Rainforest
+        uses: rainforestapp/github-action@master
+        with:
+          token: ${{ secrets.RAINFOREST_API_TOKEN }}
+          run_group_id: 13018
+          cache_key: ${{ inputs.environment }}
+          custom_url: ${{ steps.lookup_environment_url.outputs.base_url }}
