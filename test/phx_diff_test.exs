@@ -140,8 +140,8 @@ defmodule PhxDiffTest do
       source = PhxDiff.default_app_specification(@unknown_phoenix_version)
       target = PhxDiff.default_app_specification(~V[1.3.1])
 
-      {log_output, result} =
-        capture_log_with_result(fn ->
+      {result, log_output} =
+        with_log(fn ->
           PhxDiff.fetch_diff(source, target)
         end)
 
@@ -289,21 +289,6 @@ defmodule PhxDiffTest do
 
       {:error, _} ->
         :ok
-    end
-  end
-
-  defp capture_log_with_result(function) when is_function(function, 0) do
-    test_pid = self()
-    ref = make_ref()
-
-    log_output =
-      capture_log(fn ->
-        result = function.()
-        send(test_pid, {:log_result, ref, result})
-      end)
-
-    receive do
-      {:log_result, ^ref, result} -> {log_output, result}
     end
   end
 end
