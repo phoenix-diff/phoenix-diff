@@ -57,9 +57,9 @@ defmodule PhxDiff.MixProject do
       {:honeybadger, "~> 0.19.0"},
       # The following are dependencies are needed for OpenTelemetry
       {:tls_certificate_check, "~> 1.11"},
-      {:opentelemetry_api, "~> 1.1.0"},
-      {:opentelemetry, "~> 1.1.1"},
       {:opentelemetry_exporter, "~> 1.2.0"},
+      {:opentelemetry, "~> 1.1.1"},
+      {:opentelemetry_api, "~> 1.1.0"},
       {:opentelemetry_phoenix, "~> 1.0.0"},
       {:opentelemetry_liveview, "~> 1.0.0-rc.4"},
       {:boundary, "~> 0.9", runtime: false},
@@ -123,8 +123,15 @@ defmodule PhxDiff.MixProject do
 
   defp releases do
     [
-      phx_diff: [include_executables_for: [:unix]],
-      applications: [runtime_tools: :permanent]
+      phx_diff: [
+        include_executables_for: [:unix],
+        applications: [
+          runtime_tools: :permanent,
+          phx_diff: :permanent,
+          opentelemetry_exporter: :permanent,
+          opentelemetry: :temporary
+        ]
+      ]
     ]
   end
 end
