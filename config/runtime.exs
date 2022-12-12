@@ -151,3 +151,16 @@ case System.fetch_env("OTEL_EXPORTER") do
     # Disabled by default
     config :opentelemetry, traces_exporter: :none
 end
+
+# Log format
+default_log_format = if config_env() == :prod, do: "json"
+
+case System.get_env("LOG_FORMAT", default_log_format) do
+  "json" ->
+    config :logger, :console,
+      format: {PhxDiff.Logging.Formatter, :format},
+      colors: [enabled: false]
+
+  _ ->
+    :ok
+end
