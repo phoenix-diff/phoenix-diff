@@ -9,6 +9,7 @@ processes = []
   PORT = "8080"
   ALLOWED_ORIGINS= "//phoenixdiff.org //*.phoenixdiff.org"
   DEPLOYMENT_ENV="Production"
+  OTEL_EXPORTER="grafana-cloud"
 
 [experimental]
   allowed_public_ports = []

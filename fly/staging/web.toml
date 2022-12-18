@@ -8,6 +8,7 @@ processes = []
 [env]
   URL_HOST = "phoenixdiff-web-staging.fly.dev"
   DEPLOYMENT_ENV="Staging"
+  OTEL_EXPORTER="grafana-cloud"
   PORT = "8080"
 
 [experimental]

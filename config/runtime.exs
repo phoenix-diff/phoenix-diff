@@ -135,6 +135,20 @@ case System.fetch_env("OTEL_EXPORTER") do
         {"x-honeycomb-dataset", System.fetch_env!("OTEL_HONEYCOMB_DATASET")}
       ]
 
+  {:ok, "grafana-cloud"} ->
+    encoded_credential =
+      Base.encode64(
+        "#{System.fetch_env!("GRAFANA_USERNAME")}:#{System.fetch_env!("GRAFANA_API_KEY")}"
+      )
+
+    config :opentelemetry_exporter,
+      otlp_protocol: :grpc,
+      otlp_compression: :gzip,
+      otlp_endpoint: "https://tempo-us-central1.grafana.net:443",
+      otlp_headers: [
+        {"authorization", "Basic #{encoded_credential}"}
+      ]
+
   {:ok, "signoz-local"} ->
     config :opentelemetry_exporter,
       otlp_protocol: :http_protobuf,
