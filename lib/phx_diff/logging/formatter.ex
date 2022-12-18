@@ -3,13 +3,14 @@ defmodule PhxDiff.Logging.Formatter do
 
   import Jason.Helpers
 
-  def format(level, message, timestamp, _metadata) do
+  def format(level, message, timestamp, metadata) do
     event =
-      json_map(
+      %{
         message: IO.iodata_to_binary(message),
         syslog: json_map(timestamp: format_datetime(timestamp)),
         level: Atom.to_string(level)
-      )
+      }
+      |> Map.merge(known_metadata_attributes(metadata))
 
     [Jason.encode_to_iodata!(event), "\n"]
   end
@@ -17,5 +18,10 @@ defmodule PhxDiff.Logging.Formatter do
   defp format_datetime({date, time}) do
     [Logger.Formatter.format_date(date), ?T, Logger.Formatter.format_time(time), ?Z]
     |> IO.iodata_to_binary()
+  end
+
+  defp known_metadata_attributes(metadata) do
+    Keyword.take(metadata, [:"event.domain"])
+    |> Map.new()
   end
 end

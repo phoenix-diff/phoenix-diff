@@ -7,7 +7,8 @@ defmodule PhxDiff.CaptureJSONLog do
     ExUnit.CaptureLog.capture_log(
       [
         format: {PhxDiff.Logging.Formatter, :format},
-        colors: [enabled: false]
+        colors: [enabled: false],
+        metadata: :all
       ],
       function
     )

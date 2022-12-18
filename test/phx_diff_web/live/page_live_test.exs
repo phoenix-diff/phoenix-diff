@@ -4,6 +4,7 @@ defmodule PhxDiffWeb.PageLiveTest do
   import Phoenix.LiveViewTest
   import PhxDiff.TestSupport.OpenTelemetryTestExporter, only: [subscribe_to_otel_spans: 1]
   import PhxDiff.TestSupport.Sigils
+  import PhxDiff.CaptureJSONLog
 
   alias PhxDiff.AppSpecification
   alias PhxDiff.TestSupport.DiffFixtures
@@ -224,6 +225,18 @@ defmodule PhxDiffWeb.PageLiveTest do
         AppSpecification.new(~V|1.7.0-rc.0|, [])
       )
     )
+  end
+
+  test "generates logs with appropriate metadata attached", %{conn: conn} do
+    diff_logs =
+      capture_json_log(fn ->
+        {:ok, _view, _html} =
+          conn
+          |> live(~p"/?source=1.5.9&source_variant=default&target=1.5.9&target_variant=live")
+      end)
+      |> Enum.filter(&match?(%{"event.domain" => "diffs"}, &1))
+
+    assert Enum.find(diff_logs, &match?(%{"message" => ~S|Comparing "1.5.9" to "1.5.9"|}, &1))
   end
 
   defp assert_diff_rendered(view, expected_diff) do

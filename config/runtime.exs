@@ -152,7 +152,8 @@ case System.get_env("LOG_FORMAT", default_log_format) do
   "json" ->
     config :logger, :console,
       format: {PhxDiff.Logging.Formatter, :format},
-      colors: [enabled: false]
+      colors: [enabled: false],
+      metadata: :all
 
   _ ->
     :ok

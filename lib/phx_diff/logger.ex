@@ -25,16 +25,20 @@ defmodule PhxDiff.Logger do
   def phx_diff_diffs_generate_start(_, _, metadata, _) do
     %{source_spec: source, target_spec: target} = metadata
 
-    Logger.info(["Comparing ", app_spec(source), " to ", app_spec(target)])
+    Logger.info(["Comparing ", app_spec(source), " to ", app_spec(target)],
+      "event.domain": "diffs"
+    )
   end
 
   @doc false
   def phx_diff_diffs_generate_stop(_, _metrics, %{error: error}, _) do
-    Logger.warning(["Unable to generate diff - \r\n", inspect(error, pretty: true)])
+    Logger.warning(["Unable to generate diff - \r\n", inspect(error, pretty: true)],
+      "event.domain": "diffs"
+    )
   end
 
   def phx_diff_diffs_generate_stop(_, %{duration: duration}, _metadata, _) do
-    Logger.info(["Generated in ", duration(duration)])
+    Logger.info(["Generated in ", duration(duration)], "event.domain": "diffs")
   end
 
   defp app_spec(%AppSpecification{} = app_spec) do
