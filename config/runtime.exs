@@ -105,16 +105,21 @@ git_sha =
     _ -> nil
   end
 
+deployment_env = System.get_env("DEPLOYMENT_ENV", to_string(config_env()))
+
 # Set the honeybadger environment name for all envs
 config :honeybadger,
-  environment_name: System.get_env("HONEYBADGER_ENV_NAME", to_string(config_env())),
+  environment_name: System.get_env("HONEYBADGER_ENV_NAME", deployment_env),
   revision: git_sha
 
 # OpenTelemetry configuration
 config :opentelemetry,
   span_processor: :batch,
   traces_exporter: :otlp,
-  resource: [service: %{version: git_sha}]
+  resource: [
+    "deployment.environment": deployment_env,
+    "service.version": git_sha
+  ]
 
 case System.fetch_env("OTEL_EXPORTER") do
   {:ok, "stdout"} ->
