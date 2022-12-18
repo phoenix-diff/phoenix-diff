@@ -111,41 +111,29 @@ config :honeybadger,
   revision: git_sha
 
 # OpenTelemetry configuration
-config :opentelemetry, :resource,
-  service: %{
-    version: git_sha
-  }
+config :opentelemetry,
+  span_processor: :batch,
+  traces_exporter: :otlp,
+  resource: [service: %{version: git_sha}]
 
 case System.fetch_env("OTEL_EXPORTER") do
   {:ok, "stdout"} ->
-    config :opentelemetry, :processors,
-      otel_batch_processor: %{
-        exporter: {:otel_exporter_stdout, []}
-      }
+    config :opentelemetry, traces_exporter: {:otel_exporter_stdout, []}
 
   {:ok, "honeycomb"} ->
-    config :opentelemetry, :processors,
-      otel_batch_processor: %{
-        exporter:
-          {:opentelemetry_exporter,
-           %{
-             endpoints: ["https://api.honeycomb.io:443"],
-             headers: [
-               {"x-honeycomb-team", System.fetch_env!("OTEL_HONEYCOMB_API_KEY")},
-               {"x-honeycomb-dataset", System.fetch_env!("OTEL_HONEYCOMB_DATASET")}
-             ]
-           }}
-      }
+    config :opentelemetry_exporter,
+      otlp_protocol: :grpc,
+      otlp_compression: :gzip,
+      otlp_endpoint: "https://api.honeycomb.io:443",
+      otlp_headers: [
+        {"x-honeycomb-team", System.fetch_env!("OTEL_HONEYCOMB_API_KEY")},
+        {"x-honeycomb-dataset", System.fetch_env!("OTEL_HONEYCOMB_DATASET")}
+      ]
 
   {:ok, "signoz-local"} ->
-    config :opentelemetry, :processors,
-      otel_batch_processor: %{
-        exporter:
-          {:opentelemetry_exporter,
-           %{
-             endpoints: ["http://localhost:4318"]
-           }}
-      }
+    config :opentelemetry_exporter,
+      otlp_protocol: :http_protobuf,
+      otlp_endpoint: "http://localhost:4318"
 
   :error ->
     # Disabled by default

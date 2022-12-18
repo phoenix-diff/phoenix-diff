@@ -14,9 +14,6 @@ config :logger, level: :debug
 config :phoenix, :plug_init_mode, :runtime
 
 config :opentelemetry,
-  tracer: :otel_tracer_default,
-  processors: [
-    otel_batch_processor: %{
-      scheduled_delay_ms: 1
-    }
-  ]
+  span_processor: :batch,
+  traces_exporter: :otlp,
+  bsp_scheduled_delay_ms: 1
