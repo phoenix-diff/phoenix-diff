@@ -57,10 +57,12 @@ defmodule PhxDiffWeb.PageLive do
          |> assign(:target_arguments, arguments_string(target_app_spec))}
 
       {:error, _changeset} ->
+        diff_selection = socket.assigns.diff_selection
+
         {:noreply,
          push_patch(socket,
            to:
-             ~p"/?source=#{PhxDiff.previous_release_version()}&target=#{PhxDiff.latest_version()}"
+             ~p"/?#{[source: diff_selection.source, target: diff_selection.target]}"
          )}
     end
   end

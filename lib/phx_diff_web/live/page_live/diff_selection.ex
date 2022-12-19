@@ -26,8 +26,12 @@ defmodule PhxDiffWeb.PageLive.DiffSelection do
   end
 
   def changeset(data, params \\ %{}) do
+    all_versions = PhxDiff.all_versions()
+
     data
     |> cast(params, [:source, :source_variant, :target, :target_variant])
     |> validate_required([:source, :target])
+    |> validate_inclusion(:source, all_versions)
+    |> validate_inclusion(:target, all_versions)
   end
 end
