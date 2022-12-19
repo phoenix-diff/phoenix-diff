@@ -11,6 +11,7 @@ defmodule PhxDiff.Logging.Formatter do
         level: Atom.to_string(level)
       }
       |> Map.merge(known_metadata_attributes(metadata))
+      |> Map.merge(trace_attributes(metadata))
 
     [Jason.encode_to_iodata!(event), "\n"]
   end
@@ -22,6 +23,14 @@ defmodule PhxDiff.Logging.Formatter do
 
   defp known_metadata_attributes(metadata) do
     Keyword.take(metadata, [:"event.domain"])
+    |> Map.new()
+  end
+
+  defp trace_attributes(metadata) do
+    Enum.flat_map(metadata, fn
+      {:otel_trace_id, trace_id} -> ["trace.id": to_string(trace_id)]
+      _ -> []
+    end)
     |> Map.new()
   end
 end

@@ -236,7 +236,10 @@ defmodule PhxDiffWeb.PageLiveTest do
       end)
       |> Enum.filter(&match?(%{"event.domain" => "diffs"}, &1))
 
-    assert Enum.find(diff_logs, &match?(%{"message" => ~S|Comparing "1.5.9" to "1.5.9"|}, &1))
+    assert compare_log =
+             Enum.find(diff_logs, &match?(%{"message" => ~S|Comparing "1.5.9" to "1.5.9"|}, &1))
+
+    assert is_binary(compare_log["trace.id"])
   end
 
   defp assert_diff_rendered(view, expected_diff) do
