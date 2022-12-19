@@ -21,6 +21,10 @@ defmodule PhxDiffWeb.PageLive.DiffSelection do
     field :target_variant, Fields.Variant
   end
 
+  def new do
+    %__MODULE__{source: PhxDiff.previous_release_version(), target: PhxDiff.latest_version()}
+  end
+
   def changeset(data, params \\ %{}) do
     data
     |> cast(params, [:source, :source_variant, :target, :target_variant])

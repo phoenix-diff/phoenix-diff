@@ -37,7 +37,7 @@ defmodule PhxDiffWeb.PageLive do
      socket
      |> assign(:no_changes?, false)
      |> assign(:all_versions, PhxDiff.all_versions() |> Enum.map(&to_string/1))
-     |> assign(:diff_selection, %DiffSelection{})}
+     |> assign(:diff_selection, DiffSelection.new())}
   end
 
   @impl true

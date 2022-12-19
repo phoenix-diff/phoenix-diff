@@ -12,13 +12,7 @@ defmodule PhxDiffWeb.PageLiveTest do
   setup [:subscribe_to_otel_spans]
 
   test "redirects to include the source and target in url", %{conn: conn} do
-    {:ok, view, _html} =
-      conn
-      |> live(~p"/")
-      |> follow_redirect(
-        conn,
-        ~p"/?source=#{PhxDiff.previous_release_version()}&target=#{PhxDiff.latest_version()}"
-      )
+    {:ok, view, _html} = live(conn, ~p"/")
 
     assert has_element?(
              view,
@@ -81,10 +75,7 @@ defmodule PhxDiffWeb.PageLiveTest do
   end
 
   test "toggling line by line or side by side", %{conn: conn} do
-    {:ok, view, _html} =
-      conn
-      |> live(~p"/")
-      |> follow_redirect(conn)
+    {:ok, view, _html} = live(conn, ~p"/")
 
     assert display_mode_button_active?(view, "Line by line")
     refute display_mode_button_active?(view, "Side by side")
@@ -161,10 +152,7 @@ defmodule PhxDiffWeb.PageLiveTest do
   @version_without_live_default_option "1.4.0"
 
   test "indicates the options used to generate the source and target apps", %{conn: conn} do
-    {:ok, view, _html} =
-      conn
-      |> live(~p"/")
-      |> follow_redirect(conn)
+    {:ok, view, _html} = live(conn, ~p"/")
 
     view
     |> element("#diff-selector-form")
