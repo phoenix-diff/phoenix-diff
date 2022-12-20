@@ -106,6 +106,7 @@ git_sha =
   end
 
 deployment_env = System.get_env("DEPLOYMENT_ENV", to_string(config_env()))
+{:ok, hostname} = :inet.gethostname()
 
 # Set the honeybadger environment name for all envs
 config :honeybadger,
@@ -118,7 +119,9 @@ config :opentelemetry,
   traces_exporter: :otlp,
   resource: [
     "deployment.environment": deployment_env,
-    "service.version": git_sha
+    "service.version": git_sha,
+    "host.id": hostname,
+    "host.name": hostname
   ]
 
 case System.fetch_env("OTEL_EXPORTER") do
