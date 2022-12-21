@@ -143,6 +143,10 @@ defmodule PhxDiffWeb.PageLive do
   defp variant_options_for_version(version) do
     version
     |> PhxNewArgListPresets.list_known_presets_for_version()
+    |> Enum.sort_by(fn
+      %{id: :default} -> {0, :default}
+      %{id: id} -> {1, id}
+    end)
     |> Enum.map(fn preset ->
       {arguments_string(preset.arg_list) || "(Default)", preset.id}
     end)
