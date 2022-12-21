@@ -9,7 +9,10 @@ defmodule PhxDiff.Diffs.AppRepo do
   @args_to_path_mappings [
     {[], "default"},
     {["--live"], "live"},
-    {["--no-ecto"], "no-ecto"}
+    {["--no-ecto"], "no-ecto"},
+    {["--no-live"], "no-live"},
+    {["--no-html"], "no-html"},
+    {["--binary-id"], "binary-id"}
   ]
 
   @spec all_versions() :: [version]

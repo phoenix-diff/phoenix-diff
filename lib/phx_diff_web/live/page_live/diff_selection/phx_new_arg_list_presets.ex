@@ -6,7 +6,10 @@ defmodule PhxDiffWeb.PageLive.DiffSelection.PhxNewArgListPresets do
   @mappings [
     default: [],
     no_ecto: ["--no-ecto"],
-    live: ["--live"]
+    live: ["--live"],
+    no_live: ["--no-live"],
+    no_html: ["--no-html"],
+    binary_id: ["--binary-id"]
   ]
 
   for {id, arg_list} <- @mappings do
