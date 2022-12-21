@@ -14,21 +14,25 @@
         class="mt-8 mb-11 sm:my-12 sm:inline-grid gap-4 grid-cols-2 grid-rows-1"
       >
         <div id="source-selector" class="mb-3 sm:mb-0">
+          <div>
+            <h4 class="uppercase underline text-sm sm:mb-2">Source</h4>
+          </div>
           <.version_select field={{f, :source}} label="Source" versions={@all_versions} />
-          <%= if @source_arguments do %>
-            <div class="mt-1  text-xs">
-              Generated with <%= @source_arguments %>
-            </div>
-          <% end %>
+          <.phx_new_arg_list_preset_select
+            field={{f, :source_variant}}
+            preset_options={@source_variants}
+          />
         </div>
 
         <div id="target-selector" class="mb-3 sm:mb-0">
+          <div>
+            <h4 class="uppercase underline text-sm sm:mb-2">Target</h4>
+          </div>
           <.version_select field={{f, :target}} label="Target" versions={@all_versions} />
-          <%= if @target_arguments do %>
-            <div class="mt-1 text-xs">
-              Generated with <%= @target_arguments %>
-            </div>
-          <% end %>
+          <.phx_new_arg_list_preset_select
+            field={{f, :target_variant}}
+            preset_options={@target_variants}
+          />
         </div>
       </.form>
 

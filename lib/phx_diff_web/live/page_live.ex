@@ -6,6 +6,7 @@ defmodule PhxDiffWeb.PageLive do
   alias PhxDiff.AppSpecification
   alias PhxDiff.ComparisonError
   alias PhxDiffWeb.PageLive.DiffSelection
+  alias PhxDiffWeb.PageLive.DiffSelection.PhxNewArgListPresets
 
   @doc """
   Version selector on the homepage
@@ -22,10 +23,34 @@ defmodule PhxDiffWeb.PageLive do
     <.input
       field={@field}
       type="select"
-      label={@label}
+      label="Version"
       options={@versions}
-      label_class="uppercase underline text-sm pr-2 sm:text-base"
+      label_class="sr-only uppercase underline text-sm pr-2 sm:text-base"
       wrapper_class="inline-block sm:inline-flex sm:items-center"
+      input_class="text-sm sm:mt-0"
+    />
+    """
+  end
+
+  @doc """
+  PhxNewArgListPresets selector
+  """
+  attr :field, :any,
+    doc: "a %Phoenix.HTML.Form{}/field name tuple, for example: {f, :source}",
+    required: true
+
+  attr :preset_options, :list, doc: "List of preset options", required: true
+  attr :label, :string, doc: "The label to use on this component"
+
+  def phx_new_arg_list_preset_select(assigns) do
+    ~H"""
+    <.input
+      label="Arguments"
+      field={@field}
+      type="select"
+      options={@preset_options}
+      label_class="sr-only"
+      wrapper_class="inline-block"
       input_class="text-sm sm:mt-0"
     />
     """
@@ -37,7 +62,7 @@ defmodule PhxDiffWeb.PageLive do
      socket
      |> assign(:no_changes?, false)
      |> assign(:all_versions, PhxDiff.all_versions() |> Enum.map(&to_string/1))
-     |> assign(:diff_selection, DiffSelection.new())}
+     |> assign(:diff_selection, %DiffSelection{})}
   end
 
   @impl true
@@ -52,17 +77,16 @@ defmodule PhxDiffWeb.PageLive do
          |> assign(:no_changes?, diff == "")
          |> assign(:diff, diff)
          |> assign(:source_version, source_app_spec.phoenix_version)
-         |> assign(:source_arguments, arguments_string(source_app_spec))
+         |> assign(:source_variants, variant_options_for_version(source_app_spec.phoenix_version))
          |> assign(:target_version, target_app_spec.phoenix_version)
-         |> assign(:target_arguments, arguments_string(target_app_spec))}
+         |> assign(:target_variants, variant_options_for_version(target_app_spec.phoenix_version))}
 
-      {:error, _changeset} ->
-        diff_selection = socket.assigns.diff_selection
+      {:error, changeset} ->
+        diff_selection = find_valid_diff_selection(changeset)
 
         {:noreply,
          push_patch(socket,
-           to:
-             ~p"/?#{[source: diff_selection.source, target: diff_selection.target]}"
+           to: ~p"/?#{to_params(diff_selection)}"
          )}
     end
   end
@@ -71,13 +95,13 @@ defmodule PhxDiffWeb.PageLive do
   def handle_event("diff-changed", %{"diff_selection" => params}, socket) do
     changeset = DiffSelection.changeset(socket.assigns.diff_selection, params)
 
-    case Changeset.apply_action(changeset, :lookup) do
-      {:ok, %{source: source, target: target}} ->
-        {:noreply, push_patch(socket, to: ~p"/?source=#{source}&target=#{target}")}
+    diff_selection =
+      case Changeset.apply_action(changeset, :lookup) do
+        {:ok, diff_selection} -> diff_selection
+        {:error, changeset} -> find_valid_diff_selection(changeset)
+      end
 
-      {:error, changeset} ->
-        {:noreply, assign(socket, :changeset, changeset)}
-    end
+    {:noreply, push_patch(socket, to: ~p"/?#{to_params(diff_selection)}")}
   end
 
   @spec fetch_diff(DiffSelection.t(), map) ::
@@ -110,11 +134,68 @@ defmodule PhxDiffWeb.PageLive do
   end
 
   defp build_app_spec(version, nil), do: PhxDiff.default_app_specification(version)
-  defp build_app_spec(version, args), do: AppSpecification.new(version, args)
 
-  defp arguments_string(%AppSpecification{phx_new_arguments: []}), do: nil
+  defp build_app_spec(version, variant_id) do
+    {:ok, preset} = PhxNewArgListPresets.fetch(variant_id)
+    AppSpecification.new(version, preset.arg_list)
+  end
 
-  defp arguments_string(%AppSpecification{phx_new_arguments: args}) do
+  defp variant_options_for_version(version) do
+    version
+    |> PhxNewArgListPresets.list_known_presets_for_version()
+    |> Enum.map(fn preset ->
+      {arguments_string(preset.arg_list) || "(Default)", preset.id}
+    end)
+  end
+
+  defp arguments_string([]), do: nil
+
+  defp arguments_string(args) when is_list(args) do
     Enum.join(args, " ")
+  end
+
+  defp find_valid_diff_selection(changeset) do
+    diff_selection = Changeset.apply_changes(changeset)
+    error_fields = Keyword.keys(changeset.errors)
+
+    diff_selection =
+      if :source in error_fields do
+        %{diff_selection | source: PhxDiff.previous_release_version()}
+      else
+        diff_selection
+      end
+
+    diff_selection =
+      if :target in error_fields do
+        %{diff_selection | target: PhxDiff.latest_version()}
+      else
+        diff_selection
+      end
+
+    diff_selection =
+      if :source_variant in error_fields do
+        %{
+          diff_selection
+          | source_variant: PhxNewArgListPresets.get_default_for_version(diff_selection.source).id
+        }
+      else
+        diff_selection
+      end
+
+    diff_selection =
+      if :target_variant in error_fields do
+        %{
+          diff_selection
+          | target_variant: PhxNewArgListPresets.get_default_for_version(diff_selection.target).id
+        }
+      else
+        diff_selection
+      end
+
+    diff_selection
+  end
+
+  defp to_params(%DiffSelection{} = diff_selection) do
+    Map.take(diff_selection, [:source, :source_variant, :target, :target_variant])
   end
 end

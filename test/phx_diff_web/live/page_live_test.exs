@@ -12,7 +12,7 @@ defmodule PhxDiffWeb.PageLiveTest do
   setup [:subscribe_to_otel_spans]
 
   test "redirects to include the source and target in url", %{conn: conn} do
-    {:ok, view, _html} = live(conn, ~p"/")
+    {:ok, view, _html} = conn |> live(~p"/") |> follow_redirect(conn)
 
     assert has_element?(
              view,
@@ -31,7 +31,11 @@ defmodule PhxDiffWeb.PageLiveTest do
       "diff_selection" => %{"source" => "1.5.0", "target" => "1.5.1"}
     })
 
-    assert_patched(view, ~p"/?source=1.5.0&target=1.5.1")
+    assert_patched(
+      view,
+      ~p"/?#{[source: ~V|1.5.0|, source_variant: :live, target: ~V|1.5.1|, target_variant: :live]}"
+    )
+
     assert page_title(view) =~ "v1.5.0 to v1.5.1"
 
     assert_diff_rendered(view, """
@@ -75,7 +79,7 @@ defmodule PhxDiffWeb.PageLiveTest do
   end
 
   test "toggling line by line or side by side", %{conn: conn} do
-    {:ok, view, _html} = live(conn, ~p"/")
+    {:ok, view, _html} = conn |> live(~p"/") |> follow_redirect(conn)
 
     assert display_mode_button_active?(view, "Line by line")
     refute display_mode_button_active?(view, "Side by side")
@@ -104,7 +108,7 @@ defmodule PhxDiffWeb.PageLiveTest do
       |> live(~p"/?source=#{PhxDiff.previous_release_version()}&target=invalid")
       |> follow_redirect(
         conn,
-        ~p"/?source=#{PhxDiff.previous_release_version()}&target=#{PhxDiff.latest_version()}"
+        ~p"/?#{[source: PhxDiff.previous_release_version(), source_variant: :default, target: PhxDiff.latest_version(), target_variant: :default]}"
       )
   end
 
@@ -114,7 +118,7 @@ defmodule PhxDiffWeb.PageLiveTest do
       |> live(~p"/?source=invalid&target=#{PhxDiff.latest_version()}")
       |> follow_redirect(
         conn,
-        ~p"/?source=#{PhxDiff.previous_release_version()}&target=#{PhxDiff.latest_version()}"
+        ~p"/?#{[source: PhxDiff.previous_release_version(), source_variant: :default, target: PhxDiff.latest_version(), target_variant: :default]}"
       )
   end
 
@@ -128,7 +132,7 @@ defmodule PhxDiffWeb.PageLiveTest do
       )
       |> follow_redirect(
         conn,
-        ~p"/?source=#{PhxDiff.previous_release_version()}&target=#{PhxDiff.latest_version()}"
+        ~p"/?#{[source: PhxDiff.previous_release_version(), source_variant: :default, target: PhxDiff.latest_version(), target_variant: :default]}"
       )
   end
 
@@ -138,7 +142,7 @@ defmodule PhxDiffWeb.PageLiveTest do
       |> live(~p"/?source=#{@unknown_phoenix_version}&target=#{PhxDiff.latest_version()}")
       |> follow_redirect(
         conn,
-        ~p"/?source=#{PhxDiff.previous_release_version()}&target=#{PhxDiff.latest_version()}"
+        ~p"/?#{[source: PhxDiff.previous_release_version(), source_variant: :default, target: PhxDiff.latest_version(), target_variant: :default]}"
       )
 
     assert_received {:otel_span,
@@ -148,51 +152,12 @@ defmodule PhxDiffWeb.PageLiveTest do
                      }}
   end
 
-  @version_with_live_default_option "1.5.0"
-  @version_without_live_default_option "1.4.0"
-
-  test "indicates the options used to generate the source and target apps", %{conn: conn} do
-    {:ok, view, _html} = live(conn, ~p"/")
-
-    view
-    |> element("#diff-selector-form")
-    |> render_change(%{
-      "diff_selection" => %{
-        "source" => @version_with_live_default_option,
-        "target" => @version_without_live_default_option
-      }
-    })
-
-    assert view
-           |> element("#source-selector")
-           |> render() =~ "Generated with --live"
-
-    refute view
-           |> element("#target-selector")
-           |> render() =~ "Generated with --live"
-
-    view
-    |> element("#diff-selector-form")
-    |> render_change(%{
-      "diff_selection" => %{
-        "source" => @version_without_live_default_option,
-        "target" => @version_with_live_default_option
-      }
-    })
-
-    refute view
-           |> element("#source-selector")
-           |> render() =~ "Generated with --live"
-
-    assert view
-           |> element("#target-selector")
-           |> render() =~ "Generated with --live"
-  end
-
   test "allows comparing variants of the same version", %{conn: conn} do
     {:ok, view, _html} =
       conn
-      |> live(~p"/?source=1.5.9&source_variant=default&target=1.5.9&target_variant=live")
+      |> live(
+        ~p"/?#{[source: ~V|1.5.9|, source_variant: :default, target: ~V|1.5.9|, target_variant: :live]}"
+      )
 
     assert_diff_rendered(
       view,
@@ -204,7 +169,9 @@ defmodule PhxDiffWeb.PageLiveTest do
 
     {:ok, view, _html} =
       conn
-      |> live(~p"/?source=1.7.0-rc.0&source_variant=no-ecto&target=1.7.0-rc.0")
+      |> live(
+        ~p"/?#{[source: ~V|1.7.0-rc.0|, source_variant: :no_ecto, target: ~V|1.7.0-rc.0|, target_variant: :default]}"
+      )
 
     assert_diff_rendered(
       view,
@@ -220,7 +187,9 @@ defmodule PhxDiffWeb.PageLiveTest do
       capture_json_log(fn ->
         {:ok, _view, _html} =
           conn
-          |> live(~p"/?source=1.5.9&source_variant=default&target=1.5.9&target_variant=live")
+          |> live(
+            ~p"/?#{[source: ~V|1.5.9|, source_variant: :default, target: ~V|1.5.9|, target_variant: :live]}"
+          )
       end)
       |> Enum.filter(&match?(%{"event.domain" => "diffs"}, &1))
 
