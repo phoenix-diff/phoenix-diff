@@ -26,7 +26,12 @@ defmodule PhxDiff.Logger do
     %{source_spec: source, target_spec: target} = metadata
 
     Logger.info(["Comparing ", app_spec(source), " to ", app_spec(target)],
-      "event.domain": "diffs"
+      "event.domain": "diffs",
+      "event.name": "compare.start",
+      "phx_diff.comparison.source_version": to_string(source.phoenix_version),
+      "phx_diff.comparison.source_phx_new_arguments": Enum.join(source.phx_new_arguments, " "),
+      "phx_diff.comparison.target_version": to_string(target.phoenix_version),
+      "phx_diff.comparison.target_phx_new_arguments": Enum.join(target.phx_new_arguments, " ")
     )
   end
 
@@ -42,7 +47,13 @@ defmodule PhxDiff.Logger do
   end
 
   defp app_spec(%AppSpecification{} = app_spec) do
-    app_spec.phoenix_version |> to_string() |> inspect()
+    flags_segment =
+      case app_spec.phx_new_arguments do
+        [] -> []
+        args -> [" ", Enum.intersperse(args, " ")]
+      end
+
+    ["\"", app_spec.phoenix_version |> to_string(), flags_segment, "\""]
   end
 
   defp duration(duration) do

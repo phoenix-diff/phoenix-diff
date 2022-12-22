@@ -12,6 +12,7 @@ defmodule PhxDiff.Logging.Formatter do
       }
       |> Map.merge(known_metadata_attributes(metadata))
       |> Map.merge(trace_attributes(metadata))
+      |> Map.merge(phx_diff_attributes(metadata))
 
     [Jason.encode_to_iodata!(event), "\n"]
   end
@@ -22,7 +23,7 @@ defmodule PhxDiff.Logging.Formatter do
   end
 
   defp known_metadata_attributes(metadata) do
-    Keyword.take(metadata, [:"event.domain"])
+    Keyword.take(metadata, [:"event.domain", :"event.name"])
     |> Map.new()
   end
 
@@ -30,6 +31,14 @@ defmodule PhxDiff.Logging.Formatter do
     Enum.flat_map(metadata, fn
       {:otel_trace_id, trace_id} -> ["trace.id": to_string(trace_id)]
       _ -> []
+    end)
+    |> Map.new()
+  end
+
+  defp phx_diff_attributes(metadata) do
+    metadata
+    |> Enum.filter(fn {k, _v} ->
+      k |> to_string() |> String.starts_with?("phx_diff.")
     end)
     |> Map.new()
   end
