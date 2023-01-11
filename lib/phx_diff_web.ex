@@ -45,7 +45,6 @@ defmodule PhxDiffWeb do
   def controller do
     quote do
       use Phoenix.Controller,
-        namespace: PhxDiffWeb,
         formats: [:html],
         layouts: [html: PhxDiffWeb.Layouts]
 

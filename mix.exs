@@ -40,7 +40,7 @@ defmodule PhxDiff.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.7.0-rc.0", override: true},
+      {:phoenix, "~> 1.7.0-rc.1", override: true},
       {:phoenix_pubsub, "~> 2.0"},
       {:phoenix_html, "~> 3.0"},
       {:phoenix_live_view, "~> 0.18.3"},
@@ -90,7 +90,12 @@ defmodule PhxDiff.MixProject do
         "credo --strict --all",
         "dialyzer"
       ],
-      setup: ["deps.get", "cmd --cd assets yarn install"],
+      setup: ["deps.get", "assets.setup"],
+      "assets.setup": [
+        "tailwind.install --if-missing",
+        "esbuild.install --if-missing",
+        "cmd --cd assets yarn install"
+      ],
       "assets.deploy": [
         "tailwind default --minify",
         "esbuild default --minify",
