@@ -1,4 +1,5 @@
-diff -ruN assets/css/app.scss assets/css/app.scss
+diff --git assets/css/app.scss assets/css/app.scss
+index 5c2c9b5..bc41c57 100644
 --- assets/css/app.scss
 +++ assets/css/app.scss
 @@ -1,6 +1,60 @@
@@ -62,10 +63,11 @@ diff -ruN assets/css/app.scss assets/css/app.scss
  /* Alerts and form errors */
  .alert {
    padding: 15px;
-diff -ruN assets/js/app.js assets/js/app.js
+diff --git assets/js/app.js assets/js/app.js
+index af00596..d066452 100644
 --- assets/js/app.js
 +++ assets/js/app.js
-@@ -13,3 +13,24 @@
+@@ -13,3 +13,24 @@ import "../css/app.scss"
  //     import socket from "./socket"
  //
  import "phoenix_html"
@@ -90,9 +92,11 @@ diff -ruN assets/js/app.js assets/js/app.js
 +// >> liveSocket.disableLatencySim()
 +window.liveSocket = liveSocket
 +
-diff -ruN assets/js/socket.js assets/js/socket.js
+diff --git assets/js/socket.js assets/js/socket.js
+deleted file mode 100644
+index 09929ab..0000000
 --- assets/js/socket.js
-+++ assets/js/socket.js
++++ /dev/null
 @@ -1,63 +0,0 @@
 -// NOTE: The contents of this file will only be executed if
 -// you uncomment its entry in "assets/js/app.js".
@@ -157,7 +161,8 @@ diff -ruN assets/js/socket.js assets/js/socket.js
 -  .receive("error", resp => { console.log("Unable to join", resp) })
 -
 -export default socket
-diff -ruN assets/package.json assets/package.json
+diff --git assets/package.json assets/package.json
+index 67dbc73..184c7c4 100644
 --- assets/package.json
 +++ assets/package.json
 @@ -8,7 +8,9 @@
@@ -171,9 +176,11 @@ diff -ruN assets/package.json assets/package.json
    },
    "devDependencies": {
      "@babel/core": "^7.0.0",
-diff -ruN lib/sample_app_web/controllers/page_controller.ex lib/sample_app_web/controllers/page_controller.ex
+diff --git lib/sample_app_web/controllers/page_controller.ex lib/sample_app_web/controllers/page_controller.ex
+deleted file mode 100644
+index d88618d..0000000
 --- lib/sample_app_web/controllers/page_controller.ex
-+++ lib/sample_app_web/controllers/page_controller.ex
++++ /dev/null
 @@ -1,7 +0,0 @@
 -defmodule SampleAppWeb.PageController do
 -  use SampleAppWeb, :controller
@@ -182,8 +189,10 @@ diff -ruN lib/sample_app_web/controllers/page_controller.ex lib/sample_app_web/c
 -    render(conn, "index.html")
 -  end
 -end
-diff -ruN lib/sample_app_web/live/page_live.ex lib/sample_app_web/live/page_live.ex
---- lib/sample_app_web/live/page_live.ex
+diff --git lib/sample_app_web/live/page_live.ex lib/sample_app_web/live/page_live.ex
+new file mode 100644
+index 0000000..406f7d0
+--- /dev/null
 +++ lib/sample_app_web/live/page_live.ex
 @@ -0,0 +1,39 @@
 +defmodule SampleAppWeb.PageLive do
@@ -225,13 +234,17 @@ diff -ruN lib/sample_app_web/live/page_live.ex lib/sample_app_web/live/page_live
 +        do: {app, vsn}
 +  end
 +end
-diff -ruN lib/sample_app_web/live/page_live.html.leex lib/sample_app_web/live/page_live.html.leex
---- lib/sample_app_web/live/page_live.html.leex
+diff --git lib/sample_app_web/templates/page/index.html.eex lib/sample_app_web/live/page_live.html.leex
+similarity index 71%
+rename from lib/sample_app_web/templates/page/index.html.eex
+rename to lib/sample_app_web/live/page_live.html.leex
+index dd0a7f8..52509c2 100644
+--- lib/sample_app_web/templates/page/index.html.eex
 +++ lib/sample_app_web/live/page_live.html.leex
-@@ -0,0 +1,48 @@
-+<section class="phx-hero">
-+  <h1><%= gettext "Welcome to %{name}!", name: "Phoenix" %></h1>
-+  <p>Peace of mind from prototype to production</p>
+@@ -1,6 +1,16 @@
+ <section class="phx-hero">
+   <h1><%= gettext "Welcome to %{name}!", name: "Phoenix" %></h1>
+   <p>Peace of mind from prototype to production</p>
 +
 +  <form phx-change="suggest" phx-submit="search">
 +    <input type="text" name="q" value="<%= @query %>" placeholder="Live dependency search" list="results" autocomplete="off"/>
@@ -242,45 +255,14 @@ diff -ruN lib/sample_app_web/live/page_live.html.leex lib/sample_app_web/live/pa
 +    </datalist>
 +    <button type="submit" phx-disable-with="Searching...">Go to Hexdocs</button>
 +  </form>
-+</section>
-+
-+<section class="row">
-+  <article class="column">
-+    <h2>Resources</h2>
-+    <ul>
-+      <li>
-+        <a href="https://hexdocs.pm/phoenix/overview.html">Guides &amp; Docs</a>
-+      </li>
-+      <li>
-+        <a href="https://github.com/phoenixframework/phoenix">Source</a>
-+      </li>
-+      <li>
-+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.5/CHANGELOG.md">v1.5 Changelog</a>
-+      </li>
-+    </ul>
-+  </article>
-+  <article class="column">
-+    <h2>Help</h2>
-+    <ul>
-+      <li>
-+        <a href="https://elixirforum.com/c/phoenix-forum">Forum</a>
-+      </li>
-+      <li>
-+        <a href="https://webchat.freenode.net/?channels=elixir-lang">#elixir-lang on Freenode IRC</a>
-+      </li>
-+      <li>
-+        <a href="https://twitter.com/elixirphoenix">Twitter @elixirphoenix</a>
-+      </li>
-+      <li>
-+        <a href="https://elixir-slackin.herokuapp.com/">Elixir on Slack</a>
-+      </li>
-+    </ul>
-+  </article>
-+</section>
-diff -ruN lib/sample_app_web/router.ex lib/sample_app_web/router.ex
+ </section>
+ 
+ <section class="row">
+diff --git lib/sample_app_web/router.ex lib/sample_app_web/router.ex
+index eb35a05..693616b 100644
 --- lib/sample_app_web/router.ex
 +++ lib/sample_app_web/router.ex
-@@ -4,7 +4,8 @@
+@@ -4,7 +4,8 @@ defmodule SampleAppWeb.Router do
    pipeline :browser do
      plug :accepts, ["html"]
      plug :fetch_session
@@ -290,7 +272,7 @@ diff -ruN lib/sample_app_web/router.ex lib/sample_app_web/router.ex
      plug :protect_from_forgery
      plug :put_secure_browser_headers
    end
-@@ -16,7 +17,7 @@
+@@ -16,7 +17,7 @@ defmodule SampleAppWeb.Router do
    scope "/", SampleAppWeb do
      pipe_through :browser
  
@@ -299,7 +281,8 @@ diff -ruN lib/sample_app_web/router.ex lib/sample_app_web/router.ex
    end
  
    # Other scopes may use custom stacks.
-diff -ruN lib/sample_app_web/templates/layout/app.html.eex lib/sample_app_web/templates/layout/app.html.eex
+diff --git lib/sample_app_web/templates/layout/app.html.eex lib/sample_app_web/templates/layout/app.html.eex
+index fb60402..09ffdad 100644
 --- lib/sample_app_web/templates/layout/app.html.eex
 +++ lib/sample_app_web/templates/layout/app.html.eex
 @@ -1,33 +1,5 @@
@@ -341,8 +324,10 @@ diff -ruN lib/sample_app_web/templates/layout/app.html.eex lib/sample_app_web/te
 +  <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
 +  <%= @inner_content %>
 +</main>
-diff -ruN lib/sample_app_web/templates/layout/live.html.leex lib/sample_app_web/templates/layout/live.html.leex
---- lib/sample_app_web/templates/layout/live.html.leex
+diff --git lib/sample_app_web/templates/layout/live.html.leex lib/sample_app_web/templates/layout/live.html.leex
+new file mode 100644
+index 0000000..8dcded5
+--- /dev/null
 +++ lib/sample_app_web/templates/layout/live.html.leex
 @@ -0,0 +1,11 @@
 +<main role="main" class="container">
@@ -356,8 +341,10 @@ diff -ruN lib/sample_app_web/templates/layout/live.html.leex lib/sample_app_web/
 +
 +  <%= @inner_content %>
 +</main>
-diff -ruN lib/sample_app_web/templates/layout/root.html.leex lib/sample_app_web/templates/layout/root.html.leex
---- lib/sample_app_web/templates/layout/root.html.leex
+diff --git lib/sample_app_web/templates/layout/root.html.leex lib/sample_app_web/templates/layout/root.html.leex
+new file mode 100644
+index 0000000..02f5448
+--- /dev/null
 +++ lib/sample_app_web/templates/layout/root.html.leex
 @@ -0,0 +1,30 @@
 +<!DOCTYPE html>
@@ -390,59 +377,20 @@ diff -ruN lib/sample_app_web/templates/layout/root.html.leex lib/sample_app_web/
 +    <%= @inner_content %>
 +  </body>
 +</html>
-diff -ruN lib/sample_app_web/templates/page/index.html.eex lib/sample_app_web/templates/page/index.html.eex
---- lib/sample_app_web/templates/page/index.html.eex
-+++ lib/sample_app_web/templates/page/index.html.eex
-@@ -1,38 +0,0 @@
--<section class="phx-hero">
--  <h1><%= gettext "Welcome to %{name}!", name: "Phoenix" %></h1>
--  <p>Peace of mind from prototype to production</p>
--</section>
--
--<section class="row">
--  <article class="column">
--    <h2>Resources</h2>
--    <ul>
--      <li>
--        <a href="https://hexdocs.pm/phoenix/overview.html">Guides &amp; Docs</a>
--      </li>
--      <li>
--        <a href="https://github.com/phoenixframework/phoenix">Source</a>
--      </li>
--      <li>
--        <a href="https://github.com/phoenixframework/phoenix/blob/v1.5/CHANGELOG.md">v1.5 Changelog</a>
--      </li>
--    </ul>
--  </article>
--  <article class="column">
--    <h2>Help</h2>
--    <ul>
--      <li>
--        <a href="https://elixirforum.com/c/phoenix-forum">Forum</a>
--      </li>
--      <li>
--        <a href="https://webchat.freenode.net/?channels=elixir-lang">#elixir-lang on Freenode IRC</a>
--      </li>
--      <li>
--        <a href="https://twitter.com/elixirphoenix">Twitter @elixirphoenix</a>
--      </li>
--      <li>
--        <a href="https://elixir-slackin.herokuapp.com/">Elixir on Slack</a>
--      </li>
--    </ul>
--  </article>
--</section>
-diff -ruN lib/sample_app_web/views/page_view.ex lib/sample_app_web/views/page_view.ex
+diff --git lib/sample_app_web/views/page_view.ex lib/sample_app_web/views/page_view.ex
+deleted file mode 100644
+index b51be24..0000000
 --- lib/sample_app_web/views/page_view.ex
-+++ lib/sample_app_web/views/page_view.ex
++++ /dev/null
 @@ -1,3 +0,0 @@
 -defmodule SampleAppWeb.PageView do
 -  use SampleAppWeb, :view
 -end
-diff -ruN lib/sample_app_web.ex lib/sample_app_web.ex
+diff --git lib/sample_app_web.ex lib/sample_app_web.ex
+index 6316072..2bf6fe2 100644
 --- lib/sample_app_web.ex
 +++ lib/sample_app_web.ex
-@@ -42,12 +42,30 @@
+@@ -42,12 +42,30 @@ defmodule SampleAppWeb do
      end
    end
  
@@ -473,7 +421,7 @@ diff -ruN lib/sample_app_web.ex lib/sample_app_web.ex
      end
    end
  
-@@ -63,6 +81,9 @@
+@@ -63,6 +81,9 @@ defmodule SampleAppWeb do
        # Use all HTML functionality (forms, tags, etc)
        use Phoenix.HTML
  
@@ -483,10 +431,11 @@ diff -ruN lib/sample_app_web.ex lib/sample_app_web.ex
        # Import basic rendering functionality (render, render_layout, etc)
        import Phoenix.View
  
-diff -ruN mix.exs mix.exs
+diff --git mix.exs mix.exs
+index 13c8767..09c5330 100644
 --- mix.exs
 +++ mix.exs
-@@ -37,6 +37,8 @@
+@@ -37,6 +37,8 @@ defmodule SampleApp.MixProject do
        {:phoenix_ecto, "~> 4.1"},
        {:ecto_sql, "~> 3.4"},
        {:postgrex, ">= 0.0.0"},
@@ -495,9 +444,11 @@ diff -ruN mix.exs mix.exs
        {:phoenix_html, "~> 2.11"},
        {:phoenix_live_reload, "~> 1.2", only: :dev},
        {:phoenix_live_dashboard, "~> 0.4"},
-diff -ruN test/sample_app_web/controllers/page_controller_test.exs test/sample_app_web/controllers/page_controller_test.exs
+diff --git test/sample_app_web/controllers/page_controller_test.exs test/sample_app_web/controllers/page_controller_test.exs
+deleted file mode 100644
+index ff72f28..0000000
 --- test/sample_app_web/controllers/page_controller_test.exs
-+++ test/sample_app_web/controllers/page_controller_test.exs
++++ /dev/null
 @@ -1,8 +0,0 @@
 -defmodule SampleAppWeb.PageControllerTest do
 -  use SampleAppWeb.ConnCase
@@ -507,8 +458,10 @@ diff -ruN test/sample_app_web/controllers/page_controller_test.exs test/sample_a
 -    assert html_response(conn, 200) =~ "Welcome to Phoenix!"
 -  end
 -end
-diff -ruN test/sample_app_web/live/page_live_test.exs test/sample_app_web/live/page_live_test.exs
---- test/sample_app_web/live/page_live_test.exs
+diff --git test/sample_app_web/live/page_live_test.exs test/sample_app_web/live/page_live_test.exs
+new file mode 100644
+index 0000000..9d653d3
+--- /dev/null
 +++ test/sample_app_web/live/page_live_test.exs
 @@ -0,0 +1,11 @@
 +defmodule SampleAppWeb.PageLiveTest do
@@ -522,9 +475,11 @@ diff -ruN test/sample_app_web/live/page_live_test.exs test/sample_app_web/live/p
 +    assert render(page_live) =~ "Welcome to Phoenix!"
 +  end
 +end
-diff -ruN test/sample_app_web/views/page_view_test.exs test/sample_app_web/views/page_view_test.exs
+diff --git test/sample_app_web/views/page_view_test.exs test/sample_app_web/views/page_view_test.exs
+deleted file mode 100644
+index fe4c216..0000000
 --- test/sample_app_web/views/page_view_test.exs
-+++ test/sample_app_web/views/page_view_test.exs
++++ /dev/null
 @@ -1,3 +0,0 @@
 -defmodule SampleAppWeb.PageViewTest do
 -  use SampleAppWeb.ConnCase, async: true

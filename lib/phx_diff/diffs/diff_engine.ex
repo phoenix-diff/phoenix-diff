@@ -5,15 +5,28 @@ defmodule PhxDiff.Diffs.DiffEngine do
 
   @spec compute_diff(String.t(), String.t()) :: diff
   def compute_diff(source_path, target_path) do
-    {result, _exit_code} = System.cmd("diff", ["-ruN", source_path, target_path])
+    {:ok, diff} = git_diff(source_path, target_path)
 
-    result
-    |> String.replace("#{source_path}/", "")
-    |> String.replace("#{target_path}/", "")
-    |> remove_file_timestamps()
+    diff
+    |> String.replace(~r/(?:a|b)?#{source_path}\//, "")
+    |> String.replace(~r/(?:a|b)?#{target_path}\//, "")
   end
 
-  defp remove_file_timestamps(diff) do
-    String.replace(diff, ~r/^((\-\-\-|\+\+\+) [^\t]+).*$/m, "\\1")
+  defp git_diff(source_path, target_path) do
+    case System.cmd("git", [
+           "-c",
+           "core.quotepath=false",
+           "-c",
+           "diff.algorithm=histogram",
+           "diff",
+           "--no-index",
+           "--no-color",
+           source_path,
+           target_path
+         ]) do
+      {"", 0} -> {:ok, ""}
+      {output, 1} -> {:ok, output}
+      other -> {:error, other}
+    end
   end
 end

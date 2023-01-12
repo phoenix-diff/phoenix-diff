@@ -1,4 +1,5 @@
-diff -ruN .formatter.exs .formatter.exs
+diff --git .formatter.exs .formatter.exs
+index e945e12..ef8840c 100644
 --- .formatter.exs
 +++ .formatter.exs
 @@ -1,5 +1,6 @@
@@ -10,7 +11,8 @@ diff -ruN .formatter.exs .formatter.exs
 -  inputs: ["*.{heex,ex,exs}", "{config,lib,test}/**/*.{heex,ex,exs}"]
 +  inputs: ["*.{heex,ex,exs}", "{config,lib,test}/**/*.{heex,ex,exs}", "priv/*/seeds.exs"]
  ]
-diff -ruN README.md README.md
+diff --git README.md README.md
+index 1e0363f..bcfdbc2 100644
 --- README.md
 +++ README.md
 @@ -3,6 +3,7 @@
@@ -21,7 +23,8 @@ diff -ruN README.md README.md
    * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
  
  Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
-diff -ruN config/config.exs config/config.exs
+diff --git config/config.exs config/config.exs
+index fa98409..8cf2c0f 100644
 --- config/config.exs
 +++ config/config.exs
 @@ -7,6 +7,9 @@
@@ -34,7 +37,8 @@ diff -ruN config/config.exs config/config.exs
  # Configures the endpoint
  config :sample_app, SampleAppWeb.Endpoint,
    url: [host: "localhost"],
-diff -ruN config/dev.exs config/dev.exs
+diff --git config/dev.exs config/dev.exs
+index f29a84d..8157e7b 100644
 --- config/dev.exs
 +++ config/dev.exs
 @@ -1,5 +1,15 @@
@@ -53,10 +57,11 @@ diff -ruN config/dev.exs config/dev.exs
  # For development, we disable any cache and enable
  # debugging and code reloading.
  #
-diff -ruN config/runtime.exs config/runtime.exs
+diff --git config/runtime.exs config/runtime.exs
+index e996fe5..ce6a769 100644
 --- config/runtime.exs
 +++ config/runtime.exs
-@@ -21,6 +21,21 @@
+@@ -21,6 +21,21 @@ if System.get_env("PHX_SERVER") do
  end
  
  if config_env() == :prod do
@@ -78,7 +83,8 @@ diff -ruN config/runtime.exs config/runtime.exs
    # The secret key base is used to sign/encrypt cookies and other secrets.
    # A default value is used in config/dev.exs and config/test.exs but you
    # want to use a different value for prod and you most likely don't want
-diff -ruN config/test.exs config/test.exs
+diff --git config/test.exs config/test.exs
+index bf695f7..536efba 100644
 --- config/test.exs
 +++ config/test.exs
 @@ -1,5 +1,18 @@
@@ -100,7 +106,7 @@ diff -ruN config/test.exs config/test.exs
  # We don't run a server during test. If one is required,
  # you can enable the server option below.
  config :sample_app, SampleAppWeb.Endpoint,
-@@ -8,8 +21,7 @@
+@@ -8,8 +21,7 @@ config :sample_app, SampleAppWeb.Endpoint,
    server: false
  
  # In test we don't send emails.
@@ -110,10 +116,11 @@ diff -ruN config/test.exs config/test.exs
  
  # Disable swoosh api client as it is only required for production adapters.
  config :swoosh, :api_client, false
-diff -ruN lib/sample_app/application.ex lib/sample_app/application.ex
+diff --git lib/sample_app/application.ex lib/sample_app/application.ex
+index 1e66227..c319e92 100644
 --- lib/sample_app/application.ex
 +++ lib/sample_app/application.ex
-@@ -10,6 +10,8 @@
+@@ -10,6 +10,8 @@ defmodule SampleApp.Application do
      children = [
        # Start the Telemetry supervisor
        SampleAppWeb.Telemetry,
@@ -122,8 +129,10 @@ diff -ruN lib/sample_app/application.ex lib/sample_app/application.ex
        # Start the PubSub system
        {Phoenix.PubSub, name: SampleApp.PubSub},
        # Start Finch
-diff -ruN lib/sample_app/repo.ex lib/sample_app/repo.ex
---- lib/sample_app/repo.ex
+diff --git lib/sample_app/repo.ex lib/sample_app/repo.ex
+new file mode 100644
+index 0000000..338b8ba
+--- /dev/null
 +++ lib/sample_app/repo.ex
 @@ -0,0 +1,5 @@
 +defmodule SampleApp.Repo do
@@ -131,10 +140,11 @@ diff -ruN lib/sample_app/repo.ex lib/sample_app/repo.ex
 +    otp_app: :sample_app,
 +    adapter: Ecto.Adapters.Postgres
 +end
-diff -ruN lib/sample_app_web/endpoint.ex lib/sample_app_web/endpoint.ex
+diff --git lib/sample_app_web/endpoint.ex lib/sample_app_web/endpoint.ex
+index f63f2c6..9694b85 100644
 --- lib/sample_app_web/endpoint.ex
 +++ lib/sample_app_web/endpoint.ex
-@@ -29,6 +29,7 @@
+@@ -29,6 +29,7 @@ defmodule SampleAppWeb.Endpoint do
      socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
      plug Phoenix.LiveReloader
      plug Phoenix.CodeReloader
@@ -142,10 +152,11 @@ diff -ruN lib/sample_app_web/endpoint.ex lib/sample_app_web/endpoint.ex
    end
  
    plug Phoenix.LiveDashboard.RequestLogger,
-diff -ruN lib/sample_app_web/telemetry.ex lib/sample_app_web/telemetry.ex
+diff --git lib/sample_app_web/telemetry.ex lib/sample_app_web/telemetry.ex
+index 9c04c53..bd63eec 100644
 --- lib/sample_app_web/telemetry.ex
 +++ lib/sample_app_web/telemetry.ex
-@@ -51,6 +51,29 @@
+@@ -51,6 +51,29 @@ defmodule SampleAppWeb.Telemetry do
          unit: {:native, :millisecond}
        ),
  
@@ -175,10 +186,11 @@ diff -ruN lib/sample_app_web/telemetry.ex lib/sample_app_web/telemetry.ex
        # VM Metrics
        summary("vm.memory.total", unit: {:byte, :kilobyte}),
        summary("vm.total_run_queue_lengths.total"),
-diff -ruN mix.exs mix.exs
+diff --git mix.exs mix.exs
+index aadfed8..cc7eb6b 100644
 --- mix.exs
 +++ mix.exs
-@@ -33,6 +33,9 @@
+@@ -33,6 +33,9 @@ defmodule SampleApp.MixProject do
    defp deps do
      [
        {:phoenix, "~> 1.7.0-rc.0", override: true},
@@ -188,7 +200,7 @@ diff -ruN mix.exs mix.exs
        {:phoenix_html, "~> 3.0"},
        {:phoenix_live_reload, "~> 1.2", only: :dev},
        {:phoenix_live_view, "~> 0.18.3"},
-@@ -59,7 +62,10 @@
+@@ -59,7 +62,10 @@ defmodule SampleApp.MixProject do
    # See the documentation for `Mix` for more info on aliases.
    defp aliases do
      [
@@ -200,7 +212,8 @@ diff -ruN mix.exs mix.exs
        "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"]
      ]
    end
-diff -ruN priv/gettext/en/LC_MESSAGES/errors.po priv/gettext/en/LC_MESSAGES/errors.po
+diff --git priv/gettext/en/LC_MESSAGES/errors.po priv/gettext/en/LC_MESSAGES/errors.po
+index cdec3a1..844c4f5 100644
 --- priv/gettext/en/LC_MESSAGES/errors.po
 +++ priv/gettext/en/LC_MESSAGES/errors.po
 @@ -9,3 +9,104 @@
@@ -308,7 +321,8 @@ diff -ruN priv/gettext/en/LC_MESSAGES/errors.po priv/gettext/en/LC_MESSAGES/erro
 +
 +msgid "must be equal to %{number}"
 +msgstr ""
-diff -ruN priv/gettext/errors.pot priv/gettext/errors.pot
+diff --git priv/gettext/errors.pot priv/gettext/errors.pot
+index d6f47fa..ccf5c68 100644
 --- priv/gettext/errors.pot
 +++ priv/gettext/errors.pot
 @@ -8,3 +8,103 @@
@@ -415,16 +429,20 @@ diff -ruN priv/gettext/errors.pot priv/gettext/errors.pot
 +
 +msgid "must be equal to %{number}"
 +msgstr ""
-diff -ruN priv/repo/migrations/.formatter.exs priv/repo/migrations/.formatter.exs
---- priv/repo/migrations/.formatter.exs
+diff --git priv/repo/migrations/.formatter.exs priv/repo/migrations/.formatter.exs
+new file mode 100644
+index 0000000..49f9151
+--- /dev/null
 +++ priv/repo/migrations/.formatter.exs
 @@ -0,0 +1,4 @@
 +[
 +  import_deps: [:ecto_sql],
 +  inputs: ["*.exs"]
 +]
-diff -ruN priv/repo/seeds.exs priv/repo/seeds.exs
---- priv/repo/seeds.exs
+diff --git priv/repo/seeds.exs priv/repo/seeds.exs
+new file mode 100644
+index 0000000..390853d
+--- /dev/null
 +++ priv/repo/seeds.exs
 @@ -0,0 +1,11 @@
 +# Script for populating the database. You can run it as:
@@ -438,10 +456,11 @@ diff -ruN priv/repo/seeds.exs priv/repo/seeds.exs
 +#
 +# We recommend using the bang functions (`insert!`, `update!`
 +# and so on) as they will fail if something goes wrong.
-diff -ruN test/support/conn_case.ex test/support/conn_case.ex
+diff --git test/support/conn_case.ex test/support/conn_case.ex
+index 39e955c..8a8c5e8 100644
 --- test/support/conn_case.ex
 +++ test/support/conn_case.ex
-@@ -31,7 +31,8 @@
+@@ -31,7 +31,8 @@ defmodule SampleAppWeb.ConnCase do
      end
    end
  
@@ -451,8 +470,10 @@ diff -ruN test/support/conn_case.ex test/support/conn_case.ex
      {:ok, conn: Phoenix.ConnTest.build_conn()}
    end
  end
-diff -ruN test/support/data_case.ex test/support/data_case.ex
---- test/support/data_case.ex
+diff --git test/support/data_case.ex test/support/data_case.ex
+new file mode 100644
+index 0000000..f182805
+--- /dev/null
 +++ test/support/data_case.ex
 @@ -0,0 +1,58 @@
 +defmodule SampleApp.DataCase do
@@ -513,7 +534,8 @@ diff -ruN test/support/data_case.ex test/support/data_case.ex
 +    end)
 +  end
 +end
-diff -ruN test/test_helper.exs test/test_helper.exs
+diff --git test/test_helper.exs test/test_helper.exs
+index 869559e..a8a4cfb 100644
 --- test/test_helper.exs
 +++ test/test_helper.exs
 @@ -1 +1,2 @@

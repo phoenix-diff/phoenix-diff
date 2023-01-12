@@ -1,7 +1,8 @@
-diff -ruN mix.exs mix.exs
+diff --git mix.exs mix.exs
+index 3a39fc4..372d3d3 100644
 --- mix.exs
 +++ mix.exs
-@@ -33,7 +33,7 @@
+@@ -33,7 +33,7 @@ defmodule SampleApp.MixProject do
    # Type `mix help deps` for examples and options.
    defp deps do
      [

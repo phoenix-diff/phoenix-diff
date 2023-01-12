@@ -38,20 +38,13 @@ defmodule PhxDiffWeb.PageLiveTest do
 
     assert page_title(view) =~ "v1.5.0 to v1.5.1"
 
-    assert_diff_rendered(view, """
-    diff -ruN mix.exs mix.exs
-    --- mix.exs	2020-06-10 22:25:39.565354425 -0600
-    +++ mix.exs	2020-06-26 21:14:25.000000000 -0600
-    @@ -33,7 +33,7 @@
-       # Type `mix help deps` for examples and options.
-       defp deps do
-         [
-    -      {:phoenix, "~> 1.5.0"},
-    +      {:phoenix, "~> 1.5.1"},
-           {:phoenix_ecto, "~> 4.1"},
-           {:ecto_sql, "~> 3.4"},
-           {:postgrex, ">= 0.0.0"},
-    """)
+    assert_diff_rendered(
+      view,
+      DiffFixtures.known_diff_for!(
+        AppSpecification.new(~V|1.5.0|, ["--live"]),
+        AppSpecification.new(~V|1.5.1|, ["--live"])
+      )
+    )
 
     assert_receive {:otel_span,
                     %{
@@ -215,8 +208,7 @@ defmodule PhxDiffWeb.PageLiveTest do
       |> Floki.attribute("data-diff")
       |> List.first()
 
-    assert strip_date_from_diff(diff_from_view) ==
-             strip_date_from_diff(expected_diff)
+    assert diff_from_view == expected_diff
   end
 
   defp diff_results_container_display_mode(view) do
@@ -229,9 +221,5 @@ defmodule PhxDiffWeb.PageLiveTest do
 
   defp display_mode_button_active?(view, button_text) do
     has_element?(view, "#diff-view-toggles input:checked + label", button_text)
-  end
-
-  defp strip_date_from_diff(diff) do
-    Regex.replace(~r/([+\-]{3} [^\t]+)\t(.*)/, diff, "\\1")
   end
 end
