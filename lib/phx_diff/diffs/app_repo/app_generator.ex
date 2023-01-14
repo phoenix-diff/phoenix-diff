@@ -25,6 +25,7 @@ defmodule PhxDiff.Diffs.AppRepo.AppGenerator do
     sample_app_path = generate_sample_app_path(workspace_path)
 
     with :ok <- run_phoenix_generator(sample_app_path, mix_archives_path, app_specification),
+         sample_app_path = get_potentially_changed_sample_app_path!(sample_app_path),
          :ok <- clean_up_generated_app!(sample_app_path) do
       {:ok, sample_app_path}
     end
@@ -48,6 +49,13 @@ defmodule PhxDiff.Diffs.AppRepo.AppGenerator do
       )
 
     :ok
+  end
+
+  # Umbrella apps append "_umbrella" to the sample app path, so we may need to
+  # update the path we're returning.
+  defp get_potentially_changed_sample_app_path!(sample_app_path) do
+    [updated_path] = Path.wildcard(sample_app_path <> "*")
+    updated_path
   end
 
   defp clean_up_generated_app!(sample_app_path) do

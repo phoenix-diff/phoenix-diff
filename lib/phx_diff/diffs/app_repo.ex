@@ -12,7 +12,8 @@ defmodule PhxDiff.Diffs.AppRepo do
     {["--no-ecto"], "no-ecto"},
     {["--no-live"], "no-live"},
     {["--no-html"], "no-html"},
-    {["--binary-id"], "binary-id"}
+    {["--binary-id"], "binary-id"},
+    {["--umbrella"], "umbrella"}
   ]
 
   @spec all_versions() :: [version]

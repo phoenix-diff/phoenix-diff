@@ -9,7 +9,8 @@ defmodule PhxDiffWeb.PageLive.DiffSelection.PhxNewArgListPresets do
     live: ["--live"],
     no_live: ["--no-live"],
     no_html: ["--no-html"],
-    binary_id: ["--binary-id"]
+    binary_id: ["--binary-id"],
+    umbrella: ["--umbrella"]
   ]
 
   for {id, arg_list} <- @mappings do

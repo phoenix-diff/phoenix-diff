@@ -7,7 +7,7 @@ defmodule PhxDiffWeb.PageLive.DiffSelection do
   alias PhxDiffWeb.PageLive.DiffSelection.Fields
   alias PhxDiffWeb.PageLive.DiffSelection.PhxNewArgListPresets
 
-  @type variant :: :default | :no_ecto | :live | :no_live | :no_html | :binary_id
+  @type variant :: :default | :no_ecto | :live | :no_live | :no_html | :binary_id | :umbrella
 
   @type t :: %__MODULE__{
           source: Version.t() | nil,
@@ -21,12 +21,12 @@ defmodule PhxDiffWeb.PageLive.DiffSelection do
     field :source, Fields.Version
 
     field :source_variant, Ecto.Enum,
-      values: [:default, :no_ecto, :live, :no_live, :no_html, :binary_id]
+      values: [:default, :no_ecto, :live, :no_live, :no_html, :binary_id, :umbrella]
 
     field :target, Fields.Version
 
     field :target_variant, Ecto.Enum,
-      values: [:default, :no_ecto, :live, :no_live, :no_html, :binary_id]
+      values: [:default, :no_ecto, :live, :no_live, :no_html, :binary_id, :umbrella]
   end
 
   def changeset(data, params \\ %{}) do
