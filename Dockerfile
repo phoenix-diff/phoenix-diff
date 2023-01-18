@@ -51,6 +51,7 @@ RUN mkdir config
 # to be re-compiled.
 COPY config/config.exs config/${MIX_ENV}.exs config/
 RUN mix deps.compile
+RUN mix do tailwind.install --if-missing, esbuild.install --if-missing
 
 COPY priv priv
 
