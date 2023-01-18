@@ -52,6 +52,10 @@ config :phx_diff, PhxDiffWeb.Endpoint,
     ]
   ]
 
+config :phx_diff,
+  admin_username: "admin",
+  admin_password: "password"
+
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"
 

@@ -72,6 +72,10 @@ if config_env() == :prod do
     check_origin: check_origin,
     secret_key_base: secret_key_base
 
+  config :phx_diff,
+    admin_username: System.fetch_env!("ADMIN_DASHBOARD_USERNAME"),
+    admin_password: System.fetch_env!("ADMIN_DASHBOARD_PASSWORD")
+
   # ## Configuring the mailer
   #
   # In production you need to configure the mailer to use a different adapter.

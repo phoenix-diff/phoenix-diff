@@ -19,3 +19,5 @@ PhxDiff has several environment variables that need to be set to deploy to a pro
 * `ASSET_HOST` - Overrides host of asset urls. Defaults to the same as `URL_HOST`.
 * `ASSET_PORT` - Overrides port of asset urls. Defaults to the same as `URL_PORT`.
 * `ALLOWED_ORIGINS` - Sets the list of allowed origins. If not set, the allowed origins are based off `URL_HOST`
+* `ADMIN_DASHBOARD_USERNAME` - The username to access admin dashboards like LiveDashboard
+* `ADMIN_DASHBOARD_PASSWORD` - The password to access admin dashboards like LiveDashboard

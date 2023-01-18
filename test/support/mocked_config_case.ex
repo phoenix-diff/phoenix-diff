@@ -11,6 +11,7 @@ defmodule PhxDiff.MockedConfigCase do
     Mox.set_mox_from_context(context)
 
     Mox.stub_with(PhxDiff.Config.Mock, PhxDiff.Config.DefaultAdapter)
+    Mox.stub_with(PhxDiffWeb.Config.Mock, PhxDiffWeb.Config.DefaultAdapter)
 
     :ok
   end

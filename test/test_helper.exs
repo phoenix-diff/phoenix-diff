@@ -10,4 +10,7 @@ Mix.shell(Mix.Shell.Process)
 Mox.defmock(PhxDiff.Config.Mock, for: PhxDiff.Config.Adapter)
 Application.put_env(:phx_diff, :config_adapter, PhxDiff.Config.Mock)
 
+Mox.defmock(PhxDiffWeb.Config.Mock, for: PhxDiffWeb.Config.Adapter)
+Application.put_env(:phx_diff, :web_config_adapter, PhxDiffWeb.Config.Mock)
+
 ExUnit.start()
