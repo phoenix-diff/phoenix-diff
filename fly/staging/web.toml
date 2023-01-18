@@ -10,6 +10,10 @@ processes = []
   DEPLOYMENT_ENV="Staging"
   OTEL_EXPORTER="grafana-cloud"
   PORT = "8080"
+  # Normally appended to Dockerfile via fly.ctl. Placing it in here allows
+  # the container to also be run without ipv6
+  ECTO_IPV6="true"
+  ERL_AFLAGS="-proto_dist inet6_tcp"
 
 [experimental]
   allowed_public_ports = []

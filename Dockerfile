@@ -97,12 +97,8 @@ ENV MIX_ENV="prod"
 # Only copy the final release from the build stage
 COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/phx_diff ./
 
+COPY .git/ /app/bin/.git
+
 USER nobody
 
 CMD ["/app/bin/server"]
-
-# Appended by flyctl
-ENV ECTO_IPV6 true
-ENV ERL_AFLAGS "-proto_dist inet6_tcp"
-
-COPY .git/ /app/bin/.git
