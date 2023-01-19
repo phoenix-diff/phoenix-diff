@@ -18,3 +18,9 @@ updates:
     directory: "/assets"
     schedule:
       interval: "daily"
+
+  # Maintain dependencies for Docker
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "daily"
