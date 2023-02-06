@@ -5,6 +5,6 @@
   "dependencies": {
     "diff2html": "^3.4.31",
     "highlight.js": "^11.7.0",
-    "topbar": "^1.0.1"
+    "topbar": "^2.0.1"
   }
 }

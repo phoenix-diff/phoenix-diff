@@ -52,7 +52,7 @@ nopt@1.0.10:
   dependencies:
     abbrev "1"
 
-topbar@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/topbar/-/topbar-1.0.1.tgz#7987fb9ea40ce702ed2d9fcded3407a8ae5a33a9"
-  integrity sha512-HZqQSMBiG29vcjOrqKCM9iGY/h69G5gQH7ae83ZCPz5uPmbQKwK0sMEqzVDBiu64tWHJ+kk9NApECrF+FAAvRA==
+topbar@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/topbar/-/topbar-2.0.1.tgz#03a0ae1a92ff9566af8b0c7ddf711f5303bf40a3"
+  integrity sha512-4KvcxrJuGS3wkx8QacT7dfnkwyPJOuDzGUvHO/GDZqgoEEEFKTnZqCC6PYcvuZ0OfMNdyyKeAzVB2MPk0BIe8A==
