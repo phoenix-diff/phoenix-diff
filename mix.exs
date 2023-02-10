@@ -60,7 +60,7 @@ defmodule PhxDiff.MixProject do
       {:opentelemetry_exporter, "~> 1.2.0"},
       {:opentelemetry, "~> 1.1.1"},
       {:opentelemetry_api, "~> 1.1.0"},
-      {:opentelemetry_phoenix, "~> 1.0.0"},
+      {:opentelemetry_phoenix, "~> 1.1.0"},
       {:opentelemetry_liveview, "~> 1.0.0-rc.4"},
       {:boundary, "~> 0.9", runtime: false},
       {:esbuild, "~> 0.4", runtime: Mix.env() == :dev},
