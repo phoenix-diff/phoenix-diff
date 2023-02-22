@@ -1,0 +1,28 @@
+name: Generate sample app
+on:
+  workflow_dispatch:
+    inputs:
+      phx_version:
+        description: "Version of phoenix to use"
+        type: string
+        required: true
+      phx_new_arguments:
+        description: "Arguments to pass to mix phx.new"
+        type: string
+
+jobs:
+  generate_app:
+    name: Generate App
+    runs-on: ubuntu-latest
+    steps:
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: "25.2"
+          elixir-version: "1.14.3"
+      - run: mix archive.install hex phx_new ${{ inputs.phx_version }} --force
+      - run: yes no | mix phx.new sample_app ${{ inputs.phx_new_arguments }}
+      - run: find * -printf "%P\n" | tar -czf phx_app.tgz --no-recursion -C * -T -
+      - uses: actions/upload-artifact@v3
+        with:
+          name: sample-app
+          path: phx_app.tgz
