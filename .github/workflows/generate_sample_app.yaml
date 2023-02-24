@@ -19,9 +19,33 @@ jobs:
         with:
           otp-version: "25.2"
           elixir-version: "1.14.3"
+      - name: Install backblaze
+        run: curl -L -o /usr/local/bin/b2 https://github.com/Backblaze/B2_Command_Line_Tool/releases/latest/download/b2-linux && chmod +x /usr/local/bin/b2 && b2 version
+      # - name: Install awscli
+      #   run: |
+      #     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" &&
+      #     unzip awscliv2.zip &&
+      #     ./aws/install &&
+      #     rm -rf aws awscliv2
       - run: mix archive.install hex phx_new ${{ inputs.phx_version }} --force
       - run: yes no | mix phx.new sample_app ${{ inputs.phx_new_arguments }}
       - run: find * -printf "%P\n" | tar -czf phx_app.tgz --no-recursion -C * -T -
+      - run: aws --version
+      # - run: echo ${{secrets.B2_APPLICATION_KEY_ID}} > foo.txt
+      # - uses: actions/upload-artifact@v3
+      #   with:
+      #     name: foo
+      #     path: foo.txt
+      - run: aws s3 cp phx_app.tgz s3://phxdiff-diffs-test/foo/phx_app.tgz --endpoint-url https://s3.us-east-005.backblazeb2.com
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.B2_APPLICATION_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.B2_APPLICATION_KEY }}
+          AWS_DEFAULT_REGION: us-east-005
+
+      # - run: b2 upload-file phxdiff-diffs-test phx_app.tgz test/phx_app.tgz
+      #   env:
+      #     B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
+      #     B2_APPLICATION_KEY_ID: ${{ secrets.B2_APPLICATION_KEY_ID }}
       - uses: actions/upload-artifact@v3
         with:
           name: sample-app
