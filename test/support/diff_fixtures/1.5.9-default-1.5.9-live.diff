@@ -1,7 +1,7 @@
-diff --git assets/css/app.scss assets/css/app.scss
+diff --git a/assets/css/app.scss b/assets/css/app.scss
 index 5c2c9b5..bc41c57 100644
---- assets/css/app.scss
-+++ assets/css/app.scss
+--- a/assets/css/app.scss
++++ b/assets/css/app.scss
 @@ -1,6 +1,60 @@
  /* This file is for your main application css. */
  @import "./phoenix.css";
@@ -63,10 +63,10 @@ index 5c2c9b5..bc41c57 100644
  /* Alerts and form errors */
  .alert {
    padding: 15px;
-diff --git assets/js/app.js assets/js/app.js
+diff --git a/assets/js/app.js b/assets/js/app.js
 index af00596..d066452 100644
---- assets/js/app.js
-+++ assets/js/app.js
+--- a/assets/js/app.js
++++ b/assets/js/app.js
 @@ -13,3 +13,24 @@ import "../css/app.scss"
  //     import socket from "./socket"
  //
@@ -92,10 +92,10 @@ index af00596..d066452 100644
 +// >> liveSocket.disableLatencySim()
 +window.liveSocket = liveSocket
 +
-diff --git assets/js/socket.js assets/js/socket.js
+diff --git a/assets/js/socket.js b/assets/js/socket.js
 deleted file mode 100644
 index 09929ab..0000000
---- assets/js/socket.js
+--- a/assets/js/socket.js
 +++ /dev/null
 @@ -1,63 +0,0 @@
 -// NOTE: The contents of this file will only be executed if
@@ -161,10 +161,10 @@ index 09929ab..0000000
 -  .receive("error", resp => { console.log("Unable to join", resp) })
 -
 -export default socket
-diff --git assets/package.json assets/package.json
+diff --git a/assets/package.json b/assets/package.json
 index 67dbc73..184c7c4 100644
---- assets/package.json
-+++ assets/package.json
+--- a/assets/package.json
++++ b/assets/package.json
 @@ -8,7 +8,9 @@
    },
    "dependencies": {
@@ -176,10 +176,10 @@ index 67dbc73..184c7c4 100644
    },
    "devDependencies": {
      "@babel/core": "^7.0.0",
-diff --git lib/sample_app_web/controllers/page_controller.ex lib/sample_app_web/controllers/page_controller.ex
+diff --git a/lib/sample_app_web/controllers/page_controller.ex b/lib/sample_app_web/controllers/page_controller.ex
 deleted file mode 100644
 index d88618d..0000000
---- lib/sample_app_web/controllers/page_controller.ex
+--- a/lib/sample_app_web/controllers/page_controller.ex
 +++ /dev/null
 @@ -1,7 +0,0 @@
 -defmodule SampleAppWeb.PageController do
@@ -189,11 +189,11 @@ index d88618d..0000000
 -    render(conn, "index.html")
 -  end
 -end
-diff --git lib/sample_app_web/live/page_live.ex lib/sample_app_web/live/page_live.ex
+diff --git a/lib/sample_app_web/live/page_live.ex b/lib/sample_app_web/live/page_live.ex
 new file mode 100644
 index 0000000..406f7d0
 --- /dev/null
-+++ lib/sample_app_web/live/page_live.ex
++++ b/lib/sample_app_web/live/page_live.ex
 @@ -0,0 +1,39 @@
 +defmodule SampleAppWeb.PageLive do
 +  use SampleAppWeb, :live_view
@@ -234,13 +234,13 @@ index 0000000..406f7d0
 +        do: {app, vsn}
 +  end
 +end
-diff --git lib/sample_app_web/templates/page/index.html.eex lib/sample_app_web/live/page_live.html.leex
+diff --git a/lib/sample_app_web/templates/page/index.html.eex b/lib/sample_app_web/live/page_live.html.leex
 similarity index 71%
-rename from lib/sample_app_web/templates/page/index.html.eex
-rename to lib/sample_app_web/live/page_live.html.leex
+rename from /lib/sample_app_web/templates/page/index.html.eex
+rename to /lib/sample_app_web/live/page_live.html.leex
 index dd0a7f8..52509c2 100644
---- lib/sample_app_web/templates/page/index.html.eex
-+++ lib/sample_app_web/live/page_live.html.leex
+--- a/lib/sample_app_web/templates/page/index.html.eex
++++ b/lib/sample_app_web/live/page_live.html.leex
 @@ -1,6 +1,16 @@
  <section class="phx-hero">
    <h1><%= gettext "Welcome to %{name}!", name: "Phoenix" %></h1>
@@ -258,10 +258,10 @@ index dd0a7f8..52509c2 100644
  </section>
  
  <section class="row">
-diff --git lib/sample_app_web/router.ex lib/sample_app_web/router.ex
+diff --git a/lib/sample_app_web/router.ex b/lib/sample_app_web/router.ex
 index eb35a05..693616b 100644
---- lib/sample_app_web/router.ex
-+++ lib/sample_app_web/router.ex
+--- a/lib/sample_app_web/router.ex
++++ b/lib/sample_app_web/router.ex
 @@ -4,7 +4,8 @@ defmodule SampleAppWeb.Router do
    pipeline :browser do
      plug :accepts, ["html"]
@@ -281,10 +281,10 @@ index eb35a05..693616b 100644
    end
  
    # Other scopes may use custom stacks.
-diff --git lib/sample_app_web/templates/layout/app.html.eex lib/sample_app_web/templates/layout/app.html.eex
+diff --git a/lib/sample_app_web/templates/layout/app.html.eex b/lib/sample_app_web/templates/layout/app.html.eex
 index fb60402..09ffdad 100644
---- lib/sample_app_web/templates/layout/app.html.eex
-+++ lib/sample_app_web/templates/layout/app.html.eex
+--- a/lib/sample_app_web/templates/layout/app.html.eex
++++ b/lib/sample_app_web/templates/layout/app.html.eex
 @@ -1,33 +1,5 @@
 -<!DOCTYPE html>
 -<html lang="en">
@@ -324,11 +324,11 @@ index fb60402..09ffdad 100644
 +  <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
 +  <%= @inner_content %>
 +</main>
-diff --git lib/sample_app_web/templates/layout/live.html.leex lib/sample_app_web/templates/layout/live.html.leex
+diff --git a/lib/sample_app_web/templates/layout/live.html.leex b/lib/sample_app_web/templates/layout/live.html.leex
 new file mode 100644
 index 0000000..8dcded5
 --- /dev/null
-+++ lib/sample_app_web/templates/layout/live.html.leex
++++ b/lib/sample_app_web/templates/layout/live.html.leex
 @@ -0,0 +1,11 @@
 +<main role="main" class="container">
 +  <p class="alert alert-info" role="alert"
@@ -341,11 +341,11 @@ index 0000000..8dcded5
 +
 +  <%= @inner_content %>
 +</main>
-diff --git lib/sample_app_web/templates/layout/root.html.leex lib/sample_app_web/templates/layout/root.html.leex
+diff --git a/lib/sample_app_web/templates/layout/root.html.leex b/lib/sample_app_web/templates/layout/root.html.leex
 new file mode 100644
 index 0000000..02f5448
 --- /dev/null
-+++ lib/sample_app_web/templates/layout/root.html.leex
++++ b/lib/sample_app_web/templates/layout/root.html.leex
 @@ -0,0 +1,30 @@
 +<!DOCTYPE html>
 +<html lang="en">
@@ -377,19 +377,19 @@ index 0000000..02f5448
 +    <%= @inner_content %>
 +  </body>
 +</html>
-diff --git lib/sample_app_web/views/page_view.ex lib/sample_app_web/views/page_view.ex
+diff --git a/lib/sample_app_web/views/page_view.ex b/lib/sample_app_web/views/page_view.ex
 deleted file mode 100644
 index b51be24..0000000
---- lib/sample_app_web/views/page_view.ex
+--- a/lib/sample_app_web/views/page_view.ex
 +++ /dev/null
 @@ -1,3 +0,0 @@
 -defmodule SampleAppWeb.PageView do
 -  use SampleAppWeb, :view
 -end
-diff --git lib/sample_app_web.ex lib/sample_app_web.ex
+diff --git a/lib/sample_app_web.ex b/lib/sample_app_web.ex
 index 6316072..2bf6fe2 100644
---- lib/sample_app_web.ex
-+++ lib/sample_app_web.ex
+--- a/lib/sample_app_web.ex
++++ b/lib/sample_app_web.ex
 @@ -42,12 +42,30 @@ defmodule SampleAppWeb do
      end
    end
@@ -431,10 +431,10 @@ index 6316072..2bf6fe2 100644
        # Import basic rendering functionality (render, render_layout, etc)
        import Phoenix.View
  
-diff --git mix.exs mix.exs
+diff --git a/mix.exs b/mix.exs
 index 13c8767..09c5330 100644
---- mix.exs
-+++ mix.exs
+--- a/mix.exs
++++ b/mix.exs
 @@ -37,6 +37,8 @@ defmodule SampleApp.MixProject do
        {:phoenix_ecto, "~> 4.1"},
        {:ecto_sql, "~> 3.4"},
@@ -444,10 +444,10 @@ index 13c8767..09c5330 100644
        {:phoenix_html, "~> 2.11"},
        {:phoenix_live_reload, "~> 1.2", only: :dev},
        {:phoenix_live_dashboard, "~> 0.4"},
-diff --git test/sample_app_web/controllers/page_controller_test.exs test/sample_app_web/controllers/page_controller_test.exs
+diff --git a/test/sample_app_web/controllers/page_controller_test.exs b/test/sample_app_web/controllers/page_controller_test.exs
 deleted file mode 100644
 index ff72f28..0000000
---- test/sample_app_web/controllers/page_controller_test.exs
+--- a/test/sample_app_web/controllers/page_controller_test.exs
 +++ /dev/null
 @@ -1,8 +0,0 @@
 -defmodule SampleAppWeb.PageControllerTest do
@@ -458,11 +458,11 @@ index ff72f28..0000000
 -    assert html_response(conn, 200) =~ "Welcome to Phoenix!"
 -  end
 -end
-diff --git test/sample_app_web/live/page_live_test.exs test/sample_app_web/live/page_live_test.exs
+diff --git a/test/sample_app_web/live/page_live_test.exs b/test/sample_app_web/live/page_live_test.exs
 new file mode 100644
 index 0000000..9d653d3
 --- /dev/null
-+++ test/sample_app_web/live/page_live_test.exs
++++ b/test/sample_app_web/live/page_live_test.exs
 @@ -0,0 +1,11 @@
 +defmodule SampleAppWeb.PageLiveTest do
 +  use SampleAppWeb.ConnCase
@@ -475,10 +475,10 @@ index 0000000..9d653d3
 +    assert render(page_live) =~ "Welcome to Phoenix!"
 +  end
 +end
-diff --git test/sample_app_web/views/page_view_test.exs test/sample_app_web/views/page_view_test.exs
+diff --git a/test/sample_app_web/views/page_view_test.exs b/test/sample_app_web/views/page_view_test.exs
 deleted file mode 100644
 index fe4c216..0000000
---- test/sample_app_web/views/page_view_test.exs
+--- a/test/sample_app_web/views/page_view_test.exs
 +++ /dev/null
 @@ -1,3 +0,0 @@
 -defmodule SampleAppWeb.PageViewTest do

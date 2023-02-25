@@ -1,7 +1,7 @@
-diff --git mix.exs mix.exs
+diff --git a/mix.exs b/mix.exs
 index 7a682a2..473b5a5 100644
---- mix.exs
-+++ mix.exs
+--- a/mix.exs
++++ b/mix.exs
 @@ -33,11 +33,11 @@ defmodule SampleApp.MixProject do
    # Type `mix help deps` for examples and options.
    defp deps do

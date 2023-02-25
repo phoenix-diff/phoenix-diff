@@ -8,8 +8,8 @@ defmodule PhxDiff.Diffs.DiffEngine do
     {:ok, diff} = git_diff(source_path, target_path)
 
     diff
-    |> String.replace(~r/(?:a|b)?#{source_path}\//, "")
-    |> String.replace(~r/(?:a|b)?#{target_path}\//, "")
+    |> String.replace(~r/((?:a|b)?)#{source_path}\//, "\\1/")
+    |> String.replace(~r/((?:a|b)?)#{target_path}\//, "\\1/")
   end
 
   defp git_diff(source_path, target_path) do

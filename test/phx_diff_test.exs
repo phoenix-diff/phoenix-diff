@@ -99,7 +99,7 @@ defmodule PhxDiffTest do
         capture_log(fn ->
           {:ok, diff} = PhxDiff.fetch_diff(source, target)
 
-          assert diff =~ "config/config.exs config/config.exs"
+          assert diff =~ "a/config/config.exs b/config/config.exs"
         end)
 
       assert_received_telemetry_event(
