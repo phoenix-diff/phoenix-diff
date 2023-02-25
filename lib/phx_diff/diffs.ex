@@ -38,9 +38,9 @@ defmodule PhxDiff.Diffs do
     end
   end
 
-  @spec get_diff(AppSpecification.t(), AppSpecification.t()) ::
+  @spec fetch_diff(AppSpecification.t(), AppSpecification.t()) ::
           {:ok, diff} | {:error, ComparisonError.t()}
-  def get_diff(%AppSpecification{} = source_spec, %AppSpecification{} = target_spec) do
+  def fetch_diff(%AppSpecification{} = source_spec, %AppSpecification{} = target_spec) do
     metadata = %{source_spec: source_spec, target_spec: target_spec}
 
     :telemetry.span([:phx_diff, :diffs, :generate], metadata, fn ->

@@ -54,7 +54,7 @@ defmodule PhxDiff do
   """
   @spec fetch_diff(AppSpecification.t(), AppSpecification.t()) ::
           {:ok, diff} | {:error, ComparisonError.t()}
-  defdelegate fetch_diff(source_spec, target_spec), to: PhxDiff.Diffs, as: :get_diff
+  defdelegate fetch_diff(source_spec, target_spec), to: PhxDiff.Diffs
 
   @doc """
   Generates a sample application for the given app specification
