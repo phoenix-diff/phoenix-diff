@@ -145,6 +145,16 @@ defmodule PhxDiffWeb.PageLiveTest do
                      }}
   end
 
+  test "indicates no changes for identical versions", %{conn: conn} do
+    {:ok, _view, html} =
+      live(
+        conn,
+        ~p"/?#{[source: ~V|1.5.9|, source_variant: :default, target: ~V|1.5.9|, target_variant: :default]}"
+      )
+
+    assert html =~ "no changes"
+  end
+
   test "allows comparing variants of the same version", %{conn: conn} do
     {:ok, view, _html} =
       conn
