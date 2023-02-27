@@ -50,27 +50,24 @@
 
   <section id="results-section">
     <div class="container mx-auto p-4">
-      <%= if @no_changes? do %>
-        <div class="text-brand text-center text-xl mt-8">
-          There are no changes between version <%= @source_version %> and <%= @target_version %>.
-        </div>
-      <% else %>
-        <.live_component
-          module={PhxDiffWeb.PageLive.DiffViewerComponent}
-          id="main-diff"
-          diff={@diff}
-        />
-      <% end %>
+      <.live_component module={DiffViewerComponent} id="main" diff={@diff} diff_selection={@diff_selection}/>
+    <!--   <%= if @no_changes? do %> -->
+        <!-- <div class="text-brand text-center text-xl mt-8"> -->
+        <!--   There are no changes between version <%= @source_version %> and <%= @target_version %>. -->
+        <!-- </div> -->
+    <!--   <% else %> -->
+    <!--     <.diff_viewer diff={@diff} parsed_diff={@parsed_diff} /> -->
+    <!--   <% end %> -->
 
-      <div class="text-center">
-        <div
-          id="loading-container"
-          class="inline-flex text-brand text-center text-xl items-center mt-8 group-[.phx-diff-loaded-diff]:hidden"
-        >
-          <i class="fa fa-spinner fa-spin fa-2x mr-3"></i>
-          <span class="text">Loading diff</span>
-        </div>
-      </div>
+    <!--   <div class="text-center"> -->
+    <!--     <div -->
+    <!--       id="loading-container" -->
+    <!--       class="inline-flex text-brand text-center text-xl items-center mt-8 group-[.phx-diff-loaded-diff]:hidden" -->
+    <!--     > -->
+    <!--       <i class="fa fa-spinner fa-spin fa-2x mr-3"></i> -->
+    <!--       <span class="text">Loading diff</span> -->
+    <!--     </div> -->
+    <!--   </div> -->
     </div>
   </section>
 </div>

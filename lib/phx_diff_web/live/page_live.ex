@@ -7,6 +7,7 @@ defmodule PhxDiffWeb.PageLive do
   alias PhxDiff.ComparisonError
   alias PhxDiffWeb.PageLive.DiffSelection
   alias PhxDiffWeb.PageLive.DiffSelection.PhxNewArgListPresets
+  alias PhxDiffWeb.PageLive.DiffViewerComponent
 
   @doc """
   Version selector on the homepage
@@ -69,6 +70,7 @@ defmodule PhxDiffWeb.PageLive do
   def handle_params(params, _uri, socket) do
     case fetch_diff(socket.assigns.diff_selection, params) do
       {:ok, {diff_selection, source_app_spec, target_app_spec, diff}} ->
+
         {:noreply,
          socket
          |> assign(:diff_selection, diff_selection)

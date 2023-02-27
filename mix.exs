@@ -49,6 +49,7 @@ defmodule PhxDiff.MixProject do
       {:ecto, "~> 3.9.1"},
       {:phoenix_ecto, "~> 4.4"},
       {:gettext, "~> 0.20"},
+      {:git_diff, "~> 0.6.3"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:logster, "~> 1.0"},

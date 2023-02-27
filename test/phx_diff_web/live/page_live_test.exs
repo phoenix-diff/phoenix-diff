@@ -210,6 +210,30 @@ defmodule PhxDiffWeb.PageLiveTest do
     assert is_binary(compare_log["trace.id"])
   end
 
+  @arrow_symbol "→"
+
+  test "renders the diff appropriately", %{conn: conn} do
+    {:ok, view, _html} =
+      live(
+        conn,
+        ~p"/?#{[source: ~V|1.5.9|, source_variant: :default, target: ~V|1.5.9|, target_variant: :live]}"
+      )
+
+    # assert view
+    #        |> element(
+    #          ".file-list .file",
+    #          "lib/sample_app_web/{templates/page/index.html.eex #{@arrow_symbol} live/page_live.html.leex}"
+    #        )
+
+
+          assert view
+           |> element(
+             ".patch .header",
+           "lib/sample_app_web/{templates/page/index.html.eex #{@arrow_symbol} live/page_live.html.leex}"
+           )
+           |> render() =~ "renamed"
+  end
+
   defp assert_diff_rendered(view, expected_diff) do
     diff_from_view =
       element(view, ".diff-results-container")
