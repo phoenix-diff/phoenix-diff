@@ -19,6 +19,10 @@ defmodule PhxDiffWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :require_admin do
+    plug :admin_basic_auth
+  end
+
   scope "/", PhxDiffWeb do
     pipe_through :browser
 
@@ -26,7 +30,7 @@ defmodule PhxDiffWeb.Router do
   end
 
   scope "/" do
-    pipe_through [:browser, :admins_only]
+    pipe_through [:browser, :require_admin]
 
     live_dashboard "/dashboard",
       metrics: PhxDiffWeb.Telemetry,
@@ -38,7 +42,7 @@ defmodule PhxDiffWeb.Router do
   #   pipe_through :api
   # end
 
-  defp admins_only(conn, _opts) do
+  defp admin_basic_auth(conn, _opts) do
     credential = PhxDiffWeb.Config.admin_dashboard_credentials()
 
     Plug.BasicAuth.basic_auth(conn,
