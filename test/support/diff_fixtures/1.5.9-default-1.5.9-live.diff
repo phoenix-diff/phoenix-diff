@@ -236,8 +236,8 @@ index 0000000..406f7d0
 +end
 diff --git a/lib/sample_app_web/templates/page/index.html.eex b/lib/sample_app_web/live/page_live.html.leex
 similarity index 71%
-rename from /lib/sample_app_web/templates/page/index.html.eex
-rename to /lib/sample_app_web/live/page_live.html.leex
+rename from lib/sample_app_web/templates/page/index.html.eex
+rename to lib/sample_app_web/live/page_live.html.leex
 index dd0a7f8..52509c2 100644
 --- a/lib/sample_app_web/templates/page/index.html.eex
 +++ b/lib/sample_app_web/live/page_live.html.leex
