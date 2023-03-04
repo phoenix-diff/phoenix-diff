@@ -4,9 +4,10 @@
 //     import socket from "./socket"
 //
 import "phoenix_html";
+// Establish Phoenix Socket and LiveView configuration.
 import {Socket} from "phoenix";
-import topbar from "topbar";
 import {LiveSocket} from "phoenix_live_view";
+import topbar from "../vendor/topbar"
 import DiffViewerComponent from "./diff_viewer_component";
 import DiffSelectorComponent from "./diff_selector_component";
 
@@ -18,9 +19,10 @@ let Hooks = {
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
 let liveSocket = new LiveSocket("/live", Socket, {hooks: Hooks, params: {_csrf_token: csrfToken}});
 
-// Show progress bar on live navigation and form submit
-window.addEventListener("phx:page-loading-start", info => topbar.show());
-window.addEventListener("phx:page-loading-stop", info => topbar.hide());
+// Show progress bar on live navigation and form submits
+topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
+window.addEventListener("phx:page-loading-start", _info => topbar.show(300))
+window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
 
 // Show loading spinner when loading diff
 window.addEventListener("phx-diff:diff-loading-start", info => {
