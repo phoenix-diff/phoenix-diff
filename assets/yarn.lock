@@ -7,10 +7,10 @@ abbrev@1:
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"
   integrity sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==
 
-diff2html@^3.4.31:
-  version "3.4.31"
-  resolved "https://registry.yarnpkg.com/diff2html/-/diff2html-3.4.31.tgz#d2186f4321172806c2e20ae1780cf11d7994169f"
-  integrity sha512-bgL4kUUChpBqyFykgalwXRXbeW+zCkGmoH4Ftw6+WFP5JccBUJPNMapfX2WDEb+KOLflrE7eJwvb5r8+zutetw==
+diff2html@^3.4.34:
+  version "3.4.34"
+  resolved "https://registry.yarnpkg.com/diff2html/-/diff2html-3.4.34.tgz#853dbea78297f1475ae005807b13166a54593317"
+  integrity sha512-lHWZdusoYg/E9bT7BbmQKv6xGN7yCDx/OysZTQbtGBtHLu2y5SHlhO1zkzh1AjH7V909TXyPZGUeS6Ce9xPh/Q==
   dependencies:
     diff "5.1.0"
     hogan.js "3.0.2"
