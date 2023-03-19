@@ -64,7 +64,7 @@ defmodule PhxDiff.MixProject do
       {:opentelemetry_liveview, "~> 1.0.0-rc.4"},
       {:boundary, "~> 0.9", runtime: false},
       {:esbuild, "~> 0.4", runtime: Mix.env() == :dev},
-      {:tailwind, "~> 0.1.9", runtime: Mix.env() == :dev},
+      {:tailwind, "~> 0.2.0", runtime: Mix.env() == :dev},
       {:ex_doc, "~> 0.27", only: :dev, runtime: false},
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
