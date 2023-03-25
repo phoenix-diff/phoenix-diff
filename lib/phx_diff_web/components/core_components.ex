@@ -255,6 +255,12 @@ defmodule PhxDiffWeb.CoreComponents do
     """
   end
 
+  def icon(%{name: "fa-" <> _} = assigns) do
+    ~H"""
+    <span class={[@name, @class]} />
+    """
+  end
+
   @doc """
   Translates an error message using gettext.
   """
