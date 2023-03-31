@@ -185,6 +185,85 @@ defmodule PhxDiffWeb.PageLiveTest do
     )
   end
 
+  @arrow_symbol "→"
+
+  test "displays the file list in a diff2html compatible format", %{conn: conn} do
+    {:ok, view, _html} =
+      conn
+      |> live(
+        ~p"/?#{[source: ~V|1.7.1|, source_variant: :default, target: ~V|1.7.2|, target_variant: :default]}"
+      )
+
+    mix_exs_file_list_element =
+      view
+      |> element(
+        ".file-list li",
+        "mix.exs"
+      )
+      |> render()
+
+    assert mix_exs_file_list_element =~
+             "/?source=1.7.1&amp;source_variant=default&amp;target=1.7.2&amp;target_variant=default#d2h-008078"
+
+    assert mix_exs_file_list_element =~ "Changed"
+    assert mix_exs_file_list_element =~ "+3"
+    assert mix_exs_file_list_element =~ "-3"
+
+    xmark_file_list_element =
+      view
+      |> element(
+        ".file-list li",
+        "{priv/hero_icons #{@arrow_symbol} assets/vendor/heroicons}/optimized/24/solid/x-mark.svg"
+      )
+      |> render()
+
+    assert xmark_file_list_element =~
+             "/?source=1.7.1&amp;source_variant=default&amp;target=1.7.2&amp;target_variant=default#d2h-487262"
+
+    assert xmark_file_list_element =~ "Renamed"
+    assert xmark_file_list_element =~ "+0"
+    assert xmark_file_list_element =~ "-0"
+
+    academic_cap_file_list_element =
+      view
+      |> element(
+        ".file-list li",
+        "{priv/hero_icons → assets/vendor/heroicons}/optimized/20/solid/academic-cap.svg"
+      )
+      |> render()
+
+    assert academic_cap_file_list_element =~ "#d2h-289300"
+    assert academic_cap_file_list_element =~ "Renamed"
+    assert academic_cap_file_list_element =~ "+0"
+    assert academic_cap_file_list_element =~ "-0"
+
+    assert priv_upgrade_md_element =
+             view
+             |> element(
+               ".file-list li",
+               "priv/hero_icons/UPGRADE.md"
+             )
+             |> render()
+
+    assert priv_upgrade_md_element =~ "d2h-294307"
+    assert priv_upgrade_md_element =~ "Removed"
+    assert priv_upgrade_md_element =~ "+0"
+    assert priv_upgrade_md_element =~ "-7"
+
+    assert logo_svg_element =
+             view
+             |> element(
+               ".file-list li",
+               "priv/static/images/logo.svg"
+             )
+             |> render()
+
+    assert logo_svg_element =~ "d2h-470697"
+    assert logo_svg_element =~ "Added"
+    assert logo_svg_element =~ "+6"
+    assert logo_svg_element =~ "-0"
+  end
+
   test "generates logs with appropriate metadata attached", %{conn: conn} do
     diff_logs =
       capture_json_log(fn ->

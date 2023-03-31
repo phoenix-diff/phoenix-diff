@@ -72,6 +72,7 @@ defmodule PhxDiffWeb.PageLive do
         {:noreply,
          socket
          |> assign(:diff_selection, diff_selection)
+         |> assign(:current_path, ~p"/?#{to_params(diff_selection)}")
          |> assign(:changeset, DiffSelection.changeset(diff_selection))
          |> assign(:page_title, page_title(source_app_spec, target_app_spec))
          |> assign(:no_changes?, diff == "")

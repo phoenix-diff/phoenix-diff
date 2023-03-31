@@ -9,7 +9,7 @@ const DiffViewerComponent = {
   },
   _renderDiff() {
     const diff2htmlUi = new Diff2HtmlUI(this.el, this.el.getAttribute("data-diff"),{
-        drawFileList: true,
+        drawFileList: false,
         outputFormat: this.el.getAttribute("data-view-type"),
         highlight: true,
         fileContentToggle: false,
