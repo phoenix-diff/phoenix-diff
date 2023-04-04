@@ -30,14 +30,6 @@ defmodule PhxDiffWeb.CompareLive.DiffViewerComponent do
 
         <.file_list parsed_diff={@parsed_diff} />
 
-        <div
-          id="diff-results-container"
-          class="diff-results-container hidden group-[.phx-diff-loaded-diff]:block"
-          phx-hook="DiffViewerComponent"
-          data-view-type={@view_type}
-          data-diff={@diff}
-        >
-        </div>
       </.form>
       <div :if={@no_changes?} %><%= render_slot(@no_changes) %></div>
     </div>
