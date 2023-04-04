@@ -11,6 +11,7 @@ defmodule PhxDiffWeb.PageLive.DiffViewerComponent do
     <div>
       <.form
         :let={f}
+        :if={!@no_changes?}
         for={@changeset}
         as={:form}
         id={"diff-viewer-form-#{@id}"}
@@ -37,6 +38,7 @@ defmodule PhxDiffWeb.PageLive.DiffViewerComponent do
         >
         </div>
       </.form>
+      <div :if={@no_changes?} %><%= render_slot(@no_changes) %></div>
     </div>
     """
   end
@@ -195,10 +197,13 @@ defmodule PhxDiffWeb.PageLive.DiffViewerComponent do
   def update(assigns, socket) do
     socket =
       Enum.reduce(assigns, socket, fn
+        {:diff, ""}, socket ->
+          assign(socket, %{no_changes?: true})
+
         {:diff, diff}, socket ->
           {:ok, parsed_diff} = ParsedDiff.parse(diff)
 
-          assign(socket, %{diff: diff, parsed_diff: parsed_diff})
+          assign(socket, %{diff: diff, parsed_diff: parsed_diff, no_changes?: false})
 
         {key, value}, socket ->
           assign(socket, key, value)
