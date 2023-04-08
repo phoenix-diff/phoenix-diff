@@ -13,8 +13,7 @@ defmodule PhxDiffWeb.PageLive.DiffSelectionForm do
     ~H"""
     <div>
       <.form
-        :let={f}
-        for={@changeset}
+        for={@form}
         as={:diff_selection}
         id={@id}
         phx-change="diff-changed"
@@ -25,9 +24,9 @@ defmodule PhxDiffWeb.PageLive.DiffSelectionForm do
           <div>
             <h4 class="uppercase underline text-sm sm:mb-2">Source</h4>
           </div>
-          <.version_select field={{f, :source}} label="Source" versions={@all_versions} />
+          <.version_select field={@form[:source]} label="Source" versions={@all_versions} />
           <.phx_new_arg_list_preset_select
-            field={{f, :source_variant}}
+            field={@form[:source_variant]}
             preset_options={@source_variants}
           />
         </div>
@@ -36,9 +35,9 @@ defmodule PhxDiffWeb.PageLive.DiffSelectionForm do
           <div>
             <h4 class="uppercase underline text-sm sm:mb-2">Target</h4>
           </div>
-          <.version_select field={{f, :target}} label="Target" versions={@all_versions} />
+          <.version_select field={@form[:target]} label="Target" versions={@all_versions} />
           <.phx_new_arg_list_preset_select
-            field={{f, :target_variant}}
+            field={@form[:target_variant]}
             preset_options={@target_variants}
           />
         </div>
@@ -54,7 +53,7 @@ defmodule PhxDiffWeb.PageLive.DiffSelectionForm do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:changeset, changeset)
+     |> assign(:form, to_form(changeset))
      |> assign(:all_versions, PhxDiff.all_versions() |> Enum.map(&to_string/1))
      |> assign(
        :source_variants,
