@@ -2,14 +2,11 @@ defmodule PhxDiffWeb.PageLive do
   @moduledoc false
   use PhxDiffWeb, :live_view
 
-  import PhxDiffWeb.PageLive.DiffSelectionComponents
-
   alias Ecto.Changeset
   alias PhxDiff.AppSpecification
   alias PhxDiff.ComparisonError
   alias PhxDiffWeb.PageLive.DiffSelection
   alias PhxDiffWeb.PageLive.DiffSelection.PhxNewArgListPresets
-
 
   @impl true
   def mount(_params, _session, socket) do
@@ -33,9 +30,7 @@ defmodule PhxDiffWeb.PageLive do
          |> assign(:no_changes?, diff == "")
          |> assign(:diff, diff)
          |> assign(:source_version, source_app_spec.phoenix_version)
-         |> assign(:source_variants, variant_options_for_version(source_app_spec.phoenix_version))
-         |> assign(:target_version, target_app_spec.phoenix_version)
-         |> assign(:target_variants, variant_options_for_version(target_app_spec.phoenix_version))}
+         |> assign(:target_version, target_app_spec.phoenix_version)}
 
       {:error, changeset} ->
         diff_selection = find_valid_diff_selection(changeset)
@@ -94,24 +89,6 @@ defmodule PhxDiffWeb.PageLive do
   defp build_app_spec(version, variant_id) do
     {:ok, preset} = PhxNewArgListPresets.fetch(variant_id)
     AppSpecification.new(version, preset.arg_list)
-  end
-
-  defp variant_options_for_version(version) do
-    version
-    |> PhxNewArgListPresets.list_known_presets_for_version()
-    |> Enum.sort_by(fn
-      %{id: :default} -> {0, :default}
-      %{id: id} -> {1, id}
-    end)
-    |> Enum.map(fn preset ->
-      {arguments_string(preset.arg_list) || "(Default)", preset.id}
-    end)
-  end
-
-  defp arguments_string([]), do: nil
-
-  defp arguments_string(args) when is_list(args) do
-    Enum.join(args, " ")
   end
 
   defp find_valid_diff_selection(changeset) do
