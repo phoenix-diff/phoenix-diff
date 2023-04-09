@@ -27,9 +27,8 @@ defmodule PhxDiffWeb.PageLiveTest do
            )
 
     view
-    |> render_change("diff-changed", %{
-      "diff_selection" => %{"source" => "1.5.0", "target" => "1.5.1"}
-    })
+    |> element("#diff-selection-form")
+    |> render_change(%{"diff_selection" => %{"source" => "1.5.0", "target" => "1.5.1"}})
 
     assert_patched(
       view,

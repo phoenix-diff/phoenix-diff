@@ -19,6 +19,7 @@ defmodule PhxDiffWeb.PageLive.DiffSelectionForm do
         phx-change="diff-changed"
         phx-hook="DiffSelectorComponent"
         class="mt-8 mb-11 sm:my-12 sm:inline-grid gap-4 grid-cols-2 grid-rows-1"
+        phx-target={@myself}
       >
         <div id="source-selector" class="mb-3 sm:mb-0">
           <div>
@@ -63,6 +64,11 @@ defmodule PhxDiffWeb.PageLive.DiffSelectionForm do
        :target_variants,
        variant_options_for_version(diff_selection.target)
      )}
+  end
+
+  @impl true
+  def handle_event("diff-changed", %{"diff_selection" => params}, socket) do
+    {:noreply, push_patch(socket, to: ~p"/?#{params}")}
   end
 
   defp variant_options_for_version(version) do

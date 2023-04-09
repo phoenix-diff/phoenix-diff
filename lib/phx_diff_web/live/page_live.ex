@@ -42,19 +42,6 @@ defmodule PhxDiffWeb.PageLive do
     end
   end
 
-  @impl true
-  def handle_event("diff-changed", %{"diff_selection" => params}, socket) do
-    changeset = DiffSelection.changeset(socket.assigns.diff_selection, params)
-
-    diff_selection =
-      case Changeset.apply_action(changeset, :lookup) do
-        {:ok, diff_selection} -> diff_selection
-        {:error, changeset} -> find_valid_diff_selection(changeset)
-      end
-
-    {:noreply, push_patch(socket, to: ~p"/?#{to_params(diff_selection)}")}
-  end
-
   @spec fetch_diff(DiffSelection.t(), map) ::
           {:ok, {DiffSelection.t(), AppSpecification.t(), AppSpecification.t(), PhxDiff.diff()}}
           | {:error, Changeset.t()}
