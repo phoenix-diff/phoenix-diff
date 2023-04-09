@@ -19,13 +19,12 @@ defmodule PhxDiffWeb.PageLive do
 
   @impl true
   def handle_params(params, _uri, socket) do
-    case fetch_diff(socket.assigns.diff_selection, params) do
+    case fetch_diff(params) do
       {:ok, {diff_selection, source_app_spec, target_app_spec, diff}} ->
         {:noreply,
          socket
          |> assign(:diff_selection, diff_selection)
          |> assign(:current_path, ~p"/?#{to_params(diff_selection)}")
-         |> assign(:changeset, DiffSelection.changeset(diff_selection))
          |> assign(:page_title, page_title(source_app_spec, target_app_spec))
          |> assign(:no_changes?, diff == "")
          |> assign(:diff, diff)
@@ -42,11 +41,11 @@ defmodule PhxDiffWeb.PageLive do
     end
   end
 
-  @spec fetch_diff(DiffSelection.t(), map) ::
+  @spec fetch_diff(map) ::
           {:ok, {DiffSelection.t(), AppSpecification.t(), AppSpecification.t(), PhxDiff.diff()}}
           | {:error, Changeset.t()}
-  defp fetch_diff(%DiffSelection{} = diff_selection, params) do
-    changeset = DiffSelection.changeset(diff_selection, params)
+  defp fetch_diff(params) do
+    changeset = DiffSelection.changeset(%DiffSelection{}, params)
 
     with {:ok, diff_selection} <- Changeset.apply_action(changeset, :lookup) do
       source_app_spec = build_app_spec(diff_selection.source, diff_selection.source_variant)
