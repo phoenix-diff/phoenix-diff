@@ -73,7 +73,7 @@ defmodule PhxDiffWeb.PageLive.DiffViewerComponent do
           </div>
           <div class="flex-1 truncate">
             <.link
-              patch={"#{@current_path}##{patch.html_anchor}"}
+              href={"#{@current_path}##{patch.html_anchor}"}
               class="text-sm text-sky-500 hover:text-sky-700"
             >
               <%= patch.display_filename %>
