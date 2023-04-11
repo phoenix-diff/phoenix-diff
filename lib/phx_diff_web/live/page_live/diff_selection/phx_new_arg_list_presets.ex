@@ -37,7 +37,7 @@ defmodule PhxDiffWeb.PageLive.DiffSelection.PhxNewArgListPresets do
   end
 
   for {id, arg_list} <- @mappings do
-    defp preset_from_arg_list(unquote(arg_list)) do
+    def preset_from_arg_list(unquote(arg_list)) do
       %PhxNewArgListPreset{id: unquote(id), arg_list: unquote(arg_list)}
     end
   end

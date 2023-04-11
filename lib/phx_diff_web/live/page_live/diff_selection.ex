@@ -4,6 +4,7 @@ defmodule PhxDiffWeb.PageLive.DiffSelection do
 
   import Ecto.Changeset
 
+  alias PhxDiff.AppSpecification
   alias PhxDiffWeb.PageLive.DiffSelection.Fields
   alias PhxDiffWeb.PageLive.DiffSelection.PhxNewArgListPresets
 
@@ -27,6 +28,15 @@ defmodule PhxDiffWeb.PageLive.DiffSelection do
 
     field :target_variant, Ecto.Enum,
       values: [:default, :no_ecto, :live, :no_live, :no_html, :binary_id, :umbrella]
+  end
+
+  def new(%AppSpecification{} = source, %AppSpecification{} = target) do
+    %__MODULE__{
+      source: source.phoenix_version,
+      source_variant: PhxNewArgListPresets.preset_from_arg_list(source.phx_new_arguments).id,
+      target: target.phoenix_version,
+      target_variant: PhxNewArgListPresets.preset_from_arg_list(target.phx_new_arguments).id
+    }
   end
 
   def changeset(data, params \\ %{}) do

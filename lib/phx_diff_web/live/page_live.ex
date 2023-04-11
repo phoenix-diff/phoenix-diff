@@ -3,6 +3,7 @@ defmodule PhxDiffWeb.PageLive do
   use PhxDiffWeb, :live_view
 
   alias Ecto.Changeset
+  alias Phoenix.LiveView.Socket
   alias PhxDiff.AppSpecification
   alias PhxDiff.ComparisonError
   alias PhxDiffWeb.PageLive.DiffSelection
@@ -12,25 +13,17 @@ defmodule PhxDiffWeb.PageLive do
   def mount(_params, _session, socket) do
     {:ok,
      socket
-     |> assign(:no_changes?, false)
-     |> assign(:all_versions, PhxDiff.all_versions() |> Enum.map(&to_string/1))
-     |> assign(:diff_selection, %DiffSelection{})}
+     |> assign(:no_changes?, false)}
   end
 
   @impl true
   def handle_params(params, _uri, socket) do
-    case fetch_diff(params) do
-      {:ok, {diff_selection, source_app_spec, target_app_spec, diff}} ->
-        {:noreply,
-         socket
-         |> assign(:diff_selection, diff_selection)
-         |> assign(:current_path, ~p"/?#{to_params(diff_selection)}")
-         |> assign(:page_title, page_title(source_app_spec, target_app_spec))
-         |> assign(:no_changes?, diff == "")
-         |> assign(:diff, diff)
-         |> assign(:source_version, source_app_spec.phoenix_version)
-         |> assign(:target_version, target_app_spec.phoenix_version)}
-
+    with {:ok, source_app_spec, target_app_spec} <- fetch_source_and_target_app_specs(params),
+         socket = assign_app_specs(socket, source_app_spec, target_app_spec),
+         {:ok, socket} <-
+           fetch_and_assign_diff_when_connected(socket, source_app_spec, target_app_spec) do
+      {:noreply, socket}
+    else
       {:error, changeset} ->
         diff_selection = find_valid_diff_selection(changeset)
 
@@ -41,28 +34,71 @@ defmodule PhxDiffWeb.PageLive do
     end
   end
 
-  @spec fetch_diff(map) ::
-          {:ok, {DiffSelection.t(), AppSpecification.t(), AppSpecification.t(), PhxDiff.diff()}}
-          | {:error, Changeset.t()}
-  defp fetch_diff(params) do
+  @spec fetch_source_and_target_app_specs(map) ::
+          {:ok, AppSpecification.t(), AppSpecification.t()} | {:error, Changeset.t()}
+  defp fetch_source_and_target_app_specs(params) do
     changeset = DiffSelection.changeset(%DiffSelection{}, params)
 
     with {:ok, diff_selection} <- Changeset.apply_action(changeset, :lookup) do
       source_app_spec = build_app_spec(diff_selection.source, diff_selection.source_variant)
       target_app_spec = build_app_spec(diff_selection.target, diff_selection.target_variant)
 
-      case PhxDiff.fetch_diff(source_app_spec, target_app_spec) do
-        {:ok, diff} ->
-          {:ok, {diff_selection, source_app_spec, target_app_spec, diff}}
+      {:ok, source_app_spec, target_app_spec}
+    end
+  end
 
-        {:error, %ComparisonError{} = error} ->
-          changeset =
-            Enum.reduce(error.errors, changeset, fn {field, :unknown_version}, changeset ->
-              Changeset.add_error(changeset, field, "is unknown")
-            end)
+  @spec assign_app_specs(Socket.t(), AppSpecification.t(), AppSpecification.t()) :: Socket.t()
+  def assign_app_specs(socket, source_app_spec, target_app_spec) do
+    socket
+    |> assign(:source_app_spec, source_app_spec)
+    |> assign(:target_app_spec, target_app_spec)
+    |> assign(:page_title, page_title(source_app_spec, target_app_spec))
+    |> assign(:source_version, source_app_spec.phoenix_version)
+    |> assign(:target_version, target_app_spec.phoenix_version)
+    |> assign(:current_path, ~p"/?#{to_params(source_app_spec, target_app_spec)}")
+  end
 
-          {:error, changeset}
-      end
+  @spec fetch_and_assign_diff_when_connected(
+          Socket.t(),
+          AppSpecification.t(),
+          AppSpecification.t()
+        ) :: {:ok, Socket.t()} | {:error, Changeset.t()}
+  defp fetch_and_assign_diff_when_connected(socket, source_app_spec, target_app_spec) do
+    with :connected <- halt_unless_connected(socket),
+         {:ok, diff} <- fetch_diff(source_app_spec, target_app_spec) do
+      {:ok,
+       socket
+       |> assign(:diff, diff)
+       |> assign(:no_changes?, diff == "")}
+    end
+  end
+
+  defp halt_unless_connected(socket) do
+    if connected?(socket) do
+      :connected
+    else
+      {:ok, socket}
+    end
+  end
+
+  @spec fetch_diff(AppSpecification.t(), AppSpecification.t()) ::
+          {:ok, String.t()} | {:error, Changeset.t()}
+  defp fetch_diff(source_app_spec, target_app_spec) do
+    case PhxDiff.fetch_diff(source_app_spec, target_app_spec) do
+      {:ok, diff} ->
+        {:ok, diff}
+
+      {:error, %ComparisonError{} = error} ->
+        changeset =
+          DiffSelection.new(source_app_spec, target_app_spec)
+          |> DiffSelection.changeset()
+
+        changeset =
+          Enum.reduce(error.errors, changeset, fn {field, :unknown_version}, changeset ->
+            Changeset.add_error(changeset, field, "is unknown")
+          end)
+
+        {:error, changeset}
     end
   end
 
@@ -116,6 +152,12 @@ defmodule PhxDiffWeb.PageLive do
       end
 
     diff_selection
+  end
+
+  defp to_params(%AppSpecification{} = source, %AppSpecification{} = target) do
+    source
+    |> DiffSelection.new(target)
+    |> to_params()
   end
 
   defp to_params(%DiffSelection{} = diff_selection) do

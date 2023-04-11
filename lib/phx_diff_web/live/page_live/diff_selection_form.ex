@@ -5,6 +5,7 @@ defmodule PhxDiffWeb.PageLive.DiffSelectionForm do
 
   import PhxDiffWeb.PageLive.DiffSelectionComponents
 
+  alias PhxDiff.AppSpecification
   alias PhxDiffWeb.PageLive.DiffSelection
   alias PhxDiffWeb.PageLive.DiffSelection.PhxNewArgListPresets
 
@@ -48,22 +49,35 @@ defmodule PhxDiffWeb.PageLive.DiffSelectionForm do
   end
 
   @impl true
-  def update(%{diff_selection: diff_selection} = assigns, socket) do
-    changeset = DiffSelection.changeset(diff_selection)
+  def update(assigns, socket) do
+    socket =
+      assigns
+      |> Enum.reduce(socket, fn
+        {:source_app_spec, %AppSpecification{} = source}, socket ->
+          socket
+          |> assign(:source_app_spec, source)
+          |> assign(:source_variants, variant_options_for_version(source.phoenix_version))
 
-    {:ok,
-     socket
-     |> assign(assigns)
-     |> assign(:form, to_form(changeset))
-     |> assign(:all_versions, PhxDiff.all_versions() |> Enum.map(&to_string/1))
-     |> assign(
-       :source_variants,
-       variant_options_for_version(diff_selection.source)
-     )
-     |> assign(
-       :target_variants,
-       variant_options_for_version(diff_selection.target)
-     )}
+        {:target_app_spec, %AppSpecification{} = target}, socket ->
+          socket
+          |> assign(:target_app_spec, target)
+          |> assign(:target_variants, variant_options_for_version(target.phoenix_version))
+
+        {k, v}, socket ->
+          assign(socket, k, v)
+      end)
+      |> assign_new(:all_versions, fn -> PhxDiff.all_versions() |> Enum.map(&to_string/1) end)
+      |> then(fn socket ->
+        form =
+          socket.assigns.source_app_spec
+          |> DiffSelection.new(socket.assigns.target_app_spec)
+          |> DiffSelection.changeset()
+          |> to_form()
+
+        assign(socket, :form, form)
+      end)
+
+    {:ok, socket}
   end
 
   @impl true
