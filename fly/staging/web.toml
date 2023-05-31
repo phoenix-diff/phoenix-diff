@@ -1,46 +1,44 @@
-# fly.toml file generated for phoenixdiff-web-staging on 2022-10-18T21:17:36-06:00
+# fly.toml app configuration file generated for phoenixdiff-web-staging on 2023-05-31T14:57:05-06:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
 
 app = "phoenixdiff-web-staging"
+primary_region = "den"
 kill_signal = "SIGTERM"
-kill_timeout = 5
-processes = []
-
-[env]
-  URL_HOST = "phoenixdiff-web-staging.fly.dev"
-  DEPLOYMENT_ENV="Staging"
-  OTEL_EXPORTER="grafana-cloud"
-  PORT = "8080"
-  # Normally appended to Dockerfile via fly.ctl. Placing it in here allows
-  # the container to also be run without ipv6
-  ECTO_IPV6="true"
-  ERL_AFLAGS="-proto_dist inet6_tcp"
+kill_timeout = "5s"
 
 [experimental]
-  allowed_public_ports = []
   auto_rollback = true
 
+[env]
+  DEPLOYMENT_ENV = "Staging"
+  ECTO_IPV6 = "true"
+  ERL_AFLAGS = "-proto_dist inet6_tcp"
+  OTEL_EXPORTER = "grafana-cloud"
+  PORT = "8080"
+  URL_HOST = "phoenixdiff-web-staging.fly.dev"
+
 [[services]]
-  http_checks = []
+  protocol = "tcp"
   internal_port = 8080
   processes = ["app"]
-  protocol = "tcp"
-  script_checks = []
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+    force_https = true
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
   [services.concurrency]
+    type = "connections"
     hard_limit = 25
     soft_limit = 20
-    type = "connections"
-
-  [[services.ports]]
-    force_https = true
-    handlers = ["http"]
-    port = 80
-
-  [[services.ports]]
-    handlers = ["tls", "http"]
-    port = 443
 
   [[services.tcp_checks]]
-    grace_period = "1s"
     interval = "15s"
-    restart_limit = 0
     timeout = "2s"
+    grace_period = "1s"
+    restart_limit = 0
