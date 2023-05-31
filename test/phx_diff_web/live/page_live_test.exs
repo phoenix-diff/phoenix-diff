@@ -30,7 +30,7 @@ defmodule PhxDiffWeb.PageLiveTest do
     |> element("#diff-selection-form")
     |> render_change(%{"diff_selection" => %{"source" => "1.5.0", "target" => "1.5.1"}})
 
-    assert_patched(
+    assert_patch(
       view,
       ~p"/?#{[source: ~V|1.5.0|, source_variant: :live, target: ~V|1.5.1|, target_variant: :live]}"
     )
