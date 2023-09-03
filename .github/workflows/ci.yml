@@ -12,23 +12,33 @@ jobs:
         with:
           otp-version: '26.0'
           elixir-version: '1.15.5'
-      - uses: actions/cache@v3
+      - name: Restore the build cache
+        uses: actions/cache/restore@v3
+        id: build_cache
         with:
           path: |
             _build
             deps
-          key: ${{ runner.os }}-cache-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
-
+          key: ${{ runner.os }}-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-cache-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
       - run: mix deps.get
+      - run: mix compile --force --warnings-as-errors
+      - name: Save the build cache
+        uses: actions/cache/save@v3
+        if: steps.build_cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            _build
+            deps
+          key: ${{ runner.os }}-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-cache-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
       - name: Restore core plt cache
-        uses: actions/cache@v3
+        uses: actions/cache/restore@v3
         id: core-plt-cache
         with:
           path: .dialyzer/core
           key:
             ${{ runner.os }}-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-plt-core-v1
       - name: Restore local plt cache
-        uses: actions/cache@v3
+        uses: actions/cache/restore@v3
         id: local-plt-cache
         with:
           path: .dialyzer/local
@@ -40,6 +50,20 @@ jobs:
           mkdir -p .dialyzer/core
           mkdir -p .dialyzer/local
           mix dialyzer --plt
+      - name: Save the core plt cache
+        uses: actions/cache/save@v3
+        if: steps.core-plt-cache.outputs.cache-hit != 'true'
+        with:
+          path: .dialyzer/core
+          key:
+            ${{ runner.os }}-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-plt-core-v1
+      - name: Save the local plt cache
+        uses: actions/cache/save@v3
+        if: steps.local-plt-cache.outputs.cache-hit != 'true'
+        with:
+          path: .dialyzer/local
+          key:
+            ${{ runner.os }}-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-plt-local-${{ env.MIX_ENV || 'dev' }}-v1-${{ hashFiles('**/mix.lock')}}
       - run: mix ci
 
   test_javascript:
