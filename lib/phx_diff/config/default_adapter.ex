@@ -1,6 +1,5 @@
 defmodule PhxDiff.Config.DefaultAdapter do
   @moduledoc false
-  use Boundary
 
   @behaviour PhxDiff.Config.Adapter
 
