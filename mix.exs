@@ -41,12 +41,12 @@ defmodule PhxDiff.MixProject do
   defp deps do
     [
       {:git_diff, github: "aaronrenner/git_diff", branch: "ar-improve-typespecs"},
-      {:phoenix, "~> 1.7.2"},
+      {:phoenix, "~> 1.7.7"},
       {:phoenix_pubsub, "~> 2.0"},
       {:phoenix_html, "~> 3.0"},
-      {:phoenix_live_view, "~> 0.18.3"},
+      {:phoenix_live_view, "~> 0.19.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_dashboard, "~> 0.7.2"},
+      {:phoenix_live_dashboard, "~> 0.8.0"},
       {:ecto, "~> 3.10.1"},
       {:phoenix_ecto, "~> 4.4"},
       {:gettext, "~> 0.20"},

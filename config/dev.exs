@@ -4,8 +4,8 @@ import Config
 # debugging and code reloading.
 #
 # The watchers configuration can be used to run external
-# watchers to your application. For example, we use it
-# with webpack to recompile .js and .css sources.
+# watchers to your application. For example, we can use it
+# to bundle .js and .css sources.
 config :phx_diff, PhxDiffWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4000],
   check_origin: false,
