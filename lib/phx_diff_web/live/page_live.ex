@@ -162,5 +162,6 @@ defmodule PhxDiffWeb.PageLive do
 
   defp to_params(%DiffSelection{} = diff_selection) do
     Map.take(diff_selection, [:source, :source_variant, :target, :target_variant])
+    |> Enum.sort_by(&elem(&1, 0))
   end
 end
