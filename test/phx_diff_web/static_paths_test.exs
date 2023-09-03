@@ -8,8 +8,8 @@ defmodule PhxDiffWeb.StaticPathsTest do
   end
 
   test "GET an unknown path", %{conn: conn} do
-    assert_error_sent(404, fn ->
-      get(conn, "/unknown")
-    end)
+    assert conn
+           |> get("/unknown")
+           |> response(404)
   end
 end
