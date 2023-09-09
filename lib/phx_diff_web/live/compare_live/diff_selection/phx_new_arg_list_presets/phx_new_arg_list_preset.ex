@@ -1,4 +1,4 @@
-defmodule PhxDiffWeb.PageLive.DiffSelection.PhxNewArgListPresets.PhxNewArgListPreset do
+defmodule PhxDiffWeb.CompareLive.DiffSelection.PhxNewArgListPresets.PhxNewArgListPreset do
   @moduledoc false
 
   @type id :: atom

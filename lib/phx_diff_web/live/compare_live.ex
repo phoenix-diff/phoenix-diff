@@ -1,4 +1,4 @@
-defmodule PhxDiffWeb.PageLive do
+defmodule PhxDiffWeb.CompareLive do
   @moduledoc false
   use PhxDiffWeb, :live_view
 
@@ -6,8 +6,8 @@ defmodule PhxDiffWeb.PageLive do
   alias Phoenix.LiveView.Socket
   alias PhxDiff.AppSpecification
   alias PhxDiff.ComparisonError
-  alias PhxDiffWeb.PageLive.DiffSelection
-  alias PhxDiffWeb.PageLive.DiffSelection.PhxNewArgListPresets
+  alias PhxDiffWeb.CompareLive.DiffSelection
+  alias PhxDiffWeb.CompareLive.DiffSelection.PhxNewArgListPresets
 
   @impl true
   def mount(_params, _session, socket) do

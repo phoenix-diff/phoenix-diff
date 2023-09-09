@@ -1,7 +1,7 @@
-defmodule PhxDiffWeb.PageLive.DiffViewerComponent.ParsedDiff do
+defmodule PhxDiffWeb.CompareLive.DiffViewerComponent.ParsedDiff do
   @moduledoc false
 
-  alias PhxDiffWeb.PageLive.DiffViewerComponent.ParsedDiff.Patch
+  alias PhxDiffWeb.CompareLive.DiffViewerComponent.ParsedDiff.Patch
 
   defstruct [:files_changed_count, patches: []]
 

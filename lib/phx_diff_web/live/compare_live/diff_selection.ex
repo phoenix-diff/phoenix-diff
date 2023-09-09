@@ -1,12 +1,12 @@
-defmodule PhxDiffWeb.PageLive.DiffSelection do
+defmodule PhxDiffWeb.CompareLive.DiffSelection do
   @moduledoc false
   use Ecto.Schema
 
   import Ecto.Changeset
 
   alias PhxDiff.AppSpecification
-  alias PhxDiffWeb.PageLive.DiffSelection.Fields
-  alias PhxDiffWeb.PageLive.DiffSelection.PhxNewArgListPresets
+  alias PhxDiffWeb.CompareLive.DiffSelection.Fields
+  alias PhxDiffWeb.CompareLive.DiffSelection.PhxNewArgListPresets
 
   @type variant :: :default | :no_ecto | :live | :no_live | :no_html | :binary_id | :umbrella
 
