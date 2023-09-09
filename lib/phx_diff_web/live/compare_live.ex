@@ -48,7 +48,7 @@ defmodule PhxDiffWeb.CompareLive do
 
         {:noreply,
          push_patch(socket,
-           to: ~p"/?#{to_params(diff_selection)}"
+           to: ~p"/compare?#{to_params(diff_selection)}"
          )}
     end
   end

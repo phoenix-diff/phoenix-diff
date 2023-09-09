@@ -103,7 +103,7 @@ defmodule PhxDiffWeb.CompareLive.DiffSelectionForm do
       target_variant: diff_selection.target.variant
     ]
 
-    {:noreply, push_patch(socket, to: ~p"/?#{params}")}
+    {:noreply, push_patch(socket, to: ~p"/compare?#{params}")}
   end
 
   defp variant_options_for_version(version) do
