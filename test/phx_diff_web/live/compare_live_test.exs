@@ -1,4 +1,4 @@
-defmodule PhxDiffWeb.PageLiveTest do
+defmodule PhxDiffWeb.CompareLiveTest do
   use PhxDiffWeb.ConnCase
 
   import Phoenix.LiveViewTest
@@ -65,7 +65,7 @@ defmodule PhxDiffWeb.PageLiveTest do
     assert_receive {:otel_span,
                     %{
                       instrumentation_scope: %{name: "opentelemetry_liveview"},
-                      name: "PhxDiffWeb.PageLive.mount",
+                      name: "PhxDiffWeb.CompareLive.mount",
                       attributes: %{"liveview.callback": "mount"}
                     }}
   end

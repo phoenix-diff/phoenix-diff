@@ -1,4 +1,4 @@
-defmodule PhxDiffWeb.PageLive.DiffViewerComponent.Renderers do
+defmodule PhxDiffWeb.CompareLive.DiffViewerComponent.Renderers do
   @moduledoc false
 
   @arrow_symbol "→"

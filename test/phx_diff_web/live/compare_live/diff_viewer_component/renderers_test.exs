@@ -1,7 +1,7 @@
-defmodule PhxDiffWeb.PageLive.DiffViewerComponent.RenderersTest do
+defmodule PhxDiffWeb.CompareLive.DiffViewerComponent.RenderersTest do
   use ExUnit.Case, async: true
 
-  alias PhxDiffWeb.PageLive.DiffViewerComponent.Renderers
+  alias PhxDiffWeb.CompareLive.DiffViewerComponent.Renderers
 
   @arrow_symbol "→"
 

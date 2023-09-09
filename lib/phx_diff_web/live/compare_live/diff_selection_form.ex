@@ -1,13 +1,13 @@
-defmodule PhxDiffWeb.PageLive.DiffSelectionForm do
+defmodule PhxDiffWeb.CompareLive.DiffSelectionForm do
   @moduledoc false
 
   use PhxDiffWeb, :live_component
 
-  import PhxDiffWeb.PageLive.DiffSelectionComponents
+  import PhxDiffWeb.CompareLive.DiffSelectionComponents
 
   alias PhxDiff.AppSpecification
-  alias PhxDiffWeb.PageLive.DiffSelection
-  alias PhxDiffWeb.PageLive.DiffSelection.PhxNewArgListPresets
+  alias PhxDiffWeb.CompareLive.DiffSelection
+  alias PhxDiffWeb.CompareLive.DiffSelection.PhxNewArgListPresets
 
   @impl true
   def render(assigns) do

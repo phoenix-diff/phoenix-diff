@@ -6,7 +6,7 @@
       </h3>
 
       <.live_component
-        module={PhxDiffWeb.PageLive.DiffSelectionForm}
+        module={PhxDiffWeb.CompareLive.DiffSelectionForm}
         id="diff-selection-form"
         source_app_spec={@source_app_spec}
         target_app_spec={@target_app_spec}
@@ -28,7 +28,7 @@
     <div class="container mx-auto p-4">
       <.live_component
         :if={connected?(@socket)}
-        module={PhxDiffWeb.PageLive.DiffViewerComponent}
+        module={PhxDiffWeb.CompareLive.DiffViewerComponent}
         id="main-diff"
         diff={@diff}
         current_path={@current_path}

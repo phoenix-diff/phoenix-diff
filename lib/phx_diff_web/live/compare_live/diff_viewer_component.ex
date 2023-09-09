@@ -1,9 +1,9 @@
-defmodule PhxDiffWeb.PageLive.DiffViewerComponent do
+defmodule PhxDiffWeb.CompareLive.DiffViewerComponent do
   @moduledoc false
   use PhxDiffWeb, :live_component
 
   alias Ecto.Changeset
-  alias PhxDiffWeb.PageLive.DiffViewerComponent.ParsedDiff
+  alias PhxDiffWeb.CompareLive.DiffViewerComponent.ParsedDiff
 
   @impl true
   def render(assigns) do

@@ -1,9 +1,9 @@
-defmodule PhxDiffWeb.PageLive.DiffViewerComponent.ParsedDiff.Patch do
+defmodule PhxDiffWeb.CompareLive.DiffViewerComponent.ParsedDiff.Patch do
   @moduledoc false
 
   import Bitwise
 
-  alias PhxDiffWeb.PageLive.DiffViewerComponent.Renderers
+  alias PhxDiffWeb.CompareLive.DiffViewerComponent.Renderers
 
   defstruct [:display_filename, :status, :html_anchor, :summary]
 

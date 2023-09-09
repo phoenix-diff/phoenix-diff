@@ -26,7 +26,7 @@ defmodule PhxDiffWeb.Router do
   scope "/", PhxDiffWeb do
     pipe_through :browser
 
-    live "/", PageLive, :index
+    live "/", CompareLive, :index
   end
 
   scope "/" do
