@@ -8,6 +8,7 @@ defmodule PhxDiffWeb.CompareLive do
   alias PhxDiff.ComparisonError
   alias PhxDiffWeb.CompareLive.DiffSelection
   alias PhxDiffWeb.CompareLive.DiffSelection.PhxNewArgListPresets
+  alias PhxDiffWeb.DiffSelections
 
   @impl true
   def mount(_params, _session, socket) do
@@ -25,7 +26,7 @@ defmodule PhxDiffWeb.CompareLive do
       {:noreply, socket}
     else
       {:error, changeset} ->
-        diff_selection = find_valid_diff_selection(changeset)
+        diff_selection = DiffSelections.find_valid_diff_selection(changeset)
 
         {:noreply,
          push_patch(socket,
@@ -111,47 +112,6 @@ defmodule PhxDiffWeb.CompareLive do
   defp build_app_spec(version, variant_id) do
     {:ok, preset} = PhxNewArgListPresets.fetch(variant_id)
     AppSpecification.new(version, preset.arg_list)
-  end
-
-  defp find_valid_diff_selection(changeset) do
-    diff_selection = Changeset.apply_changes(changeset)
-    error_fields = Keyword.keys(changeset.errors)
-
-    diff_selection =
-      if :source in error_fields do
-        %{diff_selection | source: PhxDiff.previous_release_version()}
-      else
-        diff_selection
-      end
-
-    diff_selection =
-      if :target in error_fields do
-        %{diff_selection | target: PhxDiff.latest_version()}
-      else
-        diff_selection
-      end
-
-    diff_selection =
-      if :source_variant in error_fields do
-        %{
-          diff_selection
-          | source_variant: PhxNewArgListPresets.get_default_for_version(diff_selection.source).id
-        }
-      else
-        diff_selection
-      end
-
-    diff_selection =
-      if :target_variant in error_fields do
-        %{
-          diff_selection
-          | target_variant: PhxNewArgListPresets.get_default_for_version(diff_selection.target).id
-        }
-      else
-        diff_selection
-      end
-
-    diff_selection
   end
 
   defp to_params(%AppSpecification{} = source, %AppSpecification{} = target) do
