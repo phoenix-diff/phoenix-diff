@@ -2,8 +2,8 @@ defmodule PhxDiffWeb.DiffSelections do
   @moduledoc false
 
   alias Ecto.Changeset
-  alias PhxDiffWeb.CompareLive.DiffSelection
-  alias PhxDiffWeb.CompareLive.DiffSelection.PhxNewArgListPresets
+  alias PhxDiffWeb.DiffSelections.DiffSelection
+  alias PhxDiffWeb.DiffSelections.DiffSelection.PhxNewArgListPresets
 
   @spec find_valid_diff_selection(Changeset.t(DiffSelection.t())) :: DiffSelection.t()
   def find_valid_diff_selection(%Changeset{valid?: true} = changeset),

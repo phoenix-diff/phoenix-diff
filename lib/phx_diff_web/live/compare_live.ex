@@ -6,9 +6,9 @@ defmodule PhxDiffWeb.CompareLive do
   alias Phoenix.LiveView.Socket
   alias PhxDiff.AppSpecification
   alias PhxDiff.ComparisonError
-  alias PhxDiffWeb.CompareLive.DiffSelection
-  alias PhxDiffWeb.CompareLive.DiffSelection.PhxNewArgListPresets
   alias PhxDiffWeb.DiffSelections
+  alias PhxDiffWeb.DiffSelections.DiffSelection
+  alias PhxDiffWeb.DiffSelections.DiffSelection.PhxNewArgListPresets
 
   @impl true
   def mount(_params, _session, socket) do

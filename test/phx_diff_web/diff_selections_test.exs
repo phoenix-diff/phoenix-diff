@@ -4,8 +4,8 @@ defmodule PhxDiffWeb.DiffSelectionsTest do
   import PhxDiff.TestSupport.Sigils
 
   alias PhxDiffWeb.AppSelection
-  alias PhxDiffWeb.CompareLive.DiffSelection
   alias PhxDiffWeb.DiffSelections
+  alias PhxDiffWeb.DiffSelections.DiffSelection
 
   @unknown_phoenix_version "0.0.99"
 

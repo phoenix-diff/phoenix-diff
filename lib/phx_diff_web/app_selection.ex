@@ -6,8 +6,8 @@ defmodule PhxDiffWeb.AppSelection do
   import Ecto.Changeset
 
   alias PhxDiff.AppSpecification
-  alias PhxDiffWeb.CompareLive.DiffSelection.Fields
-  alias PhxDiffWeb.CompareLive.DiffSelection.PhxNewArgListPresets
+  alias PhxDiffWeb.DiffSelections.DiffSelection.Fields
+  alias PhxDiffWeb.DiffSelections.DiffSelection.PhxNewArgListPresets
 
   @type variant :: :default | :no_ecto | :live | :no_live | :no_html | :binary_id | :umbrella
 

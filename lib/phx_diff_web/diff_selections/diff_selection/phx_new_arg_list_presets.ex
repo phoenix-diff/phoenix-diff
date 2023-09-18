@@ -1,7 +1,7 @@
-defmodule PhxDiffWeb.CompareLive.DiffSelection.PhxNewArgListPresets do
+defmodule PhxDiffWeb.DiffSelections.DiffSelection.PhxNewArgListPresets do
   @moduledoc false
 
-  alias PhxDiffWeb.CompareLive.DiffSelection.PhxNewArgListPresets.PhxNewArgListPreset
+  alias PhxDiffWeb.DiffSelections.DiffSelection.PhxNewArgListPresets.PhxNewArgListPreset
 
   @mappings [
     default: [],

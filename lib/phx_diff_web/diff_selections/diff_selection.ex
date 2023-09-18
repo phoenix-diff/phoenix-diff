@@ -1,4 +1,4 @@
-defmodule PhxDiffWeb.CompareLive.DiffSelection do
+defmodule PhxDiffWeb.DiffSelections.DiffSelection do
   @moduledoc false
   use Ecto.Schema
 

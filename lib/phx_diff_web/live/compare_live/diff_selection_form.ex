@@ -7,9 +7,9 @@ defmodule PhxDiffWeb.CompareLive.DiffSelectionForm do
 
   alias PhxDiff.AppSpecification
   alias PhxDiffWeb.AppSelection
-  alias PhxDiffWeb.CompareLive.DiffSelection
-  alias PhxDiffWeb.CompareLive.DiffSelection.PhxNewArgListPresets
   alias PhxDiffWeb.DiffSelections
+  alias PhxDiffWeb.DiffSelections.DiffSelection
+  alias PhxDiffWeb.DiffSelections.DiffSelection.PhxNewArgListPresets
 
   @impl true
   def render(assigns) do

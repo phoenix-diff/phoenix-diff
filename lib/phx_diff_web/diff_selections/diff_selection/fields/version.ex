@@ -1,4 +1,4 @@
-defmodule PhxDiffWeb.CompareLive.DiffSelection.Fields.Version do
+defmodule PhxDiffWeb.DiffSelections.DiffSelection.Fields.Version do
   @moduledoc false
 
   use Ecto.Type
