@@ -47,7 +47,8 @@ defmodule PhxDiff.MixProject do
       {:phoenix_live_view, "~> 0.19.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_dashboard, "~> 0.8.0"},
-      {:ecto, "~> 3.10.1"},
+      # Needed until https://github.com/elixir-ecto/ecto/commit/6a2d1744058fbbb64f93d58624e05dc193ed5bf0 is released
+      {:ecto, github: "elixir-ecto/ecto", override: true},
       {:phoenix_ecto, "~> 4.4"},
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},

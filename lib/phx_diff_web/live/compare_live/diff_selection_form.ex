@@ -6,8 +6,10 @@ defmodule PhxDiffWeb.CompareLive.DiffSelectionForm do
   import PhxDiffWeb.CompareLive.DiffSelectionComponents
 
   alias PhxDiff.AppSpecification
+  alias PhxDiffWeb.AppSelection
   alias PhxDiffWeb.CompareLive.DiffSelection
   alias PhxDiffWeb.CompareLive.DiffSelection.PhxNewArgListPresets
+  alias PhxDiffWeb.DiffSelections
 
   @impl true
   def render(assigns) do
@@ -26,22 +28,26 @@ defmodule PhxDiffWeb.CompareLive.DiffSelectionForm do
           <div>
             <h4 class="uppercase underline text-sm sm:mb-2">Source</h4>
           </div>
-          <.version_select field={@form[:source]} label="Source" versions={@all_versions} />
-          <.phx_new_arg_list_preset_select
-            field={@form[:source_variant]}
-            preset_options={@source_variants}
-          />
+          <.inputs_for :let={source_form} field={@form[:source]}>
+            <.version_select field={source_form[:version]} label="Source" versions={@all_versions} />
+            <.phx_new_arg_list_preset_select
+              field={source_form[:variant]}
+              preset_options={@source_variants}
+            />
+          </.inputs_for>
         </div>
 
         <div id="target-selector" class="mb-3 sm:mb-0">
           <div>
             <h4 class="uppercase underline text-sm sm:mb-2">Target</h4>
           </div>
-          <.version_select field={@form[:target]} label="Target" versions={@all_versions} />
-          <.phx_new_arg_list_preset_select
-            field={@form[:target_variant]}
-            preset_options={@target_variants}
-          />
+          <.inputs_for :let={target_form} field={@form[:target]}>
+            <.version_select field={target_form[:version]} label="Target" versions={@all_versions} />
+            <.phx_new_arg_list_preset_select
+              field={target_form[:variant]}
+              preset_options={@target_variants}
+            />
+          </.inputs_for>
         </div>
       </.form>
     </div>
@@ -68,13 +74,17 @@ defmodule PhxDiffWeb.CompareLive.DiffSelectionForm do
       end)
       |> assign_new(:all_versions, fn -> PhxDiff.all_versions() |> Enum.map(&to_string/1) end)
       |> then(fn socket ->
+        diff_selection = %DiffSelection{
+          source: AppSelection.new(socket.assigns.source_app_spec),
+          target: AppSelection.new(socket.assigns.target_app_spec)
+        }
+
         form =
-          socket.assigns.source_app_spec
-          |> DiffSelection.new(socket.assigns.target_app_spec)
-          |> DiffSelection.changeset()
+          diff_selection
+          |> DiffSelection.changeset(%{})
           |> to_form()
 
-        assign(socket, :form, form)
+        assign(socket, form: form, diff_selection: diff_selection)
       end)
 
     {:ok, socket}
@@ -82,6 +92,17 @@ defmodule PhxDiffWeb.CompareLive.DiffSelectionForm do
 
   @impl true
   def handle_event("diff-changed", %{"diff_selection" => params}, socket) do
+    changeset = DiffSelection.changeset(socket.assigns.diff_selection, params)
+
+    diff_selection = DiffSelections.find_valid_diff_selection(changeset)
+
+    params = [
+      source: diff_selection.source.version,
+      source_variant: diff_selection.source.variant,
+      target: diff_selection.target.version,
+      target_variant: diff_selection.target.variant
+    ]
+
     {:noreply, push_patch(socket, to: ~p"/?#{params}")}
   end
 

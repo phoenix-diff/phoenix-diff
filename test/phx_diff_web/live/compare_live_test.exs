@@ -16,19 +16,24 @@ defmodule PhxDiffWeb.CompareLiveTest do
 
     assert has_element?(
              view,
-             ~S|#[name="diff_selection[source]"] [selected=selected]|,
+             ~S|#[name="diff_selection[source][version]"] [selected=selected]|,
              PhxDiff.previous_release_version() |> to_string()
            )
 
     assert has_element?(
              view,
-             ~S|#[name="diff_selection[target]"] [selected=selected]|,
+             ~S|#[name="diff_selection[target][version]"] [selected=selected]|,
              PhxDiff.latest_version() |> to_string()
            )
 
     view
     |> element("#diff-selection-form")
-    |> render_change(%{"diff_selection" => %{"source" => "1.5.0", "target" => "1.5.1"}})
+    |> render_change(%{
+      "diff_selection" => %{
+        "source" => %{"version" => "1.5.0"},
+        "target" => %{"version" => "1.5.1"}
+      }
+    })
 
     assert_patch(
       view,

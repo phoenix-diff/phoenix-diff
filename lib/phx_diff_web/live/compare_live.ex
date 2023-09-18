@@ -19,6 +19,24 @@ defmodule PhxDiffWeb.CompareLive do
 
   @impl true
   def handle_params(params, _uri, socket) do
+    params =
+      Enum.reduce(params, %{}, fn
+        {"source", version}, acc ->
+          put_in(acc, [Access.key("source", %{}), "version"], version)
+
+        {"source_variant", variant}, acc ->
+          put_in(acc, [Access.key("source", %{}), "variant"], variant)
+
+        {"target", version}, acc ->
+          put_in(acc, [Access.key("target", %{}), "version"], version)
+
+        {"target_variant", variant}, acc ->
+          put_in(acc, [Access.key("target", %{}), "variant"], variant)
+
+        _, acc ->
+          acc
+      end)
+
     with {:ok, source_app_spec, target_app_spec} <- fetch_source_and_target_app_specs(params),
          socket = assign_app_specs(socket, source_app_spec, target_app_spec),
          {:ok, socket} <-
@@ -41,8 +59,11 @@ defmodule PhxDiffWeb.CompareLive do
     changeset = DiffSelection.changeset(%DiffSelection{}, params)
 
     with {:ok, diff_selection} <- Changeset.apply_action(changeset, :lookup) do
-      source_app_spec = build_app_spec(diff_selection.source, diff_selection.source_variant)
-      target_app_spec = build_app_spec(diff_selection.target, diff_selection.target_variant)
+      source_app_spec =
+        build_app_spec(diff_selection.source.version, diff_selection.source.variant)
+
+      target_app_spec =
+        build_app_spec(diff_selection.target.version, diff_selection.target.variant)
 
       {:ok, source_app_spec, target_app_spec}
     end
@@ -121,7 +142,13 @@ defmodule PhxDiffWeb.CompareLive do
   end
 
   defp to_params(%DiffSelection{} = diff_selection) do
-    Map.take(diff_selection, [:source, :source_variant, :target, :target_variant])
-    |> Enum.sort_by(&elem(&1, 0))
+    [
+      source: get_in(diff_selection, [Access.key!(:source), Access.key(:version)]) |> to_string(),
+      source_variant:
+        get_in(diff_selection, [Access.key!(:source), Access.key(:variant)]) |> to_string(),
+      target: get_in(diff_selection, [Access.key!(:target), Access.key(:version)]) |> to_string(),
+      target_variant:
+        get_in(diff_selection, [Access.key!(:target), Access.key(:variant)]) |> to_string()
+    ]
   end
 end

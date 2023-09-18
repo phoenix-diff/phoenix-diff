@@ -3,8 +3,9 @@ defmodule PhxDiffWeb.DiffSelectionsTest do
 
   import PhxDiff.TestSupport.Sigils
 
-  alias PhxDiffWeb.DiffSelections
+  alias PhxDiffWeb.AppSelection
   alias PhxDiffWeb.CompareLive.DiffSelection
+  alias PhxDiffWeb.DiffSelections
 
   @unknown_phoenix_version "0.0.99"
 
@@ -14,10 +15,14 @@ defmodule PhxDiffWeb.DiffSelectionsTest do
 
       assert DiffSelections.find_valid_diff_selection(changeset) ==
                %DiffSelection{
-                 source: PhxDiff.previous_release_version(),
-                 source_variant: :default,
-                 target: PhxDiff.latest_version(),
-                 target_variant: :default
+                 source: %AppSelection{
+                   version: PhxDiff.previous_release_version(),
+                   variant: :default
+                 },
+                 target: %AppSelection{
+                   version: PhxDiff.latest_version(),
+                   variant: :default
+                 }
                }
     end
 
@@ -25,15 +30,19 @@ defmodule PhxDiffWeb.DiffSelectionsTest do
       changeset =
         DiffSelection.changeset(
           %DiffSelection{},
-          %{"source" => "1.5.0", "target" => "1.5.1"}
+          %{"source" => %{"version" => "1.5.0"}, "target" => %{"version" => "1.5.1"}}
         )
 
       assert DiffSelections.find_valid_diff_selection(changeset) ==
                %DiffSelection{
-                 source: ~V|1.5.0|,
-                 source_variant: :live,
-                 target: ~V|1.5.1|,
-                 target_variant: :live
+                 source: %AppSelection{
+                   version: ~V|1.5.0|,
+                   variant: :live
+                 },
+                 target: %AppSelection{
+                   version: ~V|1.5.1|,
+                   variant: :live
+                 }
                }
     end
 
@@ -41,15 +50,22 @@ defmodule PhxDiffWeb.DiffSelectionsTest do
       changeset =
         DiffSelection.changeset(
           %DiffSelection{},
-          %{"source" => @unknown_phoenix_version, "target" => "1.5.1"}
+          %{
+            "source" => %{"version" => @unknown_phoenix_version},
+            "target" => %{"version" => "1.5.1"}
+          }
         )
 
       assert DiffSelections.find_valid_diff_selection(changeset) ==
                %DiffSelection{
-                 source: PhxDiff.previous_release_version(),
-                 source_variant: :default,
-                 target: ~V|1.5.1|,
-                 target_variant: :live
+                 source: %AppSelection{
+                   version: PhxDiff.previous_release_version(),
+                   variant: :default
+                 },
+                 target: %AppSelection{
+                   version: ~V|1.5.1|,
+                   variant: :live
+                 }
                }
     end
 
@@ -58,17 +74,21 @@ defmodule PhxDiffWeb.DiffSelectionsTest do
         DiffSelection.changeset(
           %DiffSelection{},
           %{
-            "source" => "1.4.0",
-            "target" => @unknown_phoenix_version
+            "source" => %{"version" => "1.4.0"},
+            "target" => %{"version" => @unknown_phoenix_version}
           }
         )
 
       assert DiffSelections.find_valid_diff_selection(changeset) ==
                %DiffSelection{
-                 source: ~V|1.4.0|,
-                 source_variant: :default,
-                 target: PhxDiff.latest_version(),
-                 target_variant: :default
+                 source: %AppSelection{
+                   version: ~V|1.4.0|,
+                   variant: :default
+                 },
+                 target: %AppSelection{
+                   version: PhxDiff.latest_version(),
+                   variant: :default
+                 }
                }
     end
 
@@ -77,18 +97,21 @@ defmodule PhxDiffWeb.DiffSelectionsTest do
         DiffSelection.changeset(
           %DiffSelection{},
           %{
-            "source" => "1.4.0",
-            "source_variant" => "invalid",
-            "target" => "1.6.0"
+            "source" => %{"version" => "1.4.0", "variant" => "invalid"},
+            "target" => %{"version" => "1.6.0"}
           }
         )
 
       assert DiffSelections.find_valid_diff_selection(changeset) ==
                %DiffSelection{
-                 source: ~V|1.4.0|,
-                 source_variant: :default,
-                 target: ~V|1.6.0|,
-                 target_variant: :default
+                 source: %AppSelection{
+                   version: ~V|1.4.0|,
+                   variant: :default
+                 },
+                 target: %AppSelection{
+                   version: ~V|1.6.0|,
+                   variant: :default
+                 }
                }
     end
 
@@ -97,18 +120,21 @@ defmodule PhxDiffWeb.DiffSelectionsTest do
         DiffSelection.changeset(
           %DiffSelection{},
           %{
-            "source" => "1.4.0",
-            "target" => "1.6.0",
-            "target_variant" => "invalid"
+            "source" => %{"version" => "1.4.0"},
+            "target" => %{"version" => "1.6.0", "variant" => "invalid"}
           }
         )
 
       assert DiffSelections.find_valid_diff_selection(changeset) ==
                %DiffSelection{
-                 source: ~V|1.4.0|,
-                 source_variant: :default,
-                 target: ~V|1.6.0|,
-                 target_variant: :default
+                 source: %AppSelection{
+                   version: ~V|1.4.0|,
+                   variant: :default
+                 },
+                 target: %AppSelection{
+                   version: ~V|1.6.0|,
+                   variant: :default
+                 }
                }
     end
   end
