@@ -207,7 +207,7 @@ defmodule PhxDiffWeb.CompareLiveTest do
       |> render()
 
     assert mix_exs_file_list_element =~
-             "/?source=1.7.1&amp;source_variant=default&amp;target=1.7.2&amp;target_variant=default#d2h-008078"
+             "#d2h-008078"
 
     assert mix_exs_file_list_element =~ "Changed"
     assert mix_exs_file_list_element =~ "+3"
@@ -222,7 +222,7 @@ defmodule PhxDiffWeb.CompareLiveTest do
       |> render()
 
     assert xmark_file_list_element =~
-             "/?source=1.7.1&amp;source_variant=default&amp;target=1.7.2&amp;target_variant=default#d2h-487262"
+             "#d2h-487262"
 
     assert xmark_file_list_element =~ "Renamed"
     assert xmark_file_list_element =~ "+0"

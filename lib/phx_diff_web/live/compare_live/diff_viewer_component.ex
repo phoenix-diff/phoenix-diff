@@ -27,7 +27,7 @@ defmodule PhxDiffWeb.CompareLive.DiffViewerComponent do
           </.button_group_toggle>
         </div>
 
-        <.file_list parsed_diff={@parsed_diff} current_path={@current_path} />
+        <.file_list parsed_diff={@parsed_diff} />
 
         <div
           id="diff-results-container"
@@ -44,7 +44,6 @@ defmodule PhxDiffWeb.CompareLive.DiffViewerComponent do
   end
 
   attr :parsed_diff, ParsedDiff, required: true
-  attr :current_path, :string, required: true
 
   def file_list(assigns) do
     ~H"""
@@ -72,10 +71,7 @@ defmodule PhxDiffWeb.CompareLive.DiffViewerComponent do
             <.patch_status_icon status={patch.status} />
           </div>
           <div class="flex-1 truncate">
-            <.link
-              href={"#{@current_path}##{patch.html_anchor}"}
-              class="text-sm text-sky-500 hover:text-sky-700"
-            >
+            <.link href={"##{patch.html_anchor}"} class="text-sm text-sky-500 hover:text-sky-700">
               <%= patch.display_filename %>
             </.link>
           </div>

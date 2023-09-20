@@ -77,7 +77,6 @@ defmodule PhxDiffWeb.CompareLive do
     |> assign(:page_title, page_title(source_app_spec, target_app_spec))
     |> assign(:source_version, source_app_spec.phoenix_version)
     |> assign(:target_version, target_app_spec.phoenix_version)
-    |> assign(:current_path, ~p"/?#{to_params(source_app_spec, target_app_spec)}")
   end
 
   @spec fetch_and_assign_diff_when_connected(
@@ -133,12 +132,6 @@ defmodule PhxDiffWeb.CompareLive do
   defp build_app_spec(version, variant_id) do
     {:ok, preset} = PhxNewArgListPresets.fetch(variant_id)
     AppSpecification.new(version, preset.arg_list)
-  end
-
-  defp to_params(%AppSpecification{} = source, %AppSpecification{} = target) do
-    source
-    |> DiffSelection.new(target)
-    |> to_params()
   end
 
   defp to_params(%DiffSelection{} = diff_selection) do
