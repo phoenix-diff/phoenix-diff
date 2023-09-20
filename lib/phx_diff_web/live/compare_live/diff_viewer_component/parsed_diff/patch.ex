@@ -5,10 +5,11 @@ defmodule PhxDiffWeb.CompareLive.DiffViewerComponent.ParsedDiff.Patch do
 
   alias PhxDiffWeb.CompareLive.DiffViewerComponent.Renderers
 
-  defstruct [:display_filename, :status, :html_anchor, :summary]
+  defstruct [:display_filename, :display_filename_hash, :status, :html_anchor, :summary]
 
   @type t :: %__MODULE__{
           display_filename: String.t(),
+          display_filename_hash: String.t(),
           status: status,
           html_anchor: String.t(),
           summary: summary
@@ -23,6 +24,7 @@ defmodule PhxDiffWeb.CompareLive.DiffViewerComponent.ParsedDiff.Patch do
 
     %__MODULE__{
       display_filename: display_filename,
+      display_filename_hash: :crypto.hash(:sha256, display_filename) |> Base.url_encode64(),
       status: calculate_status(patch),
       html_anchor: d2h_html_id(display_filename),
       summary: calculate_summary(patch)
