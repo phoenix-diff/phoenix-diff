@@ -2,8 +2,24 @@ defmodule PhxDiffWeb.DiffSelections do
   @moduledoc false
 
   alias Ecto.Changeset
+  alias PhxDiff.AppSpecification
   alias PhxDiffWeb.DiffSelections.DiffSelection
   alias PhxDiffWeb.DiffSelections.DiffSelection.PhxNewArgListPresets
+  alias PhxDiffWeb.DiffSpecification
+
+  @spec build_diff_specification(DiffSelection.t()) :: DiffSpecification.t()
+  def build_diff_specification(%DiffSelection{} = diff_selection) do
+    source = build_app_spec(diff_selection.source.version, diff_selection.source.variant)
+    target = build_app_spec(diff_selection.target.version, diff_selection.target.variant)
+
+    DiffSpecification.new(source, target)
+  end
+
+  @spec build_app_spec(Version.t(), atom) :: AppSpecification.t()
+  def build_app_spec(version, variant_id) do
+    {:ok, preset} = PhxNewArgListPresets.fetch(variant_id)
+    AppSpecification.new(version, preset.arg_list)
+  end
 
   @spec find_valid_diff_selection(Changeset.t(DiffSelection.t())) :: DiffSelection.t()
   def find_valid_diff_selection(%Changeset{valid?: true} = changeset),

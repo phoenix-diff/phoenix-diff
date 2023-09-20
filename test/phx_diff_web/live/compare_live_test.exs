@@ -11,20 +11,15 @@ defmodule PhxDiffWeb.CompareLiveTest do
 
   setup [:subscribe_to_otel_spans]
 
-  test "redirects to include the source and target in url", %{conn: conn} do
-    {:ok, view, _html} = conn |> live(~p"/compare") |> follow_redirect(conn)
+  test "interacting with diff form", %{conn: conn} do
+    {:ok, view, _html} = conn |> live(~p"/compare/1.7.1...1.7.2")
 
-    assert has_element?(
-             view,
-             ~S|#[name="diff_selection[source][version]"] [selected=selected]|,
-             PhxDiff.previous_release_version() |> to_string()
-           )
+    form_data = get_form_data(view)
 
-    assert has_element?(
-             view,
-             ~S|#[name="diff_selection[target][version]"] [selected=selected]|,
-             PhxDiff.latest_version() |> to_string()
-           )
+    assert form_data.source.version == "1.7.1"
+    assert form_data.source.variant == "default"
+    assert form_data.target.version == "1.7.2"
+    assert form_data.target.variant == "default"
 
     view
     |> element("#diff-selection-form")
@@ -37,7 +32,7 @@ defmodule PhxDiffWeb.CompareLiveTest do
 
     assert_patch(
       view,
-      ~p"/compare?#{[source: ~V|1.5.0|, source_variant: :live, target: ~V|1.5.1|, target_variant: :live]}"
+      ~p"/compare/1.5.0 --live...1.5.1 --live"
     )
 
     assert page_title(view) =~ "v1.5.0 to v1.5.1"
@@ -75,8 +70,14 @@ defmodule PhxDiffWeb.CompareLiveTest do
                     }}
   end
 
+  test "returns 404 with an invalid diff spec", %{conn: conn} do
+    assert_error_sent(404, fn ->
+      get(conn, ~p"/compare/invalid")
+    end)
+  end
+
   test "toggling line by line or side by side", %{conn: conn} do
-    {:ok, view, _html} = conn |> live(~p"/compare") |> follow_redirect(conn)
+    {:ok, view, _html} = conn |> live(~p"/compare/1.7.1...1.7.2")
 
     assert display_mode_button_active?(view, "Line by line")
     refute display_mode_button_active?(view, "Side by side")
@@ -99,61 +100,11 @@ defmodule PhxDiffWeb.CompareLiveTest do
     assert diff_results_container_display_mode(view) == "line-by-line"
   end
 
-  test "falls back to latest version when target url_param is invalid", %{conn: conn} do
-    {:ok, _view, _html} =
-      conn
-      |> live(~p"/compare?source=#{PhxDiff.previous_release_version()}&target=invalid")
-      |> follow_redirect(
-        conn,
-        ~p"/compare?#{[source: PhxDiff.previous_release_version(), source_variant: :default, target: PhxDiff.latest_version(), target_variant: :default]}"
-      )
-  end
-
-  test "falls back to previous version when source url_param is invalid", %{conn: conn} do
-    {:ok, _view, _html} =
-      conn
-      |> live(~p"/compare?source=invalid&target=#{PhxDiff.latest_version()}")
-      |> follow_redirect(
-        conn,
-        ~p"/compare?#{[source: PhxDiff.previous_release_version(), source_variant: :default, target: PhxDiff.latest_version(), target_variant: :default]}"
-      )
-  end
-
-  @unknown_phoenix_version "0.0.99"
-
-  test "falls back to latest version when target url_param is unknown", %{conn: conn} do
-    {:ok, _view, _html} =
-      conn
-      |> live(
-        ~p"/compare?source=#{PhxDiff.previous_release_version()}&target=#{@unknown_phoenix_version}"
-      )
-      |> follow_redirect(
-        conn,
-        ~p"/compare?#{[source: PhxDiff.previous_release_version(), source_variant: :default, target: PhxDiff.latest_version(), target_variant: :default]}"
-      )
-  end
-
-  test "falls back to previous version when source url_param is unknown", %{conn: conn} do
-    {:ok, _view, _html} =
-      conn
-      |> live(~p"/compare?source=#{@unknown_phoenix_version}&target=#{PhxDiff.latest_version()}")
-      |> follow_redirect(
-        conn,
-        ~p"/compare?#{[source: PhxDiff.previous_release_version(), source_variant: :default, target: PhxDiff.latest_version(), target_variant: :default]}"
-      )
-
-    assert_received {:otel_span,
-                     %{
-                       instrumentation_scope: %{name: "opentelemetry_phoenix"},
-                       attributes: %{"http.status_code": 302}
-                     }}
-  end
-
   test "indicates no changes for identical versions", %{conn: conn} do
     {:ok, _view, html} =
       live(
         conn,
-        ~p"/compare?#{[source: ~V|1.5.9|, source_variant: :default, target: ~V|1.5.9|, target_variant: :default]}"
+        ~p"/compare/1.5.9...1.5.9"
       )
 
     assert html =~ "no changes"
@@ -162,9 +113,7 @@ defmodule PhxDiffWeb.CompareLiveTest do
   test "allows comparing variants of the same version", %{conn: conn} do
     {:ok, view, _html} =
       conn
-      |> live(
-        ~p"/compare?#{[source: ~V|1.5.9|, source_variant: :default, target: ~V|1.5.9|, target_variant: :live]}"
-      )
+      |> live(~p"/compare/1.5.9...1.5.9 --live")
 
     assert_diff_rendered(
       view,
@@ -176,9 +125,7 @@ defmodule PhxDiffWeb.CompareLiveTest do
 
     {:ok, view, _html} =
       conn
-      |> live(
-        ~p"/compare?#{[source: ~V|1.7.0-rc.0|, source_variant: :no_ecto, target: ~V|1.7.0-rc.0|, target_variant: :default]}"
-      )
+      |> live(~p"/compare/1.7.0-rc.0 --no-ecto...1.7.0-rc.0")
 
     assert_diff_rendered(
       view,
@@ -194,9 +141,7 @@ defmodule PhxDiffWeb.CompareLiveTest do
   test "displays the file list in a diff2html compatible format", %{conn: conn} do
     {:ok, view, _html} =
       conn
-      |> live(
-        ~p"/compare?#{[source: ~V|1.7.1|, source_variant: :default, target: ~V|1.7.2|, target_variant: :default]}"
-      )
+      |> live(~p"/compare/1.7.1...1.7.2")
 
     mix_exs_file_list_element =
       view
@@ -273,9 +218,7 @@ defmodule PhxDiffWeb.CompareLiveTest do
       capture_json_log(fn ->
         {:ok, _view, _html} =
           conn
-          |> live(
-            ~p"/compare?#{[source: ~V|1.5.9|, source_variant: :default, target: ~V|1.5.9|, target_variant: :live]}"
-          )
+          |> live(~p"/compare/1.5.9...1.5.9 --live")
       end)
       |> Enum.filter(&match?(%{"event.domain" => "diffs"}, &1))
 
@@ -314,5 +257,47 @@ defmodule PhxDiffWeb.CompareLiveTest do
 
   defp display_mode_button_active?(view, button_text) do
     has_element?(view, "#diff-view-toggles input:checked + label", button_text)
+  end
+
+  defp get_form_data(view) do
+    document =
+      view
+      |> render()
+      |> Floki.parse_document!()
+
+    %{
+      source: %{
+        version:
+          Floki.attribute(
+            document,
+            ~S|#[name="diff_selection[source][version]"] [selected=selected]|,
+            "value"
+          )
+          |> List.first(),
+        variant:
+          Floki.attribute(
+            document,
+            ~S|#[name="diff_selection[source][variant]"] [selected=selected]|,
+            "value"
+          )
+          |> List.first()
+      },
+      target: %{
+        version:
+          Floki.attribute(
+            document,
+            ~S|#[name="diff_selection[target][version]"] [selected=selected]|,
+            "value"
+          )
+          |> List.first(),
+        variant:
+          Floki.attribute(
+            document,
+            ~S|#[name="diff_selection[target][variant]"] [selected=selected]|,
+            "value"
+          )
+          |> List.first()
+      }
+    }
   end
 end

@@ -94,16 +94,12 @@ defmodule PhxDiffWeb.CompareLive.DiffSelectionForm do
   def handle_event("diff-changed", %{"diff_selection" => params}, socket) do
     changeset = DiffSelection.changeset(socket.assigns.diff_selection, params)
 
-    diff_selection = DiffSelections.find_valid_diff_selection(changeset)
+    diff_specification =
+      changeset
+      |> DiffSelections.find_valid_diff_selection()
+      |> DiffSelections.build_diff_specification()
 
-    params = [
-      source: diff_selection.source.version,
-      source_variant: diff_selection.source.variant,
-      target: diff_selection.target.version,
-      target_variant: diff_selection.target.variant
-    ]
-
-    {:noreply, push_patch(socket, to: ~p"/compare?#{params}")}
+    {:noreply, push_patch(socket, to: ~p"/compare/#{diff_specification}")}
   end
 
   defp variant_options_for_version(version) do
