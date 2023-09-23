@@ -5,8 +5,6 @@ defmodule PhxDiffWeb.CompareLive do
   alias Ecto.Changeset
   alias Phoenix.LiveView.Socket
   alias PhxDiff.AppSpecification
-  alias PhxDiff.ComparisonError
-  alias PhxDiffWeb.DiffSelections.DiffSelection
 
   defmodule NotFoundError do
     defexception plug_status: 404
@@ -26,13 +24,13 @@ defmodule PhxDiffWeb.CompareLive do
   @impl true
   def handle_params(%{"diff_specification" => diff_specification}, _uri, socket) do
     with {:ok, diff_specification} <- PhxDiffWeb.Params.decode_diff_spec(diff_specification),
-         socket = assign_app_specs(socket, diff_specification.source, diff_specification.target),
          {:ok, socket} <-
            fetch_and_assign_diff_when_connected(
              socket,
              diff_specification.source,
              diff_specification.target
            ) do
+      socket = assign_app_specs(socket, diff_specification.source, diff_specification.target)
       {:noreply, socket}
     else
       _ ->
@@ -56,41 +54,11 @@ defmodule PhxDiffWeb.CompareLive do
           AppSpecification.t()
         ) :: {:ok, Socket.t()} | {:error, Changeset.t()}
   defp fetch_and_assign_diff_when_connected(socket, source_app_spec, target_app_spec) do
-    with :connected <- halt_unless_connected(socket),
-         {:ok, diff} <- fetch_diff(source_app_spec, target_app_spec) do
+    with {:ok, diff} <- PhxDiff.fetch_diff(source_app_spec, target_app_spec) do
       {:ok,
        socket
        |> assign(:diff, diff)
        |> assign(:no_changes?, diff == "")}
-    end
-  end
-
-  defp halt_unless_connected(socket) do
-    if connected?(socket) do
-      :connected
-    else
-      {:ok, socket}
-    end
-  end
-
-  @spec fetch_diff(AppSpecification.t(), AppSpecification.t()) ::
-          {:ok, String.t()} | {:error, Changeset.t()}
-  defp fetch_diff(source_app_spec, target_app_spec) do
-    case PhxDiff.fetch_diff(source_app_spec, target_app_spec) do
-      {:ok, diff} ->
-        {:ok, diff}
-
-      {:error, %ComparisonError{} = error} ->
-        changeset =
-          DiffSelection.new(source_app_spec, target_app_spec)
-          |> DiffSelection.changeset()
-
-        changeset =
-          Enum.reduce(error.errors, changeset, fn {field, :unknown_version}, changeset ->
-            Changeset.add_error(changeset, field, "is unknown")
-          end)
-
-        {:error, changeset}
     end
   end
 

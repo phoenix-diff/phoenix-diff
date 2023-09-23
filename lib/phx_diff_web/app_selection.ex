@@ -27,7 +27,7 @@ defmodule PhxDiffWeb.AppSelection do
   def new(%AppSpecification{} = app_spec) do
     %__MODULE__{
       version: app_spec.phoenix_version,
-      variant: PhxNewArgListPresets.preset_from_arg_list(app_spec.phx_new_arguments).id
+      variant: PhxNewArgListPresets.preset_from_arg_list!(app_spec.phx_new_arguments).id
     }
   end
 

@@ -76,6 +76,12 @@ defmodule PhxDiffWeb.CompareLiveTest do
     end)
   end
 
+  test "returns 404 with an unknown option", %{conn: conn} do
+    assert_error_sent(404, fn ->
+      get(conn, ~p"/compare/1.7.2...1.7.2 --unknown")
+    end)
+  end
+
   test "toggling line by line or side by side", %{conn: conn} do
     {:ok, view, _html} = conn |> live(~p"/compare/1.7.1...1.7.2")
 

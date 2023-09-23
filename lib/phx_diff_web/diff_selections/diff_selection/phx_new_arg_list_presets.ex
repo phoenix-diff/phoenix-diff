@@ -26,19 +26,30 @@ defmodule PhxDiffWeb.DiffSelections.DiffSelection.PhxNewArgListPresets do
     version
     |> PhxDiff.default_app_specification()
     |> Map.fetch!(:phx_new_arguments)
-    |> preset_from_arg_list()
+    |> preset_from_arg_list!()
   end
 
   @spec list_known_presets_for_version(Version.t()) :: [PhxNewArgListPreset.t()]
   def list_known_presets_for_version(%Version{} = version) do
     version
     |> PhxDiff.list_sample_apps_for_version()
-    |> Enum.map(&preset_from_arg_list(&1.phx_new_arguments))
+    |> Enum.map(&preset_from_arg_list!(&1.phx_new_arguments))
   end
 
   for {id, arg_list} <- @mappings do
     def preset_from_arg_list(unquote(arg_list)) do
-      %PhxNewArgListPreset{id: unquote(id), arg_list: unquote(arg_list)}
+      {:ok, %PhxNewArgListPreset{id: unquote(id), arg_list: unquote(arg_list)}}
+    end
+  end
+
+  def preset_from_arg_list(_) do
+    :error
+  end
+
+  def preset_from_arg_list!(arg_list) do
+    case preset_from_arg_list(arg_list) do
+      {:ok, preset} -> preset
+      :error -> raise ArgumentError, "no preset for arg list: #{inspect(arg_list)}"
     end
   end
 end
