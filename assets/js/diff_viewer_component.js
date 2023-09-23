@@ -18,19 +18,9 @@ const DiffViewerComponent = {
 
     diff2htmlUi.draw();
 
-    this._updateDiffFileLinks();
-
     const event = new CustomEvent("phx-diff:diff-loading-stop", {bubbles: true, cancelable: true});
     window.dispatchEvent(event);
   },
-  _updateDiffFileLinks() {
-    Array.from(this.el.getElementsByClassName("d2h-file-name")).forEach((element) => {
-      const hash = element.getAttribute("href");
-      const updatedURL = `${document.location.pathname}${document.location.search}${hash}`;
-
-      element.setAttribute("href", updatedURL);
-    });
-  }
 };
 
 export default DiffViewerComponent;
