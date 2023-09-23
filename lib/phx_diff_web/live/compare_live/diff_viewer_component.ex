@@ -6,6 +6,38 @@ defmodule PhxDiffWeb.CompareLive.DiffViewerComponent do
   alias PhxDiffWeb.CompareLive.DiffViewerComponent.FileListItem
   alias PhxDiffWeb.CompareLive.DiffViewerComponent.ParsedDiff
 
+  defmodule PatchViewer do
+    use PhxDiffWeb, :live_component
+
+    @impl true
+    def render(assigns) do
+      ~H"""
+      <div class="border-gray-200">
+        <style><%= Makeup.stylesheet() %></style>
+        <div id={@patch.html_anchor} class="bg-gray-100 sticky top-0 flex items-center grap-1">
+          <.icon name="fa-file" />
+          <%= @patch.display_filename %>
+        </div>
+      <table class="w-full table-fixed font-mono">
+        <colgroup>
+          <col width="40" />
+          <col width="40" />
+          <col />
+        </colgroup>
+
+        <%= for chunk <- @patch.chunks do %>
+          <tr :for={line <- chunk.lines}>
+            <td class="select-none"><%= line.from_line_number %></td>
+            <td class="select-none"><%= line.to_line_number %></td>
+            <td class="highlight whitespace-pre"><%= {:safe, line.text |> String.slice(1..-1//1) |> Makeup.highlight_inner_html()} %></td>
+          </tr>
+        <% end %>
+      </table>
+      </div>
+      """
+    end
+  end
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -30,6 +62,11 @@ defmodule PhxDiffWeb.CompareLive.DiffViewerComponent do
 
         <.file_list parsed_diff={@parsed_diff} />
 
+        <.live_component
+          :for={patch <- @parsed_diff.patches}
+          id={"patch-viewer-#{patch.display_filename_hash}"}
+          module={PatchViewer}
+          patch={patch} />
       </.form>
       <div :if={@no_changes?} %><%= render_slot(@no_changes) %></div>
     </div>
