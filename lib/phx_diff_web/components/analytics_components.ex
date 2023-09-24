@@ -21,7 +21,7 @@ defmodule PhxDiffWeb.AnalyticsComponents do
 
   def honeybadger_error_tracking(assigns) do
     ~H"""
-    <script src="//js.honeybadger.io/v4.7/honeybadger.min.js" type="text/javascript">
+    <script src="//js.honeybadger.io/v6.5/honeybadger.min.js" type="text/javascript">
     </script>
 
     <script type="text/javascript">
