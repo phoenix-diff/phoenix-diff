@@ -23,9 +23,16 @@
     <link rel="stylesheet" href={~p"/assets/app.css"} />
     <script defer phx-track-static src={~p"/assets/app.js"}>
     </script>
+    <script :if={assigns[:dark_mode_enabled?]} type="text/javascript">
+      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
+    </script>
   </head>
 
-  <body class="min-h-screen flex flex-col">
+  <body class="min-h-screen flex flex-col dark:bg-zinc-800 dark:text-white">
     <nav role="navigation">
       <div class="p-4 flex text-brand justify-between items-center">
         <a class="text-2xl font-bold" href="/">PhoenixDiff</a>

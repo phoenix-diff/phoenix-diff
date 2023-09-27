@@ -31,6 +31,12 @@ defmodule PhxDiffWeb.Router do
     live "/compare/:diff_specification", CompareLive, :compare
   end
 
+  scope "/", PhxDiffWeb, assigns: %{dark_mode_enabled?: true} do
+    pipe_through :browser
+
+    live "/ss-compare/:diff_specification", ServerSideCompareLive, :compare
+  end
+
   scope "/" do
     pipe_through [:browser, :require_admin]
 
