@@ -2,13 +2,6 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-@import "highlight.js/styles/github.css";
-@import "diff2html/bundles/css/diff2html.min";
-
-a.d2h-file-switch {
-  @apply text-brand text-sm font-bold;
-}
-
 .button-group-toggle input:checked + label{
   @apply text-white bg-brand;
 }
