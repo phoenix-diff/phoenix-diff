@@ -30,69 +30,29 @@ defmodule PhxDiffWeb.CompareLive.DiffViewerComponent.FileListItem do
 
   defp patch_status_icon(%{status: :added} = assigns) do
     ~H"""
-    <svg
-      class="stroke-[.1] stroke-green-600 fill-green-600 inline"
-      aria-hidden="true"
-      height="16"
-      version="1.1"
-      viewBox="0 0 14 16"
-      width="14"
-    >
-      <title>Added</title>
-      <path d="M13 1H1C0.45 1 0 1.45 0 2v12c0 0.55 0.45 1 1 1h12c0.55 0 1-0.45 1-1V2c0-0.55-0.45-1-1-1z m0 13H1V2h12v12zM6 9H3V7h3V4h2v3h3v2H8v3H6V9z">
-      </path>
-    </svg>
+    <.icon name="fa-plus-solid" class="w-3 h-3 text-green-600" />
+    <span class="sr-only">Added</span>
     """
   end
 
   defp patch_status_icon(%{status: :removed} = assigns) do
     ~H"""
-    <svg
-      class="stroke-[.1] stroke-red-600 fill-red-600 inline"
-      aria-hidden="true"
-      height="16"
-      version="1.1"
-      viewBox="0 0 14 16"
-      width="14"
-    >
-      <title>Removed</title>
-      <path d="M13 1H1C0.45 1 0 1.45 0 2v12c0 0.55 0.45 1 1 1h12c0.55 0 1-0.45 1-1V2c0-0.55-0.45-1-1-1z m0 13H1V2h12v12zM11 9H3V7h8v2z">
-      </path>
-    </svg>
+    <.icon name="fa-plus-solid" class="w-3 h-3 text-red-600" />
+    <span class="sr-only">Removed</span>
     """
   end
 
   defp patch_status_icon(%{status: :renamed} = assigns) do
     ~H"""
-    <svg
-      class="stroke-[.1] stroke-blue-600 fill-blue-600 inline"
-      aria-hidden="true"
-      height="16"
-      version="1.1"
-      viewBox="0 0 14 16"
-      width="14"
-    >
-      <title>Renamed</title>
-      <path d="M6 9H3V7h3V4l5 4-5 4V9z m8-7v12c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h12c0.55 0 1 0.45 1 1z m-1 0H1v12h12V2z">
-      </path>
-    </svg>
+    <.icon name="fa-arrow-right-solid" class="w-3 h-3 text-blue-600" />
+    <span class="sr-only">Renamed</span>
     """
   end
 
   defp patch_status_icon(%{status: _} = assigns) do
     ~H"""
-    <svg
-      class="stroke-[.1] stroke-yellow-600 fill-yellow-600 inline"
-      aria-hidden="true"
-      height="16"
-      version="1.1"
-      viewBox="0 0 14 16"
-      width="14"
-    >
-      <title>Changed</title>
-      <path d="M13 1H1C0.45 1 0 1.45 0 2v12c0 0.55 0.45 1 1 1h12c0.55 0 1-0.45 1-1V2c0-0.55-0.45-1-1-1z m0 13H1V2h12v12zM4 8c0-1.66 1.34-3 3-3s3 1.34 3 3-1.34 3-3 3-3-1.34-3-3z">
-      </path>
-    </svg>
+    <.icon name="fa-plus-minus-solid" class="w-3 h-3 text-yellow-600" />
+    <span class="sr-only">Changed</span>
     """
   end
 end
