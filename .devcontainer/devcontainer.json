@@ -1,0 +1,12 @@
+{
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "features": {
+    "ghcr.io/devcontainers-contrib/features/elixir-asdf:2": {
+		"elixirVersion": "latest",
+		"erlangVersion": "latest"
+	},
+	"ghcr.io/devcontainers-contrib/features/apt-packages:1": {
+		"packages": "inotify-tools"
+	}
+  }
+}
