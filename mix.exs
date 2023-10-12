@@ -40,7 +40,7 @@ defmodule PhxDiff.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:git_diff, github: "aaronrenner/git_diff", branch: "ar-improve-typespecs"},
+      {:git_diff, github: "mononym/git_diff"},
       {:phoenix, "~> 1.7.7"},
       {:phoenix_pubsub, "~> 2.0"},
       {:phoenix_html, "~> 3.0"},
