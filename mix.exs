@@ -56,7 +56,7 @@ defmodule PhxDiff.MixProject do
       {:logster, "~> 1.0"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
-      {:honeybadger, "~> 0.20.0"},
+      {:honeybadger, "~> 0.21.0"},
       # The following are dependencies are needed for OpenTelemetry
       {:tls_certificate_check, "~> 1.11"},
       {:opentelemetry_exporter, "~> 1.2.0"},
