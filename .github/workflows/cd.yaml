@@ -43,12 +43,3 @@ jobs:
         with:
           api_key: ${{ secrets.HONEYBADGER_API_KEY }}
           environment: ${{ secrets.HONEYBADGER_ENV_NAME || inputs.environment }}
-
-  smoke_test:
-    name: Smoke Test
-    needs: [deploy]
-    if: github.repository == 'phoenix-diff/phoenix-diff'
-    uses: ./.github/workflows/smoke_test.yaml
-    with:
-      environment: ${{ inputs.environment }}
-    secrets: inherit
