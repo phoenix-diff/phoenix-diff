@@ -13,3 +13,14 @@ To add a new version of phoenix, run the following mix command
 ```
 mix phx_diff.gen.sample <phoenix_version>
 ```
+
+Since a `mix phx.new` command can be generated with various arguments, we
+should also generate the following samples:
+
+```
+mix phx_diff.gen.sample <phoenix_version> --binary-id
+mix phx_diff.gen.sample <phoenix_version> --no-ecto
+mix phx_diff.gen.sample <phoenix_version> --no-html
+mix phx_diff.gen.sample <phoenix_version> --no-live
+mix phx_diff.gen.sample <phoenix_version> --umbrealla
+```
