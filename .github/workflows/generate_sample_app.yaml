@@ -22,7 +22,7 @@ jobs:
       - run: mix archive.install hex phx_new ${{ inputs.phx_version }} --force
       - run: yes no | mix phx.new sample_app ${{ inputs.phx_new_arguments }}
       - run: find * -printf "%P\n" | tar -czf phx_app.tgz --no-recursion -C * -T -
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: sample-app
           path: phx_app.tgz
