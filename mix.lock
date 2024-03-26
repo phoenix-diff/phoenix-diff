@@ -1,6 +1,6 @@
 %{
   "acceptor_pool": {:hex, :acceptor_pool, "1.0.0", "43c20d2acae35f0c2bcd64f9d2bde267e459f0f3fd23dab26485bf518c281b21", [:rebar3], [], "hexpm", "0cbcd83fdc8b9ad2eee2067ef8b91a14858a5883cb7cd800e6fcd5803e158788"},
-  "boundary": {:hex, :boundary, "0.10.1", "4228e788754ff81a51bec30358095fc6739114ba0e99241a642fef4db6d52e05", [:mix], [], "hexpm", "4019d56c806766e2c467ae12a1dbe60e183373af69c32cc6d1f87d9e0b4c59e5"},
+  "boundary": {:hex, :boundary, "0.10.2", "d68f23551cd7926e7a80b9a47c9f8ac37c1cc15e454f170a312147756eb1fff2", [:mix], [], "hexpm", "7f0ca83ed695b6ab7f9bb342abde5ff0202b1021ee26a26c832f7948444d8590"},
   "bunt": {:hex, :bunt, "1.0.0", "081c2c665f086849e6d57900292b3a161727ab40431219529f13c4ddcf3e7a44", [:mix], [], "hexpm", "dc5f86aa08a5f6fa6b8096f0735c4e76d54ae5c9fa2c143e5a1fc7c1cd9bb6b5"},
   "castore": {:hex, :castore, "1.0.4", "ff4d0fb2e6411c0479b1d965a814ea6d00e51eb2f58697446e9c41a97d940b28", [:mix], [], "hexpm", "9418c1b8144e11656f0be99943db4caf04612e3eaecefb5dae9a2a87565584f8"},
   "certifi": {:hex, :certifi, "2.9.0", "6f2a475689dd47f19fb74334859d460a2dc4e3252a3324bd2111b8f0429e7e21", [:rebar3], [], "hexpm", "266da46bdb06d6c6d35fde799bcb28d36d985d424ad7c08b5bb48f5b5cdd4641"},
