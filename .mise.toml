@@ -1,0 +1,4 @@
+[tools]
+erlang = "26.1"
+elixir = "1.15.6-otp-26"
+node = "18.20.0"
