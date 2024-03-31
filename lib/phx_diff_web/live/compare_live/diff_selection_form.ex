@@ -24,31 +24,29 @@ defmodule PhxDiffWeb.CompareLive.DiffSelectionForm do
         class="mt-8 mb-11 sm:my-12 sm:inline-grid gap-4 grid-cols-2 grid-rows-1"
         phx-target={@myself}
       >
-        <div id="source-selector" class="mb-3 sm:mb-0">
-          <div>
-            <h4 class="uppercase underline text-sm sm:mb-2">Source</h4>
-          </div>
+        <fieldset id="source-selector" class="mb-3 sm:mb-0">
+          <legend class="uppercase underline text-sm sm:mb-2 w-full">Source</legend>
           <.inputs_for :let={source_form} field={@form[:source]}>
-            <.version_select field={source_form[:version]} label="Source" versions={@all_versions} />
+            <.version_select field={source_form[:version]} label="Version" versions={@all_versions} />
             <.phx_new_arg_list_preset_select
+              label="Arguments"
               field={source_form[:variant]}
               preset_options={@source_variants}
             />
           </.inputs_for>
-        </div>
+        </fieldset>
 
-        <div id="target-selector" class="mb-3 sm:mb-0">
-          <div>
-            <h4 class="uppercase underline text-sm sm:mb-2">Target</h4>
-          </div>
+        <fieldset id="target-selector" class="mb-3 sm:mb-0">
+          <legend class="uppercase underline text-sm sm:mb-2 w-full">Target</legend>
           <.inputs_for :let={target_form} field={@form[:target]}>
-            <.version_select field={target_form[:version]} label="Target" versions={@all_versions} />
+            <.version_select field={target_form[:version]} label="Version" versions={@all_versions} />
             <.phx_new_arg_list_preset_select
+              label="Arguments"
               field={target_form[:variant]}
               preset_options={@target_variants}
             />
           </.inputs_for>
-        </div>
+        </fieldset>
       </.form>
     </div>
     """

@@ -18,7 +18,7 @@ defmodule PhxDiffWeb.CompareLive.DiffSelectionComponents do
     <.input
       field={@field}
       type="select"
-      label="Version"
+      label={@label}
       options={@versions}
       label_class="sr-only uppercase underline text-sm pr-2 sm:text-base"
       wrapper_class="inline-block sm:inline-flex sm:items-center"
@@ -35,12 +35,12 @@ defmodule PhxDiffWeb.CompareLive.DiffSelectionComponents do
     required: true
 
   attr :preset_options, :list, doc: "List of preset options", required: true
-  attr :label, :string, doc: "The label to use on this component"
+  attr :label, :string, doc: "The label to use on this component", required: true
 
   def phx_new_arg_list_preset_select(assigns) do
     ~H"""
     <.input
-      label="Arguments"
+      label={@label}
       field={@field}
       type="select"
       options={@preset_options}
