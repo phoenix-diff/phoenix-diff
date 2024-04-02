@@ -43,3 +43,11 @@ jobs:
         with:
           api_key: ${{ secrets.HONEYBADGER_API_KEY }}
           environment: ${{ secrets.HONEYBADGER_ENV_NAME || inputs.environment }}
+
+  smoke_test:
+    name: Smoke Test
+    needs: [deploy]
+    if: github.repository == 'phoenix-diff/phoenix-diff'
+    uses: ./.github/workflows/playwright.yml
+    with:
+      base_url: ${{ needs.deploy.outputs.site_url }}
