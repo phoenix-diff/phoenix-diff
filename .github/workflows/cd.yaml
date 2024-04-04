@@ -35,7 +35,14 @@ jobs:
       - name: Look up environment url
         id: lookup_environment_url
         run: |
-          echo "base_url=https://$(flyctl status --config $FLY_CONFIG_PATH -j | jq -r 'if .Hostname == "phoenixdiff-web-prod.fly.dev" then "phoenixdiff.org" else .Hostname end')" >> $GITHUB_OUTPUT
+          if [ -n "$BASE_URL" ]; then
+            echo base_url="$BASE_URL" >> $GITHUB_OUTPUT
+          else
+            echo base_url="https://$(flyctl status --config $FLY_CONFIG_PATH -j | jq -r .Hostname)" >> $GITHUB_OUTPUT
+          fi
+        env:
+          BASE_URL: ${{vars.BASE_URL}}
+
       - name: Deploy to fly
         run: flyctl deploy -c "$FLY_CONFIG_PATH" --remote-only
       - name: Notify Honeybadger
