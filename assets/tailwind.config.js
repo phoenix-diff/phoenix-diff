@@ -9,8 +9,8 @@ const defaultTheme = require("tailwindcss/defaultTheme")
 module.exports = {
     content: [
         "./js/**/*.js",
-        "../lib/*_web.ex",
-        "../lib/*_web/**/*.*ex"
+        "../lib/phx_diff_web.ex",
+        "../lib/phx_diff_web/**/*.*ex"
     ],
     theme: {
         extend: {
@@ -93,7 +93,7 @@ module.exports = {
             ["-brand", "/brands"]
         ]
         icons.forEach(([suffix, dir]) => {
-            fs.readdirSync(path.join(iconsDir, dir)).map(file => {
+            fs.readdirSync(path.join(iconsDir, dir)).forEach(file => {
             let name = path.basename(file, ".svg") + suffix
             values[name] = {name, fullPath: path.join(iconsDir, dir, file)}
             })
