@@ -51,3 +51,4 @@ jobs:
     uses: ./.github/workflows/playwright.yml
     with:
       base_url: ${{ needs.deploy.outputs.site_url }}
+      environment: ${{ inputs.environment }}

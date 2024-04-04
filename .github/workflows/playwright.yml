@@ -16,6 +16,10 @@ on:
         description: "Url of server to run tests on"
         type: string
         required: true
+      environment:
+        description: "Name of environment to be used with uploading artifacts"
+        type: string
+        required: false
 
 jobs:
   test:
@@ -41,6 +45,6 @@ jobs:
     - uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: playwright-report
+        name: playwright-report-${{ inputs.environment }}
         path: playwright/playwright-report/
         retention-days: 30
