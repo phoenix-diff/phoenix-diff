@@ -7,7 +7,8 @@ defmodule PhxDiffWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_phx_diff_key",
-    signing_salt: "DJx5PWF3"
+    signing_salt: "DJx5PWF3",
+    same_site: "Lax"
   ]
 
   socket "/socket", PhxDiffWeb.UserSocket,
@@ -20,7 +21,8 @@ defmodule PhxDiffWeb.Endpoint do
       # limit
       timeout: 45_000,
       connect_info: [session: @session_options]
-    ]
+    ],
+    longpoll: [connect_info: [session: @session_options]]
 
   # Serve at "/" the static files from "priv/static" directory.
   #

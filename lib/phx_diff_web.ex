@@ -87,11 +87,7 @@ defmodule PhxDiffWeb do
   defp html_helpers do
     quote do
       # HTML escaping functionality
-      # import Phoenix.HTML
-
-      # Temporary
-      use Phoenix.HTML
-
+      import Phoenix.HTML
       # Core UI components and translation
       import PhxDiffWeb.CoreComponents
       import PhxDiffWeb.Gettext
