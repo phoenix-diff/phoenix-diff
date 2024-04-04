@@ -85,7 +85,7 @@ module.exports = {
         // See your `CoreComponents.icon/1` for more information.
         //
         plugin(function({matchComponents, theme}) {
-        let iconsDir = path.join(__dirname, "./vendor/font-awesome/svgs")
+        let iconsDir = path.join(__dirname, "../deps/font_awesome/svgs")
         let values = {}
         let icons = [
             ["", "/regular"],

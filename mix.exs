@@ -73,6 +73,16 @@ defmodule PhxDiff.MixProject do
        app: false,
        compile: false,
        depth: 1},
+      {
+        :font_awesome,
+        # v6.5.2
+        github: "FortAwesome/Font-Awesome",
+        ref: "c0f460dca7f7688761120415ff3c9cf7f73119be",
+        sparse: "svgs",
+        app: false,
+        compile: false,
+        depth: 1
+      },
       {:ex_doc, "~> 0.27", only: :dev, runtime: false},
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
