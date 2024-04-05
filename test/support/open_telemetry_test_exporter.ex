@@ -93,10 +93,18 @@ defmodule PhxDiff.TestSupport.OpenTelemetryTestExporter do
         {key, :undefined}
 
       {:attributes, val} ->
-        {:attributes, :otel_attributes.map(val)}
+        {:attributes, val |> :otel_attributes.map() |> Map.new(&atoms_to_string/1)}
 
       {key, val} ->
         {key, val}
     end)
   end
+
+  defp atoms_to_string({key, val}) do
+    {to_string(key), atom_value_to_string(val)}
+  end
+
+  defp atom_value_to_string(nil), do: nil
+  defp atom_value_to_string(value) when is_atom(value), do: to_string(value)
+  defp atom_value_to_string(value), do: value
 end
