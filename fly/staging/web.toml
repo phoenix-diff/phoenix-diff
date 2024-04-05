@@ -1,44 +1,44 @@
-# fly.toml app configuration file generated for phoenixdiff-web-staging on 2023-05-31T14:57:05-06:00
+# fly.toml app configuration file generated for phoenixdiff-web-staging on 2024-04-04T22:49:07-06:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = "phoenixdiff-web-staging"
-primary_region = "den"
-kill_signal = "SIGTERM"
-kill_timeout = "5s"
+app = 'phoenixdiff-web-staging'
+primary_region = 'den'
+kill_signal = 'SIGTERM'
+kill_timeout = '5s'
 
 [experimental]
   auto_rollback = true
 
 [env]
-  DEPLOYMENT_ENV = "Staging"
-  ECTO_IPV6 = "true"
-  ERL_AFLAGS = "-proto_dist inet6_tcp"
-  OTEL_EXPORTER = "grafana-cloud"
-  PORT = "8080"
-  URL_HOST = "phoenixdiff-web-staging.fly.dev"
+  DEPLOYMENT_ENV = 'Staging'
+  ECTO_IPV6 = 'true'
+  ERL_AFLAGS = '-proto_dist inet6_tcp'
+  OTEL_EXPORTER = 'grafana-cloud'
+  PORT = '8080'
+  URL_HOST = 'phoenixdiff-web-staging.fly.dev'
 
 [[services]]
-  protocol = "tcp"
+  protocol = 'tcp'
   internal_port = 8080
-  processes = ["app"]
+  processes = ['app']
 
-  [[services.ports]]
+[[services.ports]]
     port = 80
-    handlers = ["http"]
+    handlers = ['http']
     force_https = true
 
-  [[services.ports]]
+[[services.ports]]
     port = 443
-    handlers = ["tls", "http"]
+    handlers = ['tls', 'http']
+
   [services.concurrency]
-    type = "connections"
+    type = 'connections'
     hard_limit = 25
     soft_limit = 20
 
-  [[services.tcp_checks]]
-    interval = "15s"
-    timeout = "2s"
-    grace_period = "1s"
-    restart_limit = 0
+[[services.tcp_checks]]
+    interval = '15s'
+    timeout = '2s'
+    grace_period = '1s'
