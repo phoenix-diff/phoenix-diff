@@ -22,19 +22,10 @@ kill_timeout = '5s'
   internal_port = 8686
   processes = ['app']
 
-[[services.ports]]
-    port = 80
-    handlers = ['http']
-    force_https = true
-
-[[services.ports]]
-    port = 443
-    handlers = ['tls', 'http']
-
-  [services.concurrency]
-    type = 'connections'
-    hard_limit = 25
-    soft_limit = 20
+[services.concurrency]
+  type = 'connections'
+  hard_limit = 25
+  soft_limit = 20
 
 [[services.tcp_checks]]
     interval = '15s'
