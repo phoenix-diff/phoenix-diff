@@ -51,7 +51,7 @@ defmodule PhxDiff.MixProject do
       {:phoenix_ecto, "~> 4.4"},
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
-      {:plug_cowboy, "~> 2.5"},
+      {:bandit, "~> 1.4"},
       {:logster, "~> 1.0"},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
