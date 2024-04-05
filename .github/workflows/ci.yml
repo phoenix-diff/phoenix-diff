@@ -11,7 +11,7 @@ jobs:
         id: beam
         with:
           otp-version: '26.2.3'
-          elixir-version: '1.15.7'
+          elixir-version: '1.16.2'
       - name: Restore the build cache
         uses: actions/cache/restore@v4
         id: build_cache
