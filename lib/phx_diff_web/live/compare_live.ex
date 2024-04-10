@@ -44,6 +44,7 @@ defmodule PhxDiffWeb.CompareLive do
     |> assign(:source_app_spec, source_app_spec)
     |> assign(:target_app_spec, target_app_spec)
     |> assign(:page_title, page_title(source_app_spec, target_app_spec))
+    |> assign(:target_github_url, target_github_url(target_app_spec))
     |> assign(:source_version, source_app_spec.phoenix_version)
     |> assign(:target_version, target_app_spec.phoenix_version)
   end
@@ -65,4 +66,16 @@ defmodule PhxDiffWeb.CompareLive do
   defp page_title(%AppSpecification{} = source, %AppSpecification{} = target) do
     "v#{source.phoenix_version} to v#{target.phoenix_version}"
   end
+
+  @github_url "https://github.com/phoenix-diff/phoenix-diff/tree/master/priv/data/sample-app/"
+  defp target_github_url(%{phx_new_arguments: arguments, phoenix_version: version}) do
+    @github_url <> Path.join(to_string(version), phx_argument_path(arguments))
+  end
+
+  defp phx_argument_path(["--no-html"]), do: "no-html"
+  defp phx_argument_path(["--no-ecto"]), do: "no-ecto"
+  defp phx_argument_path(["--no-live"]), do: "no-live"
+  defp phx_argument_path(["--binary-id"]), do: "binary-id"
+  defp phx_argument_path(["--umbrella"]), do: "umbrella"
+  defp phx_argument_path(_arguments), do: "default"
 end
