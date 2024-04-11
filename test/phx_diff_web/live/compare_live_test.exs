@@ -30,10 +30,10 @@ defmodule PhxDiffWeb.CompareLiveTest do
       }
     })
 
-    assert_patch(
-      view,
-      ~p"/compare/1.5.0 --live...1.5.1 --live"
-    )
+    assert_patch(view, ~p"/compare/1.5.0 --live...1.5.1 --live")
+
+    assert_data_attrbute_rendered(view, "data-source-url")
+    assert_data_attrbute_rendered(view, "data-target-url")
 
     assert page_title(view) =~ "v1.5.0 to v1.5.1"
 
@@ -251,6 +251,15 @@ defmodule PhxDiffWeb.CompareLiveTest do
       |> List.first()
 
     assert diff_from_view == expected_diff
+  end
+
+  defp assert_data_attrbute_rendered(view, data_attribute) do
+    rendered_result_container =
+      element(view, ".diff-results-container")
+      |> render()
+      |> Floki.parse_fragment!()
+
+    assert [_ | _] = Floki.attribute(rendered_result_container, data_attribute)
   end
 
   defp diff_results_container_display_mode(view) do
