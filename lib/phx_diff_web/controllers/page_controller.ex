@@ -5,6 +5,10 @@ defmodule PhxDiffWeb.PageController do
   alias PhxDiffWeb.DiffSelections.DiffSelection
   alias PhxDiffWeb.DiffSpecification
 
+  def index(conn, params) when map_size(params) == 0 do
+    redirect(conn, to: ~p"/compare")
+  end
+
   def index(conn, params) do
     params =
       Enum.reduce(params, %{}, fn
@@ -29,17 +33,6 @@ defmodule PhxDiffWeb.PageController do
       |> DiffSelection.changeset(params)
       |> DiffSelections.find_valid_diff_selection()
       |> build_diff_specification()
-
-    redirect(conn, to: ~p"/compare/#{diff_specification}")
-  end
-
-  def compare(conn, _params) do
-    # Redirect to default
-    diff_specification =
-      %DiffSelection{}
-      |> DiffSelection.changeset(%{})
-      |> DiffSelections.find_valid_diff_selection()
-      |> DiffSelections.build_diff_specification()
 
     redirect(conn, to: ~p"/compare/#{diff_specification}")
   end

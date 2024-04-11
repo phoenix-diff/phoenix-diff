@@ -19,34 +19,41 @@ defmodule PhxDiffWeb.CompareLive.DiffSelectionForm do
         for={@form}
         as={:diff_selection}
         id={@id}
-        phx-change="diff-changed"
+        phx-change="selection-change"
+        phx-submit="selection-submit"
         phx-hook="DiffSelectorComponent"
-        class="mt-8 mb-11 sm:my-12 sm:inline-grid gap-4 grid-cols-2 grid-rows-1"
+        class="mt-8 mb-11 sm:my-12"
         phx-target={@myself}
       >
-        <fieldset id="source-selector" class="mb-3 sm:mb-0">
-          <legend class="uppercase underline text-sm sm:mb-2 w-full">Source</legend>
-          <.inputs_for :let={source_form} field={@form[:source]}>
-            <.version_select field={source_form[:version]} label="Version" versions={@all_versions} />
-            <.phx_new_arg_list_preset_select
-              label="Arguments"
-              field={source_form[:variant]}
-              preset_options={@source_variants}
-            />
-          </.inputs_for>
-        </fieldset>
+        <div class="mb-4 sm:inline-grid gap-4 grid-cols-2 grid-rows-1">
+          <fieldset id="source-selector" class="mb-3 sm:mb-0">
+            <legend class="uppercase underline text-sm sm:mb-2 w-full">Source</legend>
+            <.inputs_for :let={source_form} field={@form[:source]}>
+              <.version_select field={source_form[:version]} label="Version" versions={@all_versions} />
+              <.phx_new_arg_list_preset_select
+                label="Arguments"
+                field={source_form[:variant]}
+                preset_options={@source_variants}
+              />
+            </.inputs_for>
+          </fieldset>
 
-        <fieldset id="target-selector" class="mb-3 sm:mb-0">
-          <legend class="uppercase underline text-sm sm:mb-2 w-full">Target</legend>
-          <.inputs_for :let={target_form} field={@form[:target]}>
-            <.version_select field={target_form[:version]} label="Version" versions={@all_versions} />
-            <.phx_new_arg_list_preset_select
-              label="Arguments"
-              field={target_form[:variant]}
-              preset_options={@target_variants}
-            />
-          </.inputs_for>
-        </fieldset>
+          <fieldset id="target-selector" class="mb-3 sm:mb-0">
+            <legend class="uppercase underline text-sm sm:mb-2 w-full">Target</legend>
+            <.inputs_for :let={target_form} field={@form[:target]}>
+              <.version_select field={target_form[:version]} label="Version" versions={@all_versions} />
+              <.phx_new_arg_list_preset_select
+                label="Arguments"
+                field={target_form[:variant]}
+                preset_options={@target_variants}
+              />
+            </.inputs_for>
+          </fieldset>
+        </div>
+
+        <div class="text-center">
+          <button class="px-4 py-2 border border-white">Get Diff!</button>
+        </div>
       </.form>
     </div>
     """
@@ -89,7 +96,31 @@ defmodule PhxDiffWeb.CompareLive.DiffSelectionForm do
   end
 
   @impl true
-  def handle_event("diff-changed", %{"diff_selection" => params}, socket) do
+  def handle_event("selection-change", %{"diff_selection" => params}, socket) do
+    changeset = DiffSelection.changeset(socket.assigns.diff_selection, params)
+
+    diff_specification =
+      changeset
+      |> DiffSelections.find_valid_diff_selection()
+      |> DiffSelections.build_diff_specification()
+
+    socket =
+      socket
+      |> assign(:source_app_spec, diff_specification.source)
+      |> assign(
+        :source_variants,
+        variant_options_for_version(diff_specification.source.phoenix_version)
+      )
+      |> assign(:target_app_spec, diff_specification.target)
+      |> assign(
+        :target_variants,
+        variant_options_for_version(diff_specification.target.phoenix_version)
+      )
+
+    {:noreply, socket}
+  end
+
+  def handle_event("selection-submit", %{"diff_selection" => params}, socket) do
     changeset = DiffSelection.changeset(socket.assigns.diff_selection, params)
 
     diff_specification =

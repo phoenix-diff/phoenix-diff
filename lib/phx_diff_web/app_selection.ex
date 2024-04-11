@@ -31,6 +31,10 @@ defmodule PhxDiffWeb.AppSelection do
     }
   end
 
+  def new(_app_specification) do
+    %__MODULE__{}
+  end
+
   def changeset(data, params) do
     data
     |> cast(params, [:version, :variant])

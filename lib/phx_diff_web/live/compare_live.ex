@@ -5,6 +5,8 @@ defmodule PhxDiffWeb.CompareLive do
   alias Ecto.Changeset
   alias Phoenix.LiveView.Socket
   alias PhxDiff.AppSpecification
+  alias PhxDiffWeb.DiffSelections
+  alias PhxDiffWeb.DiffSelections.DiffSelection
 
   defmodule NotFoundError do
     defexception plug_status: 404
@@ -36,6 +38,22 @@ defmodule PhxDiffWeb.CompareLive do
       _ ->
         raise NotFoundError
     end
+  end
+
+  def handle_params(_params, _uri, socket) do
+    diff_specification =
+      %DiffSelection{}
+      |> DiffSelection.changeset(%{})
+      |> DiffSelections.find_valid_diff_selection()
+      |> DiffSelections.build_diff_specification()
+
+    socket =
+      socket
+      |> assign_app_specs(diff_specification.source, diff_specification.target)
+      |> assign(:diff, nil)
+      |> assign(:no_changes?, true)
+
+    {:noreply, socket}
   end
 
   @spec assign_app_specs(Socket.t(), AppSpecification.t(), AppSpecification.t()) :: Socket.t()

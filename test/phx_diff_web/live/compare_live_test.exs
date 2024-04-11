@@ -23,7 +23,7 @@ defmodule PhxDiffWeb.CompareLiveTest do
 
     view
     |> element("#diff-selection-form")
-    |> render_change(%{
+    |> render_submit(%{
       "diff_selection" => %{
         "source" => %{"version" => "1.5.0"},
         "target" => %{"version" => "1.5.1"}

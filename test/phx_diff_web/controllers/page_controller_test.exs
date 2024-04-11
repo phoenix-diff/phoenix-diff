@@ -118,24 +118,6 @@ defmodule PhxDiffWeb.PageControllerTest do
     end
   end
 
-  describe "GET /compare" do
-    test "redirects to /compare/<prev>...<latest>", %{conn: conn} do
-      path =
-        conn
-        |> get(~p"/compare")
-        |> redirected_to()
-
-      {:ok, view, _html} = conn |> live(path)
-
-      form_data = get_form_data(view)
-
-      assert form_data.source.version == PhxDiff.previous_release_version() |> to_string()
-      assert form_data.source.variant == "default"
-      assert form_data.target.version == PhxDiff.latest_version() |> to_string()
-      assert form_data.target.variant == "default"
-    end
-  end
-
   defp get_form_data(view) do
     document =
       view
