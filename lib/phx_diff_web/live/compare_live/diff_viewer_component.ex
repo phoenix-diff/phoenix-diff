@@ -36,7 +36,8 @@ defmodule PhxDiffWeb.CompareLive.DiffViewerComponent do
           phx-hook="DiffViewerComponent"
           data-view-type={@view_type}
           data-diff={@diff}
-          data-target-github-url={@target_github_url}
+          data-source-url={@source_url}
+          data-target-url={@target_url}
         >
         </div>
       </.form>
