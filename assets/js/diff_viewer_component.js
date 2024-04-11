@@ -12,7 +12,6 @@ const DiffViewerComponent = {
         drawFileList: false,
         outputFormat: this.el.getAttribute("data-view-type"),
         highlight: true,
-        fileContentToggle: false,
         matching: 'words'
     });
 
