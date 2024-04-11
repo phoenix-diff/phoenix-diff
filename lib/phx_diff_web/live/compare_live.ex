@@ -5,6 +5,7 @@ defmodule PhxDiffWeb.CompareLive do
   alias Ecto.Changeset
   alias Phoenix.LiveView.Socket
   alias PhxDiff.AppSpecification
+  alias PhxDiffWeb.DiffSelections.DiffSelection.PhxNewArgListPresets
 
   defmodule NotFoundError do
     defexception plug_status: 404
@@ -72,10 +73,10 @@ defmodule PhxDiffWeb.CompareLive do
     @github_url <> Path.join(to_string(version), phx_argument_path(arguments))
   end
 
-  defp phx_argument_path(["--no-html"]), do: "no-html"
-  defp phx_argument_path(["--no-ecto"]), do: "no-ecto"
-  defp phx_argument_path(["--no-live"]), do: "no-live"
-  defp phx_argument_path(["--binary-id"]), do: "binary-id"
-  defp phx_argument_path(["--umbrella"]), do: "umbrella"
-  defp phx_argument_path(_arguments), do: "default"
+  defp phx_argument_path(arguments) do
+    case PhxNewArgListPresets.preset_from_arg_list(arguments) do
+      {:ok, %PhxNewArgListPresets.PhxNewArgListPreset{path: path}} -> path
+      _ -> "default"
+    end
+  end
 end
