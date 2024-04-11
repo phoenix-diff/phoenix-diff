@@ -15,12 +15,7 @@ defmodule PhxDiffWeb.DiffSelections.DiffSelection.PhxNewArgListPresets do
 
   for {id, arg_list} <- @mappings do
     def fetch(unquote(id)) do
-      {:ok,
-       %PhxNewArgListPreset{
-         id: unquote(id),
-         path: PhxNewArgListPreset.path(unquote(id)),
-         arg_list: unquote(arg_list)
-       }}
+      {:ok, %PhxNewArgListPreset{id: unquote(id), arg_list: unquote(arg_list)}}
     end
   end
 
@@ -43,12 +38,7 @@ defmodule PhxDiffWeb.DiffSelections.DiffSelection.PhxNewArgListPresets do
 
   for {id, arg_list} <- @mappings do
     def preset_from_arg_list(unquote(arg_list)) do
-      {:ok,
-       %PhxNewArgListPreset{
-         id: unquote(id),
-         path: PhxNewArgListPreset.path(unquote(id)),
-         arg_list: unquote(arg_list)
-       }}
+      {:ok, %PhxNewArgListPreset{id: unquote(id), arg_list: unquote(arg_list)}}
     end
   end
 

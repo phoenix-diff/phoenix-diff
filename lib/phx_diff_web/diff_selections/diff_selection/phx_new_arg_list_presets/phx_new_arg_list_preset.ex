@@ -4,13 +4,12 @@ defmodule PhxDiffWeb.DiffSelections.DiffSelection.PhxNewArgListPresets.PhxNewArg
   @type id :: atom
   @type t :: %__MODULE__{
           id: id,
-          path: String.t(),
           arg_list: [String.t()]
         }
 
-  defstruct [:id, :path, :arg_list]
+  defstruct [:id, :arg_list]
 
-  def path(id) do
+  def path(%__MODULE__{id: id}) do
     id
     |> to_string()
     |> String.replace("_", "-")

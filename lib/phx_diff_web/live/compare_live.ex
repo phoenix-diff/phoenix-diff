@@ -76,7 +76,7 @@ defmodule PhxDiffWeb.CompareLive do
 
   defp phx_argument_path(arguments) do
     case PhxNewArgListPresets.preset_from_arg_list(arguments) do
-      {:ok, %PhxNewArgListPresets.PhxNewArgListPreset{path: path}} -> path
+      {:ok, preset} -> PhxNewArgListPresets.PhxNewArgListPreset.path(preset)
       _ -> "default"
     end
   end
