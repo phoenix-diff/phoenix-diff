@@ -27,7 +27,6 @@ const DiffViewerComponent = {
   },
   // https://github.com/rtfpessoa/diff2html/blob/master/src/templates/generic-file-path.mustache
   _genericFilePathTemplate(sourceUrl, targetUrl) {
-    console.log({sourceUrl, targetUrl})
     return `
         <div class="w-full flex justify-between">
           <div class="d2h-file-name-wrapper">
