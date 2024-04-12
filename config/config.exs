@@ -18,6 +18,10 @@ config :phx_diff, PhxDiffWeb.Endpoint,
   pubsub_server: PhxDiff.PubSub,
   live_view: [signing_salt: "NpCfQvr9hr3z/LRwF8WZL5LmKP0wC9e3"]
 
+config :phx_diff,
+  github_sample_app_base_url:
+    "https://github.com/phoenix-diff/phoenix-diff/tree/master/priv/data/sample-app"
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.20.2",

@@ -8,10 +8,4 @@ defmodule PhxDiffWeb.DiffSelections.DiffSelection.PhxNewArgListPresets.PhxNewArg
         }
 
   defstruct [:id, :arg_list]
-
-  def path(%__MODULE__{id: id}) do
-    id
-    |> to_string()
-    |> String.replace("_", "-")
-  end
 end

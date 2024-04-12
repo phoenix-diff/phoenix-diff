@@ -5,7 +5,6 @@ defmodule PhxDiffWeb.CompareLive do
   alias Ecto.Changeset
   alias Phoenix.LiveView.Socket
   alias PhxDiff.AppSpecification
-  alias PhxDiffWeb.DiffSelections.DiffSelection.PhxNewArgListPresets
 
   defmodule NotFoundError do
     defexception plug_status: 404
@@ -68,15 +67,7 @@ defmodule PhxDiffWeb.CompareLive do
     "v#{source.phoenix_version} to v#{target.phoenix_version}"
   end
 
-  @github_url "https://github.com/phoenix-diff/phoenix-diff/tree/master/priv/data/sample-app/"
-  defp github_url(%{phx_new_arguments: arguments, phoenix_version: version}) do
-    @github_url <> Path.join(to_string(version), phx_argument_path(arguments))
-  end
-
-  defp phx_argument_path(arguments) do
-    case PhxNewArgListPresets.preset_from_arg_list(arguments) do
-      {:ok, preset} -> PhxNewArgListPresets.PhxNewArgListPreset.path(preset)
-      _ -> "default"
-    end
+  defp github_url(%AppSpecification{} = app_spec) do
+    PhxDiff.get_github_sample_app_base_url(app_spec)
   end
 end

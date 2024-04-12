@@ -66,6 +66,12 @@ defmodule PhxDiff do
   defdelegate generate_sample_app(app_spec), to: PhxDiff.Diffs
 
   @doc """
+  Fetch the github url to the sample app for the given app specification
+  """
+  @spec get_github_sample_app_base_url(AppSpecification.t()) :: String.t()
+  defdelegate get_github_sample_app_base_url(app_spec), to: PhxDiff.Diffs
+
+  @doc """
   Lists the known app specs for a specific phoenix version
   """
   @spec list_sample_apps_for_version(Version.t()) :: [AppSpecification.t()]
