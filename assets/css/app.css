@@ -9,10 +9,6 @@ a.d2h-file-switch {
   @apply text-brand text-sm font-bold;
 }
 
-.d2h-file-name-wrapper {
-  @apply w-auto;
-}
-
 .button-group-toggle input:checked + label{
   @apply text-white bg-brand;
 }

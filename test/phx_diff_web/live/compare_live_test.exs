@@ -142,19 +142,12 @@ defmodule PhxDiffWeb.CompareLiveTest do
   test "renders source and target url data attributes", %{conn: conn} do
     {:ok, view, _html} = live(conn, ~p"/compare/1.5.9...1.5.9 --live")
 
-    [data_source_url] =
-      element(view, ".diff-results-container")
-      |> render()
-      |> Floki.parse_fragment!()
-      |> Floki.attribute("data-source-url")
-
     [data_target_url] =
       element(view, ".diff-results-container")
       |> render()
       |> Floki.parse_fragment!()
       |> Floki.attribute("data-target-url")
 
-    assert data_source_url =~ "1.5.9/default"
     assert data_target_url =~ "1.5.9/live"
   end
 

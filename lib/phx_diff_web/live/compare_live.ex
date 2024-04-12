@@ -45,7 +45,6 @@ defmodule PhxDiffWeb.CompareLive do
     |> assign(:source_app_spec, source_app_spec)
     |> assign(:target_app_spec, target_app_spec)
     |> assign(:page_title, page_title(source_app_spec, target_app_spec))
-    |> assign(:source_url, github_url(source_app_spec))
     |> assign(:target_url, github_url(target_app_spec))
     |> assign(:source_version, source_app_spec.phoenix_version)
     |> assign(:target_version, target_app_spec.phoenix_version)
