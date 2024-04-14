@@ -209,7 +209,7 @@ defmodule PhxDiffWeb.CoreComponents do
     />
     <label
       for={@id}
-      class="border border-brand px-4 py-2 first-of-type:rounded-l-md last-of-type:rounded-r-md text-brand bg-white"
+      class="border border-brand px-4 py-2 first-of-type:rounded-l-md last-of-type:rounded-r-md text-brand bg-white cursor-pointer"
     >
       <%= render_slot(@inner_block) %>
     </label>

@@ -36,6 +36,7 @@ defmodule PhxDiffWeb.CompareLive.DiffViewerComponent do
           phx-hook="DiffViewerComponent"
           data-view-type={@view_type}
           data-diff={@diff}
+          data-target-url={@target_url}
         >
         </div>
       </.form>

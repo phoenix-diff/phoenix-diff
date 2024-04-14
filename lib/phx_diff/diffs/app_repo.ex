@@ -70,6 +70,12 @@ defmodule PhxDiff.Diffs.AppRepo do
     end
   end
 
+  @spec get_github_sample_app_base_url(AppSpecification.t()) :: String.t()
+  def get_github_sample_app_base_url(%AppSpecification{} = app_spec) do
+    PhxDiff.Config.github_sample_app_base_url()
+    |> Path.join(app_spec_path(app_spec))
+  end
+
   defp store_generated_app(app_spec, source_path) do
     destination_path = app_path(app_spec)
 
