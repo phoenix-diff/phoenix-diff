@@ -21,38 +21,50 @@ defmodule PhxDiffWeb.CompareLive.DiffSelectionForm do
         id={@id}
         phx-change="diff-changed"
         phx-hook="DiffSelectorComponent"
-        class="mt-8 mb-11 sm:my-12 sm:inline-grid gap-4 grid-cols-2 grid-rows-1"
+        class="mt-8"
         phx-target={@myself}
       >
-        <fieldset id="source-selector" class="mb-3 sm:mb-0">
-          <legend class="uppercase underline text-sm sm:mb-2 w-full">Source</legend>
-          <.inputs_for :let={source_form} field={@form[:source]}>
-            <.version_select field={source_form[:version]} label="Version" versions={@all_versions} />
-            <.phx_new_arg_list_preset_select
-              label="Arguments"
-              field={source_form[:variant]}
-              preset_options={@source_variants}
-            />
-          </.inputs_for>
-        </fieldset>
+        <div class="mb-8 sm:inline-grid gap-4 grid-cols-2 grid-rows-1">
+          <fieldset id="source-selector" class="mb-3 sm:mb-0">
+            <legend class="uppercase underline text-sm sm:mb-2 w-full">Source</legend>
+            <.inputs_for :let={source_form} field={@form[:source]}>
+              <.version_select field={source_form[:version]} label="Version" versions={@all_versions} />
+              <.phx_new_arg_list_preset_select
+                label="Arguments"
+                field={source_form[:variant]}
+                preset_options={@source_variants}
+              />
+            </.inputs_for>
+          </fieldset>
 
-        <fieldset id="target-selector" class="mb-3 sm:mb-0">
-          <legend class="uppercase underline text-sm sm:mb-2 w-full">Target</legend>
-          <.inputs_for :let={target_form} field={@form[:target]}>
-            <.version_select field={target_form[:version]} label="Version" versions={@all_versions} />
-            <.phx_new_arg_list_preset_select
-              label="Arguments"
-              field={target_form[:variant]}
-              preset_options={@target_variants}
-            />
-          </.inputs_for>
-        </fieldset>
+          <fieldset id="target-selector" class="mb-3 sm:mb-0">
+            <legend class="uppercase underline text-sm sm:mb-2 w-full">Target</legend>
+            <.inputs_for :let={target_form} field={@form[:target]}>
+              <.version_select field={target_form[:version]} label="Version" versions={@all_versions} />
+              <.phx_new_arg_list_preset_select
+                label="Arguments"
+                field={target_form[:variant]}
+                preset_options={@target_variants}
+              />
+            </.inputs_for>
+          </fieldset>
+        </div>
+
+        <div class="text-center">
+          <button
+            type="button"
+            class="border rounded-md bg-international-orange-700 font-semibold px-3 py-2 text-white shadow-sm hover:bg-international-orange-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-international-orange-500"
+          >
+            Generate Diff
+          </button>
+        </div>
       </.form>
     </div>
     """
   end
 
   @impl true
+  @spec update(any(), any()) :: {:ok, any()}
   def update(assigns, socket) do
     socket =
       assigns

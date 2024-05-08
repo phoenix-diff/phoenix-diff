@@ -16,6 +16,21 @@ module.exports = {
         extend: {
             colors: {
                 brand: "#FD4F00",
+                // From https://uicolors.app
+                'international-orange': {
+                  '50': '#fff6ec',
+                  '100': '#ffecd3',
+                  '200': '#ffd4a5',
+                  '300': '#ffb66d',
+                  '400': '#ff8b32',
+                  '500': '#ff6a0a',
+                  '600': '#fd4f00',
+                  '700': '#cc3702',
+                  '800': '#a12b0b',
+                  '900': '#82260c',
+                  '950': '#461004',
+                }
+
             },
             fontFamily: {
                 'sans': ['Open Sans', ...defaultTheme.fontFamily.sans]

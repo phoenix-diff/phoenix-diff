@@ -1,6 +1,6 @@
 <div id="landing-page" class={"group #{if @no_changes?, do: "phx-diff-loaded-diff"}"}>
   <section id="input-section" class="bg-gradient-radial from-orange-500 to-red-500 text-white">
-    <div class="container mx-auto p-8 pt-10 text-center">
+    <div class="container mx-auto px-8 py-10 text-center">
       <h3 class="text-2xl font-light">
         See the changes needed to upgrade your Phoenix application
       </h3>
@@ -11,16 +11,6 @@
         source_app_spec={@source_app_spec}
         target_app_spec={@target_app_spec}
       />
-
-      <div>
-        <div class="inline-block border border-white px-5 py-2 text-xs sm:text-base">
-          If you found this tool useful, please
-          <.icon name="fa-star-solid" class="h-3 w-3 sm:h-4 sm:w-4 align-[-.125rem]" /> our
-          <a class="underline" href="https://github.com/navinpeiris/phoenix-diff" target="_blank">
-            GitHub repo
-          </a>
-        </div>
-      </div>
     </div>
   </section>
 
