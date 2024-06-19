@@ -35,7 +35,12 @@ defmodule PhxDiffWeb.AppSelection do
     data
     |> cast(params, [:version, :variant])
     |> validate_required([:version, :variant])
+    |> validate_version()
     |> validate_variant()
+  end
+
+  defp validate_version(changeset) do
+    validate_inclusion(changeset, :version, PhxDiff.all_versions())
   end
 
   def validate_variant(changeset) do

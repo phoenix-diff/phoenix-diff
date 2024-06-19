@@ -2,6 +2,7 @@ defmodule PhxDiffWeb.PageControllerTest do
   use PhxDiffWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
+  import Mox
 
   describe "GET /" do
     test "redirects to /compare/<prev>...<latest> when no params", %{conn: conn} do
@@ -132,6 +133,35 @@ defmodule PhxDiffWeb.PageControllerTest do
       assert form_data.source.version == PhxDiff.previous_release_version() |> to_string()
       assert form_data.source.variant == "default"
       assert form_data.target.version == PhxDiff.latest_version() |> to_string()
+      assert form_data.target.variant == "default"
+    end
+
+    @tag :tmp_dir
+    test "redirects to first available version when default version is unavailable", %{
+      conn: conn,
+      tmp_dir: tmp_dir
+    } do
+      tmp_repo_path = Path.join(tmp_dir, "app_repo")
+      stub(PhxDiff.Config.Mock, :app_repo_path, fn -> tmp_repo_path end)
+
+      # The 1.5 series defaults to --live, but if we don't have --live generate, we still want to view the diff
+      tmp_repo_path |> Path.join("1.5.3/default") |> File.mkdir_p!()
+      tmp_repo_path |> Path.join("1.5.4/binary-id") |> File.mkdir_p!()
+      tmp_repo_path |> Path.join("1.5.4/default") |> File.mkdir_p!()
+      tmp_repo_path |> Path.join("1.5.4/no-ecto") |> File.mkdir_p!()
+
+      path =
+        conn
+        |> get(~p"/compare")
+        |> redirected_to()
+
+      {:ok, view, _html} = conn |> live(path)
+
+      form_data = get_form_data(view)
+
+      assert form_data.source.version == "1.5.3"
+      assert form_data.source.variant == "default"
+      assert form_data.target.version == "1.5.4"
       assert form_data.target.variant == "default"
     end
   end
