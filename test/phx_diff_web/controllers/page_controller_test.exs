@@ -9,7 +9,7 @@ defmodule PhxDiffWeb.PageControllerTest do
       path =
         conn
         |> get(~p"/")
-        |> redirected_to()
+        |> redirected_to(:found)
 
       {:ok, view, _html} = conn |> live(path)
 
@@ -22,12 +22,12 @@ defmodule PhxDiffWeb.PageControllerTest do
     end
 
     test "falls back to latest version when target is invalid", %{conn: conn} do
-      {:ok, conn} =
+      path =
         conn
-        |> live(~p"/?source=1.7.2&target=invalid")
-        |> follow_redirect(conn)
+        |> get(~p"/?source=1.7.2&target=invalid")
+        |> redirected_to(:moved_permanently)
 
-      {:ok, view, _html} = live(conn)
+      {:ok, view, _html} = live(conn, path)
 
       form_data = get_form_data(view)
 
@@ -38,12 +38,12 @@ defmodule PhxDiffWeb.PageControllerTest do
     end
 
     test "falls back to previous version when source is invalid", %{conn: conn} do
-      {:ok, conn} =
+      path =
         conn
-        |> live(~p"/?source=invalid&target=1.7.2")
-        |> follow_redirect(conn)
+        |> get(~p"/?source=invalid&target=1.7.2")
+        |> redirected_to(:moved_permanently)
 
-      {:ok, view, _html} = live(conn)
+      {:ok, view, _html} = live(conn, path)
 
       form_data = get_form_data(view)
 
@@ -55,12 +55,12 @@ defmodule PhxDiffWeb.PageControllerTest do
 
     @unknown_phoenix_version "0.0.99"
     test "falls back to latest version when target url_param is unknown", %{conn: conn} do
-      {:ok, conn} =
+      path =
         conn
-        |> live(~p"/?source=1.7.1&target=#{@unknown_phoenix_version}")
-        |> follow_redirect(conn)
+        |> get(~p"/?source=1.7.1&target=#{@unknown_phoenix_version}")
+        |> redirected_to(:moved_permanently)
 
-      {:ok, view, _html} = live(conn)
+      {:ok, view, _html} = live(conn, path)
 
       form_data = get_form_data(view)
 
@@ -71,12 +71,12 @@ defmodule PhxDiffWeb.PageControllerTest do
     end
 
     test "falls back to previous version when source url_param is unknown", %{conn: conn} do
-      {:ok, conn} =
+      path =
         conn
-        |> live(~p"/?source=#{@unknown_phoenix_version}&target=1.7.1")
-        |> follow_redirect(conn)
+        |> get(~p"/?source=#{@unknown_phoenix_version}&target=1.7.1")
+        |> redirected_to(:moved_permanently)
 
-      {:ok, view, _html} = live(conn)
+      {:ok, view, _html} = live(conn, path)
 
       form_data = get_form_data(view)
 
@@ -87,12 +87,12 @@ defmodule PhxDiffWeb.PageControllerTest do
     end
 
     test "passes through variants", %{conn: conn} do
-      {:ok, conn} =
+      path =
         conn
-        |> live(~p"/?source=1.7.1&source_variant=no_ecto&target=1.7.1&target_variant=umbrella")
-        |> follow_redirect(conn)
+        |> get(~p"/?source=1.7.1&source_variant=no_ecto&target=1.7.1&target_variant=umbrella")
+        |> redirected_to(:moved_permanently)
 
-      {:ok, view, _html} = live(conn)
+      {:ok, view, _html} = live(conn, path)
 
       form_data = get_form_data(view)
 
@@ -103,12 +103,12 @@ defmodule PhxDiffWeb.PageControllerTest do
     end
 
     test "redirects to default variants when variants are invalid", %{conn: conn} do
-      {:ok, conn} =
+      path =
         conn
-        |> live(~p"/?source=1.7.1&source_variant=invalid&target=1.7.1&target_variant=invalid")
-        |> follow_redirect(conn)
+        |> get(~p"/?source=1.7.1&source_variant=invalid&target=1.7.1&target_variant=invalid")
+        |> redirected_to(:moved_permanently)
 
-      {:ok, view, _html} = live(conn)
+      {:ok, view, _html} = live(conn, path)
 
       form_data = get_form_data(view)
 
@@ -124,7 +124,7 @@ defmodule PhxDiffWeb.PageControllerTest do
       path =
         conn
         |> get(~p"/compare")
-        |> redirected_to()
+        |> redirected_to(:found)
 
       {:ok, view, _html} = conn |> live(path)
 
@@ -153,7 +153,7 @@ defmodule PhxDiffWeb.PageControllerTest do
       path =
         conn
         |> get(~p"/compare")
-        |> redirected_to()
+        |> redirected_to(:found)
 
       {:ok, view, _html} = conn |> live(path)
 

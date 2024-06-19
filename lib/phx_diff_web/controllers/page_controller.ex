@@ -30,7 +30,16 @@ defmodule PhxDiffWeb.PageController do
       |> DiffSelections.find_valid_diff_selection()
       |> build_diff_specification()
 
-    redirect(conn, to: ~p"/compare/#{diff_specification}")
+    redirect_status =
+      if map_size(params) == 0 do
+        :found
+      else
+        :moved_permanently
+      end
+
+    conn
+    |> put_status(redirect_status)
+    |> redirect(to: ~p"/compare/#{diff_specification}")
   end
 
   def compare(conn, _params) do
