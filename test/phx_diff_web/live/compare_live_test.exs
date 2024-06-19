@@ -1,6 +1,7 @@
 defmodule PhxDiffWeb.CompareLiveTest do
   use PhxDiffWeb.ConnCase
 
+  import Mox
   import Phoenix.LiveViewTest
   import PhxDiff.TestSupport.OpenTelemetryTestExporter, only: [subscribe_to_otel_spans: 1]
   import PhxDiff.TestSupport.Sigils
@@ -65,6 +66,29 @@ defmodule PhxDiffWeb.CompareLiveTest do
                       name: "PhxDiffWeb.CompareLive.mount",
                       attributes: %{"liveview.callback": "mount"}
                     }}
+  end
+
+  @tag :tmp_dir
+  test "renders only available options for selected diff version", %{conn: conn, tmp_dir: tmp_dir} do
+    tmp_repo_path = Path.join(tmp_dir, "app_repo")
+    stub(PhxDiff.Config.Mock, :app_repo_path, fn -> tmp_repo_path end)
+
+    # Stub some app versions (maybe build these from app specs)
+    tmp_repo_path |> Path.join("1.5.3/default") |> File.mkdir_p!()
+    tmp_repo_path |> Path.join("1.5.4/default") |> File.mkdir_p!()
+    tmp_repo_path |> Path.join("1.5.4/no-ecto") |> File.mkdir_p!()
+
+    path =
+      conn
+      |> get(~p"/compare")
+      |> redirected_to()
+
+    {:ok, view, _html} = live(conn, path)
+
+    assert list_available_source_versions(view) == ["1.5.3", "1.5.4"]
+    assert list_available_source_variants(view) == ["(Default)"]
+    assert list_available_target_versions(view) == ["1.5.3", "1.5.4"]
+    assert list_available_target_variants(view) == ["(Default)", "--no-ecto"]
   end
 
   test "returns 404 with an invalid diff spec", %{conn: conn} do
@@ -314,5 +338,37 @@ defmodule PhxDiffWeb.CompareLiveTest do
           |> List.first()
       }
     }
+  end
+
+  defp list_available_source_versions(view) do
+    view
+    |> render()
+    |> Floki.parse_document!()
+    |> Floki.find(~S|#diff_selection_source_0_version option|)
+    |> Enum.map(&Floki.text/1)
+  end
+
+  defp list_available_source_variants(view) do
+    view
+    |> render()
+    |> Floki.parse_document!()
+    |> Floki.find(~S|#diff_selection_source_0_variant option|)
+    |> Enum.map(&Floki.text/1)
+  end
+
+  defp list_available_target_versions(view) do
+    view
+    |> render()
+    |> Floki.parse_document!()
+    |> Floki.find(~S|#diff_selection_source_0_version option|)
+    |> Enum.map(&Floki.text/1)
+  end
+
+  defp list_available_target_variants(view) do
+    view
+    |> render()
+    |> Floki.parse_document!()
+    |> Floki.find(~S|#diff_selection_target_0_variant option|)
+    |> Enum.map(&Floki.text/1)
   end
 end
