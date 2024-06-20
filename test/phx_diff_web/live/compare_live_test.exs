@@ -24,10 +24,10 @@ defmodule PhxDiffWeb.CompareLiveTest do
 
     view
     |> element("#diff-selection-form")
-    |> render_change(%{
+    |> render_submit(%{
       "diff_selection" => %{
-        "source" => %{"version" => "1.5.0"},
-        "target" => %{"version" => "1.5.1"}
+        "source" => %{"version" => "1.5.0", "variant" => "live"},
+        "target" => %{"version" => "1.5.1", "variant" => "live"}
       }
     })
 
@@ -89,6 +89,26 @@ defmodule PhxDiffWeb.CompareLiveTest do
     assert list_available_source_variants(view) == ["(Default)"]
     assert list_available_target_versions(view) == ["1.5.3", "1.5.4"]
     assert list_available_target_variants(view) == ["(Default)", "--no-ecto"]
+
+    view
+    |> element("#diff-selection-form")
+    |> render_change(%{
+      "diff_selection" => %{
+        "target" => %{"version" => "1.5.3"}
+      }
+    })
+
+    assert list_available_target_variants(view) == ["(Default)"]
+
+    view
+    |> element("#diff-selection-form")
+    |> render_change(%{
+      "diff_selection" => %{
+        "source" => %{"version" => "1.5.4"}
+      }
+    })
+
+    assert list_available_source_variants(view) == ["(Default)", "--no-ecto"]
   end
 
   test "returns 404 with an invalid diff spec", %{conn: conn} do

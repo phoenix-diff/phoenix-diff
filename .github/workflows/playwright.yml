@@ -26,7 +26,7 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     container:
-      image: mcr.microsoft.com/playwright:v1.42.1-jammy
+      image: mcr.microsoft.com/playwright:v1.44.1-jammy
     defaults:
       run:
         working-directory: ./playwright

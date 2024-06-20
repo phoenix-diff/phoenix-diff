@@ -10,5 +10,7 @@ test('basic version switching', async ({ page }) => {
 
   await page.getByRole('group', { name: 'Target' }).getByLabel('Version').selectOption('1.6.0');
 
+  await page.getByRole('button', { name: 'Generate Diff' }).click({ force: true });
+
   await expect(page.getByText('There are no changes between')).toBeVisible();
 });

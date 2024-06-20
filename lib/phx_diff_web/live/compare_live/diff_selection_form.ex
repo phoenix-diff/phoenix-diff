@@ -5,6 +5,7 @@ defmodule PhxDiffWeb.CompareLive.DiffSelectionForm do
 
   import PhxDiffWeb.CompareLive.DiffSelectionComponents
 
+  alias Ecto.Changeset
   alias PhxDiff.AppSpecification
   alias PhxDiffWeb.AppSelection
   alias PhxDiffWeb.DiffSelections
@@ -19,7 +20,8 @@ defmodule PhxDiffWeb.CompareLive.DiffSelectionForm do
         for={@form}
         as={:diff_selection}
         id={@id}
-        phx-change="diff-changed"
+        phx-change="form-changed"
+        phx-submit="form-submit"
         phx-hook="DiffSelectorComponent"
         class="mt-8"
         phx-target={@myself}
@@ -52,7 +54,8 @@ defmodule PhxDiffWeb.CompareLive.DiffSelectionForm do
 
         <div class="text-center">
           <button
-            type="button"
+            type="submit"
+            role="button"
             class="border rounded-md bg-international-orange-700 font-semibold px-3 py-2 text-white shadow-sm hover:bg-international-orange-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-international-orange-500"
           >
             Generate Diff
@@ -101,15 +104,37 @@ defmodule PhxDiffWeb.CompareLive.DiffSelectionForm do
   end
 
   @impl true
-  def handle_event("diff-changed", %{"diff_selection" => params}, socket) do
+  def handle_event("form-changed", %{"diff_selection" => params}, socket) do
     changeset = DiffSelection.changeset(socket.assigns.diff_selection, params)
 
-    diff_specification =
+    socket =
       changeset
-      |> DiffSelections.find_valid_diff_selection()
-      |> DiffSelections.build_diff_specification()
+      |> Changeset.get_field(:source)
+      |> Map.fetch!(:version)
+      |> variant_options_for_version()
+      |> then(&assign(socket, :source_variants, &1))
 
-    {:noreply, push_patch(socket, to: ~p"/compare/#{diff_specification}")}
+    socket =
+      changeset
+      |> Changeset.get_field(:target)
+      |> Map.fetch!(:version)
+      |> variant_options_for_version()
+      |> then(&assign(socket, :target_variants, &1))
+
+    {:noreply, assign(socket, form: to_form(changeset))}
+  end
+
+  def handle_event("form-submit", %{"diff_selection" => params}, socket) do
+    changeset = DiffSelection.changeset(socket.assigns.diff_selection, params)
+
+    case Changeset.apply_action(changeset, :select) do
+      {:ok, diff_selection} ->
+        diff_specification = DiffSelections.build_diff_specification(diff_selection)
+        {:noreply, push_patch(socket, to: ~p"/compare/#{diff_specification}")}
+
+      {:error, changeset} ->
+        {:noreply, assign(socket, form: to_form(changeset))}
+    end
   end
 
   defp variant_options_for_version(version) do
