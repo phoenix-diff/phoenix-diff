@@ -38,7 +38,7 @@ defmodule PhxDiffWeb do
   def channel do
     quote do
       use Phoenix.Channel
-      import PhxDiffWeb.Gettext
+      use Gettext, backend: PhxDiffWeb.Gettext
     end
   end
 
@@ -48,8 +48,9 @@ defmodule PhxDiffWeb do
         formats: [:html],
         layouts: [html: PhxDiffWeb.Layouts]
 
+      use Gettext, backend: PhxDiffWeb.Gettext
+
       import Plug.Conn
-      import PhxDiffWeb.Gettext
       unquote(verified_routes())
     end
   end
@@ -86,11 +87,13 @@ defmodule PhxDiffWeb do
 
   defp html_helpers do
     quote do
+      # Translation
+      use Gettext, backend: PhxDiffWeb.Gettext
+
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components and translation
       import PhxDiffWeb.CoreComponents
-      import PhxDiffWeb.Gettext
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS

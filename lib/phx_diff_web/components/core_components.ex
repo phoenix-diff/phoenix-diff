@@ -10,6 +10,8 @@ defmodule PhxDiffWeb.CoreComponents do
   """
   use Phoenix.Component
 
+  use Gettext, backend: PhxDiffWeb.Gettext
+
   # credo:disable-for-this-file Credo.Check.Design.AliasUsage
 
   @doc """

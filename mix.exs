@@ -49,7 +49,7 @@ defmodule PhxDiff.MixProject do
       {:phoenix_live_dashboard, "~> 0.8.3"},
       {:ecto, "~> 3.11"},
       {:phoenix_ecto, "~> 4.4"},
-      {:gettext, "~> 0.20"},
+      {:gettext, "~> 0.26"},
       {:jason, "~> 1.2"},
       {:bandit, "~> 1.4"},
       {:logster, "~> 1.0"},
