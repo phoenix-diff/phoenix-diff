@@ -76,9 +76,8 @@ defmodule PhxDiff.MixProject do
        depth: 1},
       {
         :font_awesome,
-        # v6.5.2
         github: "FortAwesome/Font-Awesome",
-        ref: "c0f460dca7f7688761120415ff3c9cf7f73119be",
+        tag: "6.6.0",
         sparse: "svgs",
         app: false,
         compile: false,
