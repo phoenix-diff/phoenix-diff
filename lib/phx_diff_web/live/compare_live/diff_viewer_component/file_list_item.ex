@@ -11,15 +11,15 @@ defmodule PhxDiffWeb.CompareLive.DiffViewerComponent.FileListItem do
       </div>
       <div class="flex-1 truncate">
         <.link href={"##{@patch.html_anchor}"} class="text-sm text-sky-500 hover:text-sky-700">
-          <%= @patch.display_filename %>
+          {@patch.display_filename}
         </.link>
       </div>
       <div class="flex-none text-sm">
         <span class="text-green-500 border-green-300 border px-0.5 rounded-l">
-          +<%= @patch.summary.additions %>
+          +{@patch.summary.additions}
         </span>
         <span class="text-red-500 border-red-300 border px-0.5 rounded-r">
-          -<%= @patch.summary.deletions %>
+          -{@patch.summary.deletions}
         </span>
       </div>
     </li>
