@@ -25,6 +25,8 @@ defmodule PhxDiff.Diffs.DiffEngine do
            "diff",
            "--no-index",
            "--no-color",
+           "--src-prefix=a/",
+           "--dst-prefix=b/",
            source_path,
            target_path
          ]) do
