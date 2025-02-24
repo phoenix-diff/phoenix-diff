@@ -1,5 +1,5 @@
 {
-  "image": "hexpm/elixir:1.14.5-erlang-26.1.1-ubuntu-jammy-20230126",
+  "image": "hexpm/elixir:1.18.2-erlang-27.2.4-ubuntu-noble-20250127",
   "features": {
     "ghcr.io/devcontainers-contrib/features/apt-packages:1": {
       "packages": "build-essential git inotify-tools"

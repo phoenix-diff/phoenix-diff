@@ -40,7 +40,7 @@ defmodule PhxDiffWeb.CompareLive.DiffViewerComponent do
         >
         </div>
       </.form>
-      <div :if={@no_changes?} %><%= render_slot(@no_changes) %></div>
+      <div :if={@no_changes?} %>{render_slot(@no_changes)}</div>
     </div>
     """
   end
@@ -51,7 +51,7 @@ defmodule PhxDiffWeb.CompareLive.DiffViewerComponent do
     ~H"""
     <div class="mb-3">
       <div class="font-semibold">
-        Files changed (<%= @parsed_diff.files_changed_count %>)
+        Files changed ({@parsed_diff.files_changed_count})
         <.link
           id="file-list-show-link"
           class="text-orange-500 hover:text-orange-700 text-sm"
