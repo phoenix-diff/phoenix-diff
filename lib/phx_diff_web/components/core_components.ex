@@ -41,9 +41,9 @@ defmodule PhxDiffWeb.CoreComponents do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
       <div class="space-y-8 bg-white mt-10">
-        <%= render_slot(@inner_block, f) %>
+        {render_slot(@inner_block, f)}
         <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-6">
-          <%= render_slot(action, f) %>
+          {render_slot(action, f)}
         </div>
       </div>
     </.form>
@@ -75,7 +75,7 @@ defmodule PhxDiffWeb.CoreComponents do
       ]}
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </button>
     """
   end
@@ -131,8 +131,8 @@ defmodule PhxDiffWeb.CoreComponents do
 
   def input(%{type: "select"} = assigns) do
     ~H"""
-    <div phx-feedback-for={@name} class={@wrapper_class}>
-      <.label for={@id} class={@label_class}><%= @label %></.label>
+    <div class={@wrapper_class}>
+      <.label for={@id} class={@label_class}>{@label}</.label>
       <select
         id={@id}
         name={@name}
@@ -140,10 +140,10 @@ defmodule PhxDiffWeb.CoreComponents do
         class={"mt-1 block w-full py-2 px-3 pr-8 bg-white border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-zinc-500 focus:border-zinc-500 sm:text-sm text-black #{@input_class}"}
         {@rest}
       >
-        <option :if={@prompt}><%= @prompt %></option>
-        <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
+        <option :if={@prompt}>{@prompt}</option>
+        {Phoenix.HTML.Form.options_for_select(@options, @value)}
       </select>
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -158,7 +158,7 @@ defmodule PhxDiffWeb.CoreComponents do
   def label(assigns) do
     ~H"""
     <label for={@for} {@rest}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </label>
     """
   end
@@ -178,7 +178,7 @@ defmodule PhxDiffWeb.CoreComponents do
     ~H"""
     <div class={"button-group-toggle inline-flex rounded-md shadow-sm #{@class}"} role="group">
       <.button_group_toggle_button :for={option <- @option} field={@field} value={option.value}>
-        <%= render_slot(option) %>
+        {render_slot(option)}
       </.button_group_toggle_button>
     </div>
     """
@@ -213,7 +213,7 @@ defmodule PhxDiffWeb.CoreComponents do
       for={@id}
       class="border border-brand px-4 py-2 first-of-type:rounded-l-md last-of-type:rounded-r-md text-brand bg-white cursor-pointer"
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </label>
     """
   end
@@ -226,7 +226,7 @@ defmodule PhxDiffWeb.CoreComponents do
   def error(assigns) do
     ~H"""
     <p class="phx-no-feedback:hidden mt-3 flex gap-3 text-sm leading-6 text-rose-600">
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </p>
     """
   end

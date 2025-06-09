@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content={get_csrf_token()} />
     <.live_title prefix="PhoenixDiff · ">
-      <%= assigns[:page_title] || "" %>
+      {assigns[:page_title] || ""}
     </.live_title>
     <meta name="description" content="See the changes needed to upgrade your Phoenix application" />
     <meta name="keywords" content="Elixir,Phoenix,PhoenixFramework,Upgrade,Diff,PhoenixDiff" />
@@ -41,7 +41,7 @@
     </nav>
 
     <main role="main" class="flex-1">
-      <%= @inner_content %>
+      {@inner_content}
     </main>
 
     <footer class="bg-zinc-700 text-zinc-400">
