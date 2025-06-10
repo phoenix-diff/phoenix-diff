@@ -1,5 +1,5 @@
 {
-  "image": "hexpm/elixir:1.17.3-erlang-27.1-ubuntu-jammy-20240808",
+  "image": "hexpm/elixir:1.18.3-erlang-27.3.4-ubuntu-noble-20250415.1",
   "postCreateCommand": "apt-get update && apt-get install -y build-essential git inotify-tools",
   "features": {
     "ghcr.io/devcontainers/features/node:1": {}
