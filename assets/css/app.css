@@ -1,6 +1,4 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@import "tailwindcss";
 
 @import "highlight.js/styles/github.css";
 @import "diff2html/bundles/css/diff2html.min";
