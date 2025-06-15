@@ -1,9 +1,39 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@import "tailwindcss" source(none);
+@source "../../lib/phx_diff_web";
+@source "../css";
+@source "../js";
+
+/* A Tailwind plugin that makes "hero-#{ICON}" classes available.
+   The heroicons installation itself is managed by your mix.exs */
+@plugin "../vendor/heroicons";
+
+/* A Tailwind plugin that makes "fa-#{ICON}" classes available.
+   The font-awesome installation itself is managed by your mix.exs */
+@plugin "../vendor/font-awesome";
+
+/* Legacy Forms reset */
+@plugin "@tailwindcss/forms";
 
 @import "highlight.js/styles/github.css";
 @import "diff2html/bundles/css/diff2html.min";
+
+/* From https://uicolors.app */
+@theme {
+  --color-brand: #FD4F00;
+  --color-international-orange-50: #fff6ec;
+  --color-international-orange-100: #ffecd3;
+  --color-international-orange-200: #ffd4a5;
+  --color-international-orange-300: #ffb66d;
+  --color-international-orange-400: #ff8b32;
+  --color-international-orange-500: #ff6a0a;
+  --color-international-orange-600: #fd4f00;
+  --color-international-orange-700: #cc3702;
+  --color-international-orange-800: #a12b0b;
+  --color-international-orange-900: #82260c;
+  --color-international-orange-950: #461004;
+
+  --font-sans: 'Open Sans', sans-serif;
+}*/
 
 a.d2h-file-switch {
   @apply text-brand text-sm font-bold;
@@ -12,3 +42,11 @@ a.d2h-file-switch {
 .button-group-toggle input:checked + label{
   @apply text-white bg-brand;
 }
+
+/* Add variants based on LiveView classes */
+@custom-variant phx-click-loading (.phx-click-loading&, .phx-click-loading &);
+@custom-variant phx-submit-loading (.phx-submit-loading&, .phx-submit-loading &);
+@custom-variant phx-change-loading (.phx-change-loading&, .phx-change-loading &);
+
+/* Make LiveView wrapper divs transparent for layout */
+[data-phx-session] { display: contents }
