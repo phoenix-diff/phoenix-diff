@@ -16,7 +16,8 @@ const DiffViewerComponent = {
         highlight: true,
         fileContentToggle: false,
         matching: 'words',
-        rawTemplates: {'generic-file-path': this._genericFilePathTemplate(targetUrl)}
+        rawTemplates: {'generic-file-path': this._genericFilePathTemplate(targetUrl)},
+        colorScheme: 'auto'
     });
 
     diff2htmlUi.draw();
