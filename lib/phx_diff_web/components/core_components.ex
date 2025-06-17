@@ -29,6 +29,7 @@ defmodule PhxDiffWeb.CoreComponents do
   use Phoenix.Component
   use Gettext, backend: PhxDiffWeb.Gettext
 
+  alias Phoenix.HTML.Form
   alias Phoenix.LiveView.JS
 
   @doc """
@@ -176,7 +177,7 @@ defmodule PhxDiffWeb.CoreComponents do
   def input(%{type: "checkbox"} = assigns) do
     assigns =
       assign_new(assigns, :checked, fn ->
-        Phoenix.HTML.Form.normalize_value("checkbox", assigns[:value])
+        Form.normalize_value("checkbox", assigns[:value])
       end)
 
     ~H"""
@@ -499,15 +500,15 @@ defmodule PhxDiffWeb.CoreComponents do
   slot :inner_block, required: true
 
   defp button_group_toggle_button(%{field: {f, field}} = assigns) do
-    field_value = Phoenix.HTML.Form.input_value(f, field)
+    field_value = Form.input_value(f, field)
     checked? = input_equals?(assigns.value, field_value)
     assigns = assign_new(assigns, :checked?, fn -> checked? end)
 
     assigns =
       assigns
       |> assign(field: nil)
-      |> assign_new(:name, fn -> Phoenix.HTML.Form.input_name(f, field) end)
-      |> assign_new(:id, fn -> Phoenix.HTML.Form.input_id(f, field, assigns.value) end)
+      |> assign_new(:name, fn -> Form.input_name(f, field) end)
+      |> assign_new(:id, fn -> Form.input_id(f, field, assigns.value) end)
 
     ~H"""
     <input
