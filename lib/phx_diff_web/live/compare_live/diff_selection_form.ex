@@ -28,7 +28,9 @@ defmodule PhxDiffWeb.CompareLive.DiffSelectionForm do
       >
         <div class="mb-8 sm:inline-grid gap-4 grid-cols-2 grid-rows-1">
           <fieldset id="source-selector" class="mb-3 sm:mb-0">
-            <legend class="uppercase underline text-sm sm:mb-2 w-full">Source</legend>
+            <legend class="uppercase underline text-sm sm:mb-2 w-full text-neutral-content">
+              Source
+            </legend>
             <.inputs_for :let={source_form} field={@form[:source]}>
               <.version_select field={source_form[:version]} label="Version" versions={@all_versions} />
               <.phx_new_arg_list_preset_select
@@ -40,7 +42,9 @@ defmodule PhxDiffWeb.CompareLive.DiffSelectionForm do
           </fieldset>
 
           <fieldset id="target-selector" class="mb-3 sm:mb-0">
-            <legend class="uppercase underline text-sm sm:mb-2 w-full">Target</legend>
+            <legend class="uppercase underline text-sm sm:mb-2 w-full text-neutral-content">
+              Target
+            </legend>
             <.inputs_for :let={target_form} field={@form[:target]}>
               <.version_select field={target_form[:version]} label="Version" versions={@all_versions} />
               <.phx_new_arg_list_preset_select

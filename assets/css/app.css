@@ -11,10 +11,8 @@
    The font-awesome installation itself is managed by your mix.exs */
 @plugin "../vendor/font-awesome";
 
-/* Legacy Forms reset */
-@plugin "@tailwindcss/forms";
-
-@import "highlight.js/styles/github.css";
+@import "highlight.js/styles/github.css" screen and (prefers-color-scheme: light);
+@import "highlight.js/styles/github-dark.css" screen and (prefers-color-scheme: dark);
 @import "diff2html/bundles/css/diff2html.min";
 
 /* From https://uicolors.app */

@@ -408,9 +408,15 @@ defmodule PhxDiffWeb.CoreComponents do
       <.icon name="hero-arrow-path" class="ml-1 size-3 motion-safe:animate-spin" />
   """
   attr :name, :string, required: true
-  attr :class, :string, default: "size-4"
+  attr :class, :string, default: nil
 
   def icon(%{name: "hero-" <> _} = assigns) do
+    ~H"""
+    <span class={[@name, @class]} />
+    """
+  end
+
+  def icon(%{name: "fa-" <> _} = assigns) do
     ~H"""
     <span class={[@name, @class]} />
     """
@@ -467,4 +473,62 @@ defmodule PhxDiffWeb.CoreComponents do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
   end
 
+  @doc """
+  Generates a button group where we can toggle between the options
+  """
+
+  attr :field, :any, doc: "a %Phoenix.HTML.Form{}/field name tuple, for example: {f, :email}"
+  attr :class, :string, default: "", doc: "CSS classes to add to wrapper"
+
+  slot :option, required: true do
+    attr :value, :string, required: true
+  end
+
+  def button_group_toggle(assigns) do
+    ~H"""
+    <div class={"button-group-toggle inline-flex rounded-md shadow-sm #{@class}"} role="group">
+      <.button_group_toggle_button :for={option <- @option} field={@field} value={option.value}>
+        {render_slot(option)}
+      </.button_group_toggle_button>
+    </div>
+    """
+  end
+
+  attr :field, :any, doc: "a %Phoenix.HTML.Form{}/field name tuple, for example: {f, :email}"
+  attr :value, :string, required: true
+  slot :inner_block, required: true
+
+  defp button_group_toggle_button(%{field: {f, field}} = assigns) do
+    field_value = Phoenix.HTML.Form.input_value(f, field)
+    checked? = input_equals?(assigns.value, field_value)
+    assigns = assign_new(assigns, :checked?, fn -> checked? end)
+
+    assigns =
+      assigns
+      |> assign(field: nil)
+      |> assign_new(:name, fn -> Phoenix.HTML.Form.input_name(f, field) end)
+      |> assign_new(:id, fn -> Phoenix.HTML.Form.input_id(f, field, assigns.value) end)
+
+    ~H"""
+    <input
+      type="radio"
+      name={@name}
+      id={@id}
+      autocomplete="off"
+      value={@value}
+      checked={@checked?}
+      class="sr-only"
+    />
+    <label
+      for={@id}
+      class="border border-brand px-4 py-2 first-of-type:rounded-l-md last-of-type:rounded-r-md text-brand cursor-pointer"
+    >
+      {render_slot(@inner_block)}
+    </label>
+    """
+  end
+
+  defp input_equals?(val1, val2) do
+    Phoenix.HTML.html_escape(val1) == Phoenix.HTML.html_escape(val2)
+  end
 end
