@@ -36,14 +36,14 @@ defmodule PhxDiff.Diffs.AppRepo.AppGenerator.MixArchivesDirectories do
 
   defp install_hex(working_dir) do
     {_output, 0} =
-      System.cmd("mix", ["local.hex", "--force"], env: [{"MIX_ARCHIVES", working_dir}])
+      System.cmd("/usr/local/bin/mix", ["local.hex", "--force"], env: [{"MIX_ARCHIVES", working_dir}])
 
     :ok
   end
 
   @spec install_phx_new(String.t(), String.t()) :: :ok | {:error, :unknown_version} | no_return
   defp install_phx_new(working_dir, version) do
-    case System.cmd("mix", ["archive.install", "hex", "phx_new", to_string(version), "--force"],
+    case System.cmd("/usr/local/bin/mix", ["archive.install", "hex", "phx_new", to_string(version), "--force"],
            env: [{"MIX_ARCHIVES", working_dir}],
            stderr_to_stdout: true
          ) do
