@@ -3,7 +3,7 @@
     "deploy": "cd .. && mix assets.deploy && rm -f _build/esbuild*"
   },
   "dependencies": {
-    "diff2html": "^3.4.51",
+    "diff2html": "^3.4.52",
     "highlight.js": "^11.11.1"
   }
 }
