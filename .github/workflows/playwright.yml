@@ -31,7 +31,7 @@ jobs:
       run:
         working-directory: ./playwright
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
