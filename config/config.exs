@@ -24,7 +24,7 @@ config :phx_diff,
 
 # Configure esbuild (the version is required)
 config :esbuild,
-  version: "0.25.5",
+  version: "0.25.9",
   default: [
     args:
       ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
@@ -34,7 +34,7 @@ config :esbuild,
 
 # Configure tailwind (the version is required)
 config :tailwind,
-  version: "4.0.9",
+  version: "4.1.12",
   default: [
     args: ~w(
       --input=assets/css/app.css
