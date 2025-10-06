@@ -66,7 +66,7 @@ defmodule PhxDiff.MixProject do
       {:opentelemetry_liveview, "~> 1.0.0-rc.4"},
       {:boundary, "~> 0.9", runtime: false},
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
-      {:tailwind, "~> 0.3.0", runtime: Mix.env() == :dev},
+      {:tailwind, "~> 0.4.0", runtime: Mix.env() == :dev},
       {:heroicons,
        github: "tailwindlabs/heroicons",
        tag: "v2.2.0",
