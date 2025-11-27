@@ -41,7 +41,7 @@ defmodule PhxDiff.MixProject do
   defp deps do
     [
       {:git_diff, github: "mononym/git_diff"},
-      {:phoenix, "~> 1.7.21"},
+      {:phoenix, "~> 1.8.2"},
       {:phoenix_pubsub, "~> 2.0"},
       {:phoenix_html, "~> 4.0"},
       {:phoenix_live_view, "~> 1.0"},
