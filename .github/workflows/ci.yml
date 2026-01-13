@@ -6,7 +6,7 @@ jobs:
     env:
       MIX_ENV: test
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: erlef/setup-beam@v1
         id: beam
         with:
@@ -69,7 +69,7 @@ jobs:
   test_javascript:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       # Download phoenix so we yarn install works correctly
       - uses: erlef/setup-beam@v1
         with:
