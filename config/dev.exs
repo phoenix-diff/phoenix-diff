@@ -7,7 +7,7 @@ import Config
 # watchers to your application. For example, we can use it
 # to bundle .js and .css sources.
 config :phx_diff, PhxDiffWeb.Endpoint,
-  http: [ip: {127, 0, 0, 1}, port: 4000],
+  http: [ip: {127, 0, 0, 1}],
   check_origin: false,
   code_reloader: true,
   debug_errors: true,

@@ -20,9 +20,12 @@ if System.get_env("PHX_SERVER") do
   config :phx_diff, PhxDiffWeb.Endpoint, server: true
 end
 
+config :phx_diff, PhxDiffWeb.Endpoint,
+  http: [port: String.to_integer(System.get_env("PORT", "4000"))]
+
 if config_env() == :dev && System.get_env("ALLOW_EXTERNAL_ACCESS") == "true" do
   # Allow access beyond localhost
-  config :phx_diff, PhxDiffWeb.Endpoint, http: [ip: {0, 0, 0, 0}, port: 4000]
+  config :phx_diff, PhxDiffWeb.Endpoint, http: [ip: {0, 0, 0, 0}]
 end
 
 if config_env() == :prod do
