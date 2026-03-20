@@ -48,7 +48,7 @@ defmodule PhxDiffWeb.CompareLive.DiffViewerComponent.Renderers do
 
       {prefix_path_segments, [_ | _] = from_path_segments, [_ | _] = to_path_segments,
        suffix_path_segments}
-      when length(prefix_path_segments) > 0 or length(suffix_path_segments) > 0 ->
+      when prefix_path_segments != [] or suffix_path_segments != [] ->
         Path.join([
           maybe_join_path(prefix_path_segments),
           "{#{Path.join(from_path_segments)} #{@arrow_symbol} #{Path.join(to_path_segments)}}",

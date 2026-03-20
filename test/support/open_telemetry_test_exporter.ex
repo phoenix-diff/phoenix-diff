@@ -27,11 +27,7 @@ defmodule PhxDiff.TestSupport.OpenTelemetryTestExporter do
   def export(_type, spans_tid, _Resource, _state) do
     :ets.foldl(
       fn span, _acc ->
-        normalized_span = normalize_span(span)
-
-        Registry.dispatch(@registry, :subscriber, fn entries ->
-          for {pid, _} <- entries, do: send(pid, {:otel_span, normalized_span})
-        end)
+        span |> normalize_span() |> dispatch_span()
       end,
       [],
       spans_tid
@@ -56,6 +52,12 @@ defmodule PhxDiff.TestSupport.OpenTelemetryTestExporter do
   def subscribe_to_otel_spans(_) do
     Registry.register(@registry, :subscriber, [])
     :ok
+  end
+
+  defp dispatch_span(normalized_span) do
+    Registry.dispatch(@registry, :subscriber, fn entries ->
+      Enum.each(entries, fn {pid, _} -> send(pid, {:otel_span, normalized_span}) end)
+    end)
   end
 
   defp normalize_span(span) when is_record(span, :span) do
