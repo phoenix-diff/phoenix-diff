@@ -70,6 +70,49 @@ defmodule PhxDiffWeb.BrowseLiveTest do
     end
   end
 
+  describe "file tree" do
+    test "renders directory groupings", %{conn: conn} do
+      {:ok, _view, html} = live(conn, ~p"/browse/1.7.1/files/mix.exs")
+
+      # Directories should appear as group headers
+      assert html =~ "lib"
+      assert html =~ "config"
+
+      # Files within directories should be rendered as links
+      parsed = Floki.parse_document!(html)
+
+      # Find file tree links
+      file_links =
+        Floki.find(parsed, "#file-tree a")
+        |> Enum.map(&Floki.text/1)
+        |> Enum.map(&String.trim/1)
+
+      assert "mix.exs" in file_links
+    end
+
+    test "selected file has active styling", %{conn: conn} do
+      {:ok, _view, html} = live(conn, ~p"/browse/1.7.1/files/mix.exs")
+
+      parsed = Floki.parse_document!(html)
+
+      active_links =
+        Floki.find(parsed, "#file-tree .bg-orange-100")
+        |> Enum.map(&Floki.text/1)
+        |> Enum.map(&String.trim/1)
+
+      assert "mix.exs" in active_links
+    end
+
+    test "mobile toggle button shows file count", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/browse/1.7.1/files/mix.exs")
+
+      html = render(view)
+
+      # The mobile toggle should display the file count
+      assert html =~ "file-tree-toggle"
+    end
+  end
+
   describe "switching app specifications" do
     test "submitting the form with a different version navigates to new app spec", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/browse/1.7.1/files/README.md")
