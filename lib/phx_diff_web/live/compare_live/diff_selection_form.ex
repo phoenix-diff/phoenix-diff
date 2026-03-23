@@ -3,7 +3,7 @@ defmodule PhxDiffWeb.CompareLive.DiffSelectionForm do
 
   use PhxDiffWeb, :live_component
 
-  import PhxDiffWeb.CompareLive.DiffSelectionComponents
+  import PhxDiffWeb.AppSelectionComponents
 
   alias Ecto.Changeset
   alias PhxDiff.AppSpecification

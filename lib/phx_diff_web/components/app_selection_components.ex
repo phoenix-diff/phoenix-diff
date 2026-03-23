@@ -1,4 +1,4 @@
-defmodule PhxDiffWeb.CompareLive.DiffSelectionComponents do
+defmodule PhxDiffWeb.AppSelectionComponents do
   @moduledoc false
 
   use PhxDiffWeb, :html
