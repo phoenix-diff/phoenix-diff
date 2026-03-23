@@ -4,6 +4,12 @@
       <h3 class="text-2xl font-light text-neutral-content">
         Browse a generated Phoenix application
       </h3>
+
+      <.live_component
+        module={PhxDiffWeb.BrowseLive.AppSelectionForm}
+        id="app-selection-form"
+        app_spec={@app_spec}
+      />
     </div>
   </section>
 

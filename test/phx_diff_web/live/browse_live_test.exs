@@ -50,4 +50,27 @@ defmodule PhxDiffWeb.BrowseLiveTest do
       assert_patch(view, ~p"/browse/1.7.1/files/README.md")
     end
   end
+
+  describe "switching app specifications" do
+    test "submitting the form with a different version navigates to new app spec", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/browse/1.7.1/files/README.md")
+
+      view
+      |> element("#app-selection-form")
+      |> render_submit(%{app_selection: %{version: "1.6.0", variant: "default"}})
+
+      assert_patch(view, ~p"/browse/1.6.0/files/README.md")
+    end
+
+    test "changing version updates variant options", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/browse/1.7.1/files/README.md")
+
+      html =
+        view
+        |> element("#app-selection-form")
+        |> render_change(%{app_selection: %{version: "1.6.0", variant: "default"}})
+
+      assert html =~ "version"
+    end
+  end
 end
