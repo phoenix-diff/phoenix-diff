@@ -57,6 +57,20 @@ defmodule PhxDiff do
   defdelegate fetch_diff(source_spec, target_spec), to: PhxDiff.Diffs
 
   @doc """
+  List all files for an app specification
+  """
+  @spec list_app_files(AppSpecification.t()) ::
+          {:ok, [String.t()]} | {:error, :invalid_version}
+  defdelegate list_app_files(app_spec), to: PhxDiff.Diffs
+
+  @doc """
+  Read a file from an app specification
+  """
+  @spec read_app_file(AppSpecification.t(), String.t()) ::
+          {:ok, String.t()} | {:error, :invalid_version | :not_found | :binary_file}
+  defdelegate read_app_file(app_spec, relative_path), to: PhxDiff.Diffs
+
+  @doc """
   Generates a sample application for the given app specification
 
   Returns the path of the generated app

@@ -70,6 +70,52 @@ defmodule PhxDiff.Diffs.AppRepo do
     end
   end
 
+  @spec list_app_files(AppSpecification.t()) ::
+          {:ok, [String.t()]} | {:error, :invalid_version}
+  def list_app_files(%AppSpecification{} = app_spec) do
+    with {:ok, root} <- fetch_app_path(app_spec) do
+      files =
+        root
+        |> Path.join("**")
+        |> Path.wildcard(match_dot: true)
+        |> Enum.filter(&File.regular?/1)
+        |> Enum.map(&Path.relative_to(&1, root))
+        |> Enum.sort()
+
+      {:ok, files}
+    end
+  end
+
+  @spec read_app_file(AppSpecification.t(), String.t()) ::
+          {:ok, String.t()} | {:error, :invalid_version | :not_found | :binary_file}
+  def read_app_file(%AppSpecification{} = app_spec, relative_path) do
+    with {:ok, root} <- fetch_app_path(app_spec),
+         :ok <- validate_path(relative_path),
+         full_path <- Path.expand(relative_path, root),
+         true <- String.starts_with?(full_path, Path.expand(root)),
+         true <- File.regular?(full_path),
+         {:ok, content} <- File.read(full_path) do
+      if String.contains?(content, <<0>>) do
+        {:error, :binary_file}
+      else
+        {:ok, content}
+      end
+    else
+      {:error, _} = error -> error
+      _ -> {:error, :not_found}
+    end
+  end
+
+  defp validate_path(path) do
+    segments = Path.split(path)
+
+    cond do
+      segments == [] -> {:error, :not_found}
+      Enum.any?(segments, &(&1 in [".", ".."])) -> {:error, :not_found}
+      true -> :ok
+    end
+  end
+
   @spec get_github_sample_app_base_url(AppSpecification.t()) :: String.t()
   def get_github_sample_app_base_url(%AppSpecification{} = app_spec) do
     PhxDiff.Config.github_sample_app_base_url()

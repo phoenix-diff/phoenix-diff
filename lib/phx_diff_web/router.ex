@@ -29,6 +29,9 @@ defmodule PhxDiffWeb.Router do
     get "/", PageController, :index
     get "/compare", PageController, :compare
     live "/compare/:diff_specification", CompareLive, :compare
+
+    live "/browse/:app_specification/files/*path", BrowseLive, :file
+    live "/browse/:app_specification", BrowseLive, :browse
   end
 
   scope "/" do

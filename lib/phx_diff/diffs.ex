@@ -25,6 +25,14 @@ defmodule PhxDiff.Diffs do
   @spec list_sample_apps_for_version(version) :: [AppSpecification.t()]
   defdelegate list_sample_apps_for_version(version), to: AppRepo
 
+  @spec list_app_files(AppSpecification.t()) ::
+          {:ok, [String.t()]} | {:error, :invalid_version}
+  defdelegate list_app_files(app_spec), to: AppRepo
+
+  @spec read_app_file(AppSpecification.t(), String.t()) ::
+          {:ok, String.t()} | {:error, :invalid_version | :not_found | :binary_file}
+  defdelegate read_app_file(app_spec, relative_path), to: AppRepo
+
   @spec generate_sample_app(AppSpecification.t()) ::
           {:ok, String.t()} | {:error, :unknown_version}
   defdelegate generate_sample_app(app_spec), to: AppRepo
