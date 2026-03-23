@@ -30,6 +30,7 @@ defmodule PhxDiffWeb.Router do
     get "/compare", PageController, :compare
     live "/compare/:diff_specification", CompareLive, :compare
 
+    get "/browse", PageController, :browse
     live "/browse/:app_specification/files/*path", BrowseLive, :file
     live "/browse/:app_specification", BrowseLive, :browse
   end

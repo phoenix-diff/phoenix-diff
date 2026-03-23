@@ -42,6 +42,12 @@ defmodule PhxDiffWeb.PageController do
     |> redirect(to: ~p"/compare/#{diff_specification}")
   end
 
+  def browse(conn, _params) do
+    latest_version = PhxDiff.latest_version()
+    app_spec = PhxDiff.default_app_specification(latest_version)
+    redirect(conn, to: ~p"/browse/#{app_spec}")
+  end
+
   def compare(conn, _params) do
     # Redirect to default
     diff_specification =

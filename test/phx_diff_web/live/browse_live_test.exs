@@ -51,6 +51,25 @@ defmodule PhxDiffWeb.BrowseLiveTest do
     end
   end
 
+  describe "/browse redirect" do
+    test "redirects to the latest version", %{conn: conn} do
+      latest_version = PhxDiff.latest_version()
+
+      conn = get(conn, ~p"/browse")
+
+      assert redirected_to(conn) == "/browse/#{latest_version}"
+    end
+  end
+
+  describe "navigation" do
+    test "root layout contains a Browse link", %{conn: conn} do
+      {:ok, _view, html} = live(conn, ~p"/browse/1.7.1/files/README.md")
+
+      assert html =~ ~s|href="/browse"|
+      assert html =~ "Browse"
+    end
+  end
+
   describe "switching app specifications" do
     test "submitting the form with a different version navigates to new app spec", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/browse/1.7.1/files/README.md")
