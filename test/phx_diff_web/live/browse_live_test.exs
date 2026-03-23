@@ -153,6 +153,21 @@ defmodule PhxDiffWeb.BrowseLiveTest do
     end
   end
 
+  describe "dotfiles" do
+    test "dotfiles appear in the file list", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/browse/1.7.1/files/mix.exs")
+
+      html = render(view)
+      assert html =~ ".formatter.exs"
+    end
+
+    test "dotfiles can be opened and display content", %{conn: conn} do
+      {:ok, _view, html} = live(conn, ~p"/browse/1.7.1/files/.formatter.exs")
+
+      assert html =~ "import_deps"
+    end
+  end
+
   describe "switching app specifications" do
     test "submitting the form with a different version navigates to new app spec", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/browse/1.7.1/files/README.md")
