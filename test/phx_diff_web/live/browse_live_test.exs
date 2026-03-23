@@ -30,5 +30,24 @@ defmodule PhxDiffWeb.BrowseLiveTest do
 
       assert html =~ "mix.exs"
     end
+
+    test "applies language class for syntax highlighting", %{conn: conn} do
+      {:ok, _view, html} = live(conn, ~p"/browse/1.7.1/files/mix.exs")
+
+      assert html =~ "language-elixir"
+      assert html =~ "CodeHighlight"
+    end
+
+    test "navigating between files updates content", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/browse/1.7.1/files/mix.exs")
+
+      assert render(view) =~ "defmodule"
+
+      view
+      |> element(~s|a[href="/browse/1.7.1/files/README.md"]|)
+      |> render_click()
+
+      assert_patch(view, ~p"/browse/1.7.1/files/README.md")
+    end
   end
 end

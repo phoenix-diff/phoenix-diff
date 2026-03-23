@@ -26,13 +26,11 @@
           </ul>
         </div>
 
-        <div class="flex-1 min-w-0 pl-4">
-          <div class="bg-zinc-100 px-4 py-2 rounded-t text-sm font-mono font-medium text-zinc-700">
-            {@selected_file}
-          </div>
-          <div class="border border-zinc-200 rounded-b overflow-x-auto">
-            <pre class="p-4 text-sm"><code>{@file_content}</code></pre>
-          </div>
+        <div class="pl-4 flex-1 min-w-0">
+          <PhxDiffWeb.BrowseLive.CodeViewerComponent.code_viewer
+            selected_file={@selected_file}
+            file_content={@file_content}
+          />
         </div>
       </div>
     </div>

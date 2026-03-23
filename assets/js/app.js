@@ -10,10 +10,12 @@ import {LiveSocket} from "phoenix_live_view";
 import topbar from "../vendor/topbar"
 import DiffViewerComponent from "./diff_viewer_component";
 import DiffSelectorComponent from "./diff_selector_component";
+import CodeHighlight from "./code_highlight";
 
 let Hooks = {
   DiffViewerComponent: DiffViewerComponent,
-  DiffSelectorComponent: DiffSelectorComponent
+  DiffSelectorComponent: DiffSelectorComponent,
+  CodeHighlight: CodeHighlight
 };
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
