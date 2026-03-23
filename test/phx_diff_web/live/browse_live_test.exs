@@ -135,6 +135,14 @@ defmodule PhxDiffWeb.BrowseLiveTest do
     end
   end
 
+  describe "path traversal" do
+    test "returns 404 for path with .. segments", %{conn: conn} do
+      assert_error_sent(404, fn ->
+        live(conn, "/browse/1.7.1/files/lib/..%2F..%2F..%2Fetc%2Fpasswd")
+      end)
+    end
+  end
+
   describe "switching app specifications" do
     test "submitting the form with a different version navigates to new app spec", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/browse/1.7.1/files/README.md")

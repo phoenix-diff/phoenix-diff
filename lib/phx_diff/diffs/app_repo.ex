@@ -89,8 +89,8 @@ defmodule PhxDiff.Diffs.AppRepo do
   @spec read_app_file(AppSpecification.t(), String.t()) ::
           {:ok, String.t()} | {:error, :invalid_version | :not_found | :binary_file}
   def read_app_file(%AppSpecification{} = app_spec, relative_path) do
-    with {:ok, root} <- fetch_app_path(app_spec),
-         :ok <- validate_path(relative_path),
+    with :ok <- validate_path(relative_path),
+         {:ok, root} <- fetch_app_path(app_spec),
          full_path <- Path.expand(relative_path, root),
          true <- String.starts_with?(full_path, Path.expand(root)),
          true <- File.regular?(full_path),
