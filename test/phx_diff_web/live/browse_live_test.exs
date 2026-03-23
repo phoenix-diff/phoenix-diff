@@ -143,6 +143,16 @@ defmodule PhxDiffWeb.BrowseLiveTest do
     end
   end
 
+  describe "binary files" do
+    test "shows binary file message instead of content", %{conn: conn} do
+      {:ok, _view, html} =
+        live(conn, ~p"/browse/1.7.1/files/priv/static/favicon.ico")
+
+      assert html =~ "Binary file not displayed"
+      refute html =~ "CodeHighlight"
+    end
+  end
+
   describe "switching app specifications" do
     test "submitting the form with a different version navigates to new app spec", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/browse/1.7.1/files/README.md")

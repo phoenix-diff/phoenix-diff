@@ -25,10 +25,16 @@
         </div>
 
         <div class="sm:pl-4 flex-1 min-w-0">
-          <PhxDiffWeb.BrowseLive.CodeViewerComponent.code_viewer
-            selected_file={@selected_file}
-            file_content={@file_content}
-          />
+          <%= if @binary_file do %>
+            <PhxDiffWeb.BrowseLive.CodeViewerComponent.binary_file_notice selected_file={
+              @selected_file
+            } />
+          <% else %>
+            <PhxDiffWeb.BrowseLive.CodeViewerComponent.code_viewer
+              selected_file={@selected_file}
+              file_content={@file_content}
+            />
+          <% end %>
         </div>
       </div>
     </div>

@@ -25,19 +25,24 @@ defmodule PhxDiffWeb.BrowseLive do
     relative_path = Enum.join(path_segments, "/")
 
     with {:ok, app_spec} <- PhxDiffWeb.Params.decode_app_spec(app_spec_slug),
-         {:ok, files} <- PhxDiff.list_app_files(app_spec),
-         {:ok, content} <- PhxDiff.read_app_file(app_spec, relative_path) do
+         {:ok, files} <- PhxDiff.list_app_files(app_spec) do
+      {content, binary?} =
+        case PhxDiff.read_app_file(app_spec, relative_path) do
+          {:ok, content} -> {content, false}
+          {:error, :binary_file} -> {nil, true}
+          {:error, :not_found} -> raise NotFoundError
+        end
+
       {:noreply,
        socket
        |> assign(:app_spec, app_spec)
        |> assign(:files, files)
        |> assign(:selected_file, relative_path)
        |> assign(:file_content, content)
+       |> assign(:binary_file, binary?)
        |> assign(:page_title, "#{relative_path} — v#{app_spec.phoenix_version}")}
     else
       {:error, :invalid_version} -> raise NotFoundError
-      {:error, :not_found} -> raise NotFoundError
-      {:error, :binary_file} -> raise NotFoundError
       :error -> raise NotFoundError
     end
   end

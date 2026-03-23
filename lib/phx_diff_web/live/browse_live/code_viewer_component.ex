@@ -35,6 +35,21 @@ defmodule PhxDiffWeb.BrowseLive.CodeViewerComponent do
     """
   end
 
+  attr :selected_file, :string, required: true
+
+  def binary_file_notice(assigns) do
+    ~H"""
+    <div class="flex-1 min-w-0">
+      <div class="bg-zinc-100 px-4 py-2 rounded-t text-sm font-mono font-medium text-zinc-700">
+        {@selected_file}
+      </div>
+      <div class="border border-zinc-200 rounded-b p-8 text-center text-zinc-500">
+        Binary file not displayed
+      </div>
+    </div>
+    """
+  end
+
   defp language_class(file_path) do
     ext = Path.extname(file_path)
 
