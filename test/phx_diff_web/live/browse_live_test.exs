@@ -127,6 +127,14 @@ defmodule PhxDiffWeb.BrowseLiveTest do
     end
   end
 
+  describe "nonexistent file" do
+    test "returns 404 for a file that does not exist", %{conn: conn} do
+      assert_error_sent(404, fn ->
+        live(conn, ~p"/browse/1.7.1/files/no/such/file.ex")
+      end)
+    end
+  end
+
   describe "switching app specifications" do
     test "submitting the form with a different version navigates to new app spec", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/browse/1.7.1/files/README.md")
