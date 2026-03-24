@@ -20,7 +20,7 @@ defmodule PhxDiffWeb.BrowseLive.CodeViewerComponent do
 
     ~H"""
     <div class="flex-1 min-w-0">
-      <div class="bg-zinc-100 px-4 py-2 rounded-t text-sm font-mono font-medium text-zinc-700">
+      <div class="bg-zinc-100 px-4 py-2 rounded-t text-sm font-medium text-zinc-700">
         {@selected_file}
       </div>
       <div class="border border-zinc-200 rounded-b overflow-x-auto">
@@ -40,7 +40,7 @@ defmodule PhxDiffWeb.BrowseLive.CodeViewerComponent do
   def binary_file_notice(assigns) do
     ~H"""
     <div class="flex-1 min-w-0">
-      <div class="bg-zinc-100 px-4 py-2 rounded-t text-sm font-mono font-medium text-zinc-700">
+      <div class="bg-zinc-100 px-4 py-2 rounded-t text-sm font-medium text-zinc-700">
         {@selected_file}
       </div>
       <div class="border border-zinc-200 rounded-b p-8 text-center text-zinc-500">

@@ -57,7 +57,7 @@ defmodule PhxDiffWeb.BrowseLive.FileTreeComponent do
           <% open? = String.starts_with?(@selected_file, dir_path) %>
           <li>
             <button
-              class="flex items-center w-full py-1 text-xs font-semibold text-zinc-500 tracking-wide hover:text-zinc-700 cursor-pointer"
+              class="flex items-center w-full py-1 text-sm text-zinc-600 hover:text-zinc-800 cursor-pointer"
               style={"padding-left: #{@depth * 0.75 + 0.5}rem"}
               phx-click={toggle_directory(dir_id)}
             >
@@ -91,11 +91,13 @@ defmodule PhxDiffWeb.BrowseLive.FileTreeComponent do
             <.link
               patch={~p"/browse/#{@app_spec}/files/#{Path.split(full_path)}"}
               class={[
-                "block py-1 text-sm rounded hover:bg-zinc-100 truncate",
+                "flex items-center py-1 text-sm rounded hover:bg-zinc-100 truncate",
                 full_path == @selected_file && "bg-orange-100 text-orange-900 font-medium"
               ]}
               style={"padding-left: #{@depth * 0.75 + 0.5}rem"}
             >
+              <span class="size-3 mr-1 shrink-0"></span>
+              <.icon name="hero-document" class="size-4 mr-1 shrink-0 text-zinc-400" />
               {file}
             </.link>
           </li>
