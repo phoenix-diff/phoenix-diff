@@ -15,7 +15,7 @@ defmodule PhxDiffWeb.BrowseLive.FileTreeComponent do
     <div>
       <button
         id="file-tree-toggle"
-        class="sm:hidden flex items-center w-full text-left px-2 py-2 text-sm font-semibold text-zinc-300 border-b border-zinc-700"
+        class="sm:hidden flex items-center w-full text-left px-2 py-2 text-sm font-semibold text-base-content/80 border-b border-base-300"
         phx-click={toggle_file_tree()}
       >
         <span id="file-tree-toggle-chevron-right">
@@ -57,21 +57,21 @@ defmodule PhxDiffWeb.BrowseLive.FileTreeComponent do
           <% open? = String.starts_with?(@selected_file, dir_path) %>
           <li>
             <button
-              class="flex items-center w-full py-1 text-sm text-zinc-400 hover:text-zinc-200 cursor-pointer"
+              class="flex items-center w-full py-1 text-sm text-base-content/60 hover:text-base-content cursor-pointer"
               style={"padding-left: #{@depth * 0.75 + 0.5}rem"}
               phx-click={toggle_directory(dir_id)}
             >
               <span id={"#{dir_id}-chevron-right"} class={[open? && "hidden"]}>
-                <.icon name="hero-chevron-right" class="size-3 mr-1 text-zinc-400" />
+                <.icon name="hero-chevron-right" class="size-3 mr-1 text-base-content/60" />
               </span>
               <span id={"#{dir_id}-chevron-down"} class={[!open? && "hidden"]}>
-                <.icon name="hero-chevron-down" class="size-3 mr-1 text-zinc-400" />
+                <.icon name="hero-chevron-down" class="size-3 mr-1 text-base-content/60" />
               </span>
               <span id={"#{dir_id}-folder-closed"} class={[open? && "hidden"]}>
-                <.icon name="hero-folder" class="size-4 mr-1 text-zinc-400" />
+                <.icon name="hero-folder" class="size-4 mr-1 text-base-content/60" />
               </span>
               <span id={"#{dir_id}-folder-open"} class={[!open? && "hidden"]}>
-                <.icon name="hero-folder-open" class="size-4 mr-1 text-zinc-400" />
+                <.icon name="hero-folder-open" class="size-4 mr-1 text-base-content/60" />
               </span>
               {dir}
             </button>
@@ -91,13 +91,13 @@ defmodule PhxDiffWeb.BrowseLive.FileTreeComponent do
             <.link
               patch={~p"/browse/#{@app_spec}/files/#{Path.split(full_path)}"}
               class={[
-                "flex items-center py-1 text-sm rounded hover:bg-zinc-700 truncate",
-                full_path == @selected_file && "bg-zinc-700 text-orange-400 font-medium"
+                "flex items-center py-1 text-sm rounded hover:bg-base-200 truncate",
+                full_path == @selected_file && "bg-base-200 text-orange-500 font-medium"
               ]}
               style={"padding-left: #{@depth * 0.75 + 0.5}rem"}
             >
               <span class="size-3 mr-1 shrink-0"></span>
-              <.icon name="hero-document" class="size-4 mr-1 shrink-0 text-zinc-400" />
+              <.icon name="hero-document" class="size-4 mr-1 shrink-0 text-base-content/60" />
               {file}
             </.link>
           </li>
