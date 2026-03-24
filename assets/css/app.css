@@ -122,6 +122,39 @@ a.d2h-file-switch {
   --noise: 0;
 }
 
+/* Code viewer line numbers */
+pre.code-with-line-numbers {
+  display: flex;
+  align-items: flex-start;
+  padding: 0;
+}
+
+.line-numbers-gutter {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0.75rem;
+  text-align: right;
+  user-select: none;
+  color: rgba(128, 128, 128, 0.6);
+  border-right: 1px solid rgba(128, 128, 128, 0.2);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  flex-shrink: 0;
+  min-width: 2.5rem;
+}
+
+.line-numbers-gutter span {
+  display: block;
+  line-height: 1.25rem;
+}
+
+pre.code-with-line-numbers code.hljs {
+  flex: 1;
+  padding: 1rem;
+  min-width: 0;
+  line-height: 1.25rem;
+}
+
 /* Add variants based on LiveView classes */
 @custom-variant phx-click-loading (.phx-click-loading&, .phx-click-loading &);
 @custom-variant phx-submit-loading (.phx-submit-loading&, .phx-submit-loading &);
