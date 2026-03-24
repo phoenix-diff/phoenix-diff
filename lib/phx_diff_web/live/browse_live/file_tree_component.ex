@@ -15,7 +15,7 @@ defmodule PhxDiffWeb.BrowseLive.FileTreeComponent do
     <div>
       <button
         id="file-tree-toggle"
-        class="sm:hidden flex items-center w-full text-left px-2 py-2 text-sm font-semibold text-zinc-700 border-b border-zinc-200"
+        class="sm:hidden flex items-center w-full text-left px-2 py-2 text-sm font-semibold text-zinc-300 border-b border-zinc-700"
         phx-click={toggle_file_tree()}
       >
         <span id="file-tree-toggle-chevron-right">
@@ -57,7 +57,7 @@ defmodule PhxDiffWeb.BrowseLive.FileTreeComponent do
           <% open? = String.starts_with?(@selected_file, dir_path) %>
           <li>
             <button
-              class="flex items-center w-full py-1 text-sm text-zinc-600 hover:text-zinc-800 cursor-pointer"
+              class="flex items-center w-full py-1 text-sm text-zinc-400 hover:text-zinc-200 cursor-pointer"
               style={"padding-left: #{@depth * 0.75 + 0.5}rem"}
               phx-click={toggle_directory(dir_id)}
             >
@@ -91,8 +91,8 @@ defmodule PhxDiffWeb.BrowseLive.FileTreeComponent do
             <.link
               patch={~p"/browse/#{@app_spec}/files/#{Path.split(full_path)}"}
               class={[
-                "flex items-center py-1 text-sm rounded hover:bg-zinc-100 truncate",
-                full_path == @selected_file && "bg-orange-100 text-orange-900 font-medium"
+                "flex items-center py-1 text-sm rounded hover:bg-zinc-700 truncate",
+                full_path == @selected_file && "bg-zinc-700 text-orange-400 font-medium"
               ]}
               style={"padding-left: #{@depth * 0.75 + 0.5}rem"}
             >
