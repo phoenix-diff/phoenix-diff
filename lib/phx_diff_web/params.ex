@@ -36,6 +36,10 @@ defmodule PhxDiffWeb.Params do
   end
 end
 
+defimpl Phoenix.Param, for: PhxDiff.AppSpecification do
+  def to_param(app_spec), do: PhxDiffWeb.Params.encode_app_spec(app_spec)
+end
+
 defimpl Phoenix.Param, for: PhxDiffWeb.DiffSpecification do
   def to_param(diff_spec), do: PhxDiffWeb.Params.encode_diff_spec(diff_spec)
 end

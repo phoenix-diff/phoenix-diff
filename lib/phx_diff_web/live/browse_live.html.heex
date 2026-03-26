@@ -1,0 +1,42 @@
+<div id="browse-page">
+  <section id="input-section" class="bg-radial from-orange-400 to-red-500">
+    <div class="container mx-auto px-8 py-10 text-center">
+      <h3 class="text-2xl font-light text-neutral-content">
+        Browse a generated Phoenix application
+      </h3>
+
+      <.live_component
+        module={PhxDiffWeb.BrowseLive.AppSelectionForm}
+        id="app-selection-form"
+        app_spec={@app_spec}
+      />
+    </div>
+  </section>
+
+  <section id="results-section">
+    <div class="container mx-auto p-4">
+      <div class="flex flex-col sm:flex-row">
+        <div class="sm:w-64 shrink-0 sm:border-r border-base-300 sm:pr-4 overflow-y-auto sm:max-h-[80vh]">
+          <PhxDiffWeb.BrowseLive.FileTreeComponent.file_tree
+            app_spec={@app_spec}
+            files={@files}
+            selected_file={@selected_file}
+          />
+        </div>
+
+        <div class="sm:pl-4 flex-1 min-w-0">
+          <%= if @binary_file do %>
+            <PhxDiffWeb.BrowseLive.CodeViewerComponent.binary_file_notice selected_file={
+              @selected_file
+            } />
+          <% else %>
+            <PhxDiffWeb.BrowseLive.CodeViewerComponent.code_viewer
+              selected_file={@selected_file}
+              file_content={@file_content}
+            />
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

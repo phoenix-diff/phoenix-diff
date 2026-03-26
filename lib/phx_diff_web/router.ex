@@ -13,6 +13,7 @@ defmodule PhxDiffWeb.Router do
     plug :put_secure_browser_headers
     plug :fetch_honeybadger_config
     plug :fetch_analytics_config
+    plug :put_current_path
   end
 
   pipeline :api do
@@ -29,6 +30,10 @@ defmodule PhxDiffWeb.Router do
     get "/", PageController, :index
     get "/compare", PageController, :compare
     live "/compare/:diff_specification", CompareLive, :compare
+
+    get "/browse", PageController, :browse
+    live "/browse/:app_specification/files/*path", BrowseLive, :file
+    live "/browse/:app_specification", BrowseLive, :browse
   end
 
   scope "/" do
@@ -43,6 +48,10 @@ defmodule PhxDiffWeb.Router do
   # scope "/api", PhxDiffWeb do
   #   pipe_through :api
   # end
+
+  defp put_current_path(conn, _opts) do
+    assign(conn, :current_path, conn.request_path)
+  end
 
   defp admin_basic_auth(conn, _opts) do
     credential = PhxDiffWeb.Config.admin_dashboard_credentials()
