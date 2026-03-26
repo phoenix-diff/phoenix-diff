@@ -48,16 +48,16 @@
           <span id="nav-icon-close" class="hidden"><.icon name="hero-x-mark" class="w-6 h-6" /></span>
         </button>
 
-        <ul class="hidden sm:flex gap-4 items-center">
+        <ul class="hidden sm:flex gap-1 items-center">
           <li>
-            <.link navigate={~p"/compare"} class="hover:underline">Compare</.link>
+            <.link navigate={~p"/compare"} class={["rounded-md px-3 py-1.5 text-sm transition-colors duration-150 hover:bg-brand/10", String.starts_with?(@current_path, "/compare") && "bg-brand/15 font-medium"]}>Compare</.link>
           </li>
           <li>
-            <.link navigate={~p"/browse"} class="hover:underline">Browse</.link>
+            <.link navigate={~p"/browse"} class={["rounded-md px-3 py-1.5 text-sm transition-colors duration-150 hover:bg-brand/10", String.starts_with?(@current_path, "/browse") && "bg-brand/15 font-medium"]}>Browse</.link>
           </li>
           <li>
-            <a href="https://github.com/navinpeiris/phoenix-diff" target="_blank">
-              <.icon name="fa-github-brand" class="w-4 h-4 align-[-.125rem]" />
+            <a href="https://github.com/navinpeiris/phoenix-diff" target="_blank" class="flex items-center rounded-md p-1.5 transition-colors duration-150 hover:bg-brand/10">
+              <.icon name="fa-github-brand" class="w-5 h-5" />
             </a>
           </li>
         </ul>
