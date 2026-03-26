@@ -92,7 +92,7 @@ defmodule PhxDiffWeb.BrowseLive.FileTreeComponent do
               patch={~p"/browse/#{@app_spec}/files/#{Path.split(full_path)}"}
               class={[
                 "flex items-center py-1 text-sm rounded hover:bg-base-200 truncate",
-                full_path == @selected_file && "bg-base-200 text-orange-500 font-medium"
+                full_path == @selected_file && "bg-base-200 text-primary font-medium"
               ]}
               style={"padding-left: #{@depth * 0.75 + 0.5}rem"}
             >

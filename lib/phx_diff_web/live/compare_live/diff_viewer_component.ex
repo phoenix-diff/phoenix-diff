@@ -54,20 +54,20 @@ defmodule PhxDiffWeb.CompareLive.DiffViewerComponent do
         Files changed ({@parsed_diff.files_changed_count})
         <.link
           id="file-list-show-link"
-          class="text-orange-500 hover:text-orange-700 text-sm"
+          class="text-primary hover:text-primary/70 text-sm"
           phx-click={show_file_list()}
         >
           show
         </.link>
         <.link
           id="file-list-hide-link"
-          class="text-orange-500 hover:text-orange-700 hidden text-sm"
+          class="text-primary hover:text-primary/70 hidden text-sm"
           phx-click={hide_file_list()}
         >
           hide
         </.link>
       </div>
-      <ul id="file-list" class="file-list divide-y divide-gray-200 hidden">
+      <ul id="file-list" class="file-list divide-y divide-base-300 hidden">
         <.live_component
           :for={patch <- @parsed_diff.patches}
           id={"file-list-#{patch.display_filename_hash}"}

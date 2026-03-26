@@ -96,7 +96,7 @@ defmodule PhxDiffWeb.BrowseLiveTest do
       parsed = Floki.parse_document!(html)
 
       active_links =
-        Floki.find(parsed, "#file-tree .bg-orange-100")
+        Floki.find(parsed, "#file-tree .text-primary")
         |> Enum.map(&Floki.text/1)
         |> Enum.map(&String.trim/1)
 
