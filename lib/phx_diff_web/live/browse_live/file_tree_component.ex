@@ -26,17 +26,19 @@ defmodule PhxDiffWeb.BrowseLive.FileTreeComponent do
         </span>
         Files ({length(@files)})
       </button>
-      <nav id="file-tree" class="hidden sm:!block">
-        <ul class="space-y-0.5">
-          <.tree_entries
-            entries={@tree}
-            app_spec={@app_spec}
-            selected_file={@selected_file}
-            prefix=""
-            depth={0}
-          />
-        </ul>
-      </nav>
+      <div id="file-tree-wrapper" class="grid grid-rows-[0fr] sm:!grid-rows-[1fr] transition-[grid-template-rows] duration-200 ease-out">
+        <nav id="file-tree" class="overflow-hidden sm:!overflow-visible">
+          <ul class="space-y-0.5">
+            <.tree_entries
+              entries={@tree}
+              app_spec={@app_spec}
+              selected_file={@selected_file}
+              prefix=""
+              depth={0}
+            />
+          </ul>
+        </nav>
+      </div>
     </div>
     """
   end
@@ -120,11 +122,7 @@ defmodule PhxDiffWeb.BrowseLive.FileTreeComponent do
 
   defp toggle_file_tree(js \\ %JS{}) do
     js
-    |> JS.toggle(
-      to: "#file-tree",
-      in: {"transition-all transform ease-in duration-200", "opacity-0", "opacity-100"},
-      out: {"transition-all transform ease-in duration-200", "opacity-100", "opacity-0"}
-    )
+    |> JS.toggle_class("grid-rows-[1fr] grid-rows-[0fr]", to: "#file-tree-wrapper")
     |> JS.toggle(to: "#file-tree-toggle-chevron-right")
     |> JS.toggle(to: "#file-tree-toggle-chevron-down")
   end
