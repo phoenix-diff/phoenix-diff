@@ -26,7 +26,10 @@ defmodule PhxDiffWeb.BrowseLive.FileTreeComponent do
         </span>
         Files ({length(@files)})
       </button>
-      <div id="file-tree-wrapper" class="grid grid-rows-[0fr] sm:!grid-rows-[1fr] transition-[grid-template-rows] duration-200 ease-out">
+      <div
+        id="file-tree-wrapper"
+        class="grid grid-rows-[0fr] sm:!grid-rows-[1fr] transition-[grid-template-rows] duration-200 ease-out"
+      >
         <nav id="file-tree" class="overflow-hidden sm:!overflow-visible">
           <ul class="space-y-0.5">
             <.tree_entries
