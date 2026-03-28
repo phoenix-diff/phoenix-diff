@@ -84,6 +84,7 @@ defmodule PhxDiffWeb.BrowseLive.AppSelectionForm do
      |> assign(:variant_options, variant_options)}
   end
 
+  @impl true
   def handle_event("form-submit", %{"app_selection" => params}, socket) do
     changeset = AppSelection.changeset(socket.assigns.app_selection, params)
 
