@@ -71,6 +71,13 @@ defmodule PhxDiff do
   defdelegate read_app_file(app_spec, relative_path), to: PhxDiff.Diffs
 
   @doc """
+  Read raw file bytes from an app specification, including binary files
+  """
+  @spec read_raw_app_file(AppSpecification.t(), String.t()) ::
+          {:ok, binary()} | {:error, :invalid_version | :not_found}
+  defdelegate read_raw_app_file(app_spec, relative_path), to: PhxDiff.Diffs
+
+  @doc """
   Generates a sample application for the given app specification
 
   Returns the path of the generated app

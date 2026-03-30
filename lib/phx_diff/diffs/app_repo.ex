@@ -89,17 +89,29 @@ defmodule PhxDiff.Diffs.AppRepo do
   @spec read_app_file(AppSpecification.t(), String.t()) ::
           {:ok, String.t()} | {:error, :invalid_version | :not_found | :binary_file}
   def read_app_file(%AppSpecification{} = app_spec, relative_path) do
+    with {:ok, content} <- read_file_bytes(app_spec, relative_path) do
+      if String.contains?(content, <<0>>) do
+        {:error, :binary_file}
+      else
+        {:ok, content}
+      end
+    end
+  end
+
+  @spec read_raw_app_file(AppSpecification.t(), String.t()) ::
+          {:ok, binary()} | {:error, :invalid_version | :not_found}
+  def read_raw_app_file(%AppSpecification{} = app_spec, relative_path) do
+    read_file_bytes(app_spec, relative_path)
+  end
+
+  defp read_file_bytes(app_spec, relative_path) do
     with :ok <- validate_path(relative_path),
          {:ok, root} <- fetch_app_path(app_spec),
          full_path <- Path.expand(relative_path, root),
          true <- String.starts_with?(full_path, Path.expand(root)),
          true <- File.regular?(full_path),
          {:ok, content} <- File.read(full_path) do
-      if String.contains?(content, <<0>>) do
-        {:error, :binary_file}
-      else
-        {:ok, content}
-      end
+      {:ok, content}
     else
       {:error, _} = error -> error
       _ -> {:error, :not_found}
