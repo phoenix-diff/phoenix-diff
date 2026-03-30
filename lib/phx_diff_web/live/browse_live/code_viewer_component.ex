@@ -1,6 +1,6 @@
 defmodule PhxDiffWeb.BrowseLive.CodeViewerComponent do
   @moduledoc false
-  use Phoenix.Component
+  use PhxDiffWeb, :html
 
   @extension_to_language %{
     ".ex" => "elixir",
@@ -14,29 +14,14 @@ defmodule PhxDiffWeb.BrowseLive.CodeViewerComponent do
 
   attr :selected_file, :string, required: true
   attr :file_content, :string, required: true
+  attr :app_spec, :any, required: true
 
   def code_viewer(assigns) do
     assigns = assign(assigns, :language_class, language_class(assigns.selected_file))
 
     ~H"""
     <div class="flex-1 min-w-0">
-      <div class="bg-base-300 px-4 py-2 rounded-t text-sm font-medium text-base-content flex items-center gap-2">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-4 w-4 shrink-0 text-base-content/60"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          stroke-width="2"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-          />
-        </svg>
-        {@selected_file}
-      </div>
+      <.file_header selected_file={@selected_file} app_spec={@app_spec} />
       <div class="border border-base-300 rounded-b overflow-x-auto">
         <pre class="p-4 text-sm"><code
             id={"code-viewer-#{@selected_file}"}
@@ -50,32 +35,43 @@ defmodule PhxDiffWeb.BrowseLive.CodeViewerComponent do
   end
 
   attr :selected_file, :string, required: true
+  attr :app_spec, :any, required: true
 
   def binary_file_notice(assigns) do
     ~H"""
     <div class="flex-1 min-w-0">
-      <div class="bg-base-300 px-4 py-2 rounded-t text-sm font-medium text-base-content flex items-center gap-2">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-4 w-4 shrink-0 text-base-content/60"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          stroke-width="2"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-          />
-        </svg>
-        {@selected_file}
-      </div>
+      <.file_header selected_file={@selected_file} app_spec={@app_spec} />
       <div class="border border-base-300 rounded-b p-8 text-center text-base-content/50">
         Binary file not displayed
       </div>
     </div>
     """
+  end
+
+  attr :selected_file, :string, required: true
+  attr :app_spec, :any, required: true
+
+  defp file_header(assigns) do
+    assigns =
+      assign(assigns, :raw_file_url, raw_file_url(assigns.app_spec, assigns.selected_file))
+
+    ~H"""
+    <div class="bg-base-300 px-4 py-2 rounded-t text-sm font-medium text-base-content flex items-center gap-2">
+      <.icon name="hero-document-text" class="size-4 shrink-0 text-base-content/60" />
+      <span class="flex-1 truncate">{@selected_file}</span>
+      <a
+        href={@raw_file_url}
+        target="_blank"
+        class="text-xs font-medium px-2 py-0.5 rounded border border-base-content/20 text-base-content/60 hover:text-base-content hover:border-base-content/40 hover:bg-base-content/5 transition-colors"
+      >
+        Raw
+      </a>
+    </div>
+    """
+  end
+
+  defp raw_file_url(app_spec, selected_file) do
+    ~p"/browse/#{app_spec}/raw/#{Path.split(selected_file)}"
   end
 
   defp language_class(file_path) do

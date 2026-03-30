@@ -33,6 +33,10 @@ defmodule PhxDiff.Diffs do
           {:ok, String.t()} | {:error, :invalid_version | :not_found | :binary_file}
   defdelegate read_app_file(app_spec, relative_path), to: AppRepo
 
+  @spec read_raw_app_file(AppSpecification.t(), String.t()) ::
+          {:ok, binary()} | {:error, :invalid_version | :not_found}
+  defdelegate read_raw_app_file(app_spec, relative_path), to: AppRepo
+
   @spec generate_sample_app(AppSpecification.t()) ::
           {:ok, String.t()} | {:error, :unknown_version}
   defdelegate generate_sample_app(app_spec), to: AppRepo

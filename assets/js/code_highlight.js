@@ -11,7 +11,7 @@ function addLineNumbers(codeEl) {
   const lineCount = lines[lines.length - 1] === '' ? lines.length - 1 : lines.length;
 
   const gutter = document.createElement('span');
-  gutter.className = 'flex flex-col px-3 py-4 text-right select-none text-base-content/60 border-r border-base-content/20 text-sm leading-5 shrink-0 min-w-10';
+  gutter.className = 'line-numbers-gutter flex flex-col px-3 py-4 text-right select-none text-base-content/60 border-r border-base-content/20 text-sm leading-5 shrink-0 min-w-10';
   gutter.setAttribute('aria-hidden', 'true');
 
   const numbers = [];

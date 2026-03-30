@@ -25,6 +25,10 @@ defmodule PhxDiffWeb.Router do
   end
 
   scope "/", PhxDiffWeb do
+    get "/browse/:app_specification/raw/*path", RawFileController, :show
+  end
+
+  scope "/", PhxDiffWeb do
     pipe_through :browser
 
     get "/", PageController, :index

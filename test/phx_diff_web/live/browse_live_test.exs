@@ -38,6 +38,12 @@ defmodule PhxDiffWeb.BrowseLiveTest do
       assert html =~ "CodeHighlight"
     end
 
+    test "shows a raw link pointing to the raw file URL", %{conn: conn} do
+      {:ok, _view, html} = live(conn, ~p"/browse/1.7.1/files/mix.exs")
+
+      assert html =~ ~s|href="/browse/1.7.1/raw/mix.exs"|
+    end
+
     test "navigating between files updates content", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/browse/1.7.1/files/mix.exs")
 
@@ -150,6 +156,13 @@ defmodule PhxDiffWeb.BrowseLiveTest do
 
       assert html =~ "Binary file not displayed"
       refute html =~ "CodeHighlight"
+    end
+
+    test "shows a raw link for binary files", %{conn: conn} do
+      {:ok, _view, html} =
+        live(conn, ~p"/browse/1.7.1/files/priv/static/favicon.ico")
+
+      assert html =~ ~s|href="/browse/1.7.1/raw/priv/static/favicon.ico"|
     end
   end
 
