@@ -25,6 +25,8 @@ defmodule PhxDiffWeb.Router do
   end
 
   scope "/", PhxDiffWeb do
+    get "/llms.txt", LLMTextController, :show
+    get "/versions", VersionController, :index
     get "/browse/:app_specification/raw/*path", RawFileController, :show
   end
 
