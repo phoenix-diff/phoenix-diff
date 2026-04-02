@@ -11,6 +11,7 @@ defmodule PhxDiffWeb.LLMTextController do
   ## Endpoints
 
   GET /versions — list all versions and their available app specs
+  GET /browse/<app_spec>/files.txt — list all files in a generated app
   GET /browse/<app_spec>/raw/<path> — fetch a specific file from a generated app
 
   ## App specs
