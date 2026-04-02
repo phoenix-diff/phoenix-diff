@@ -70,6 +70,18 @@ defmodule PhxDiff.Diffs do
     end)
   end
 
+  @spec fetch_diff_stat(AppSpecification.t(), AppSpecification.t()) ::
+          {:ok, String.t()} | {:error, ComparisonError.t()}
+  def fetch_diff_stat(%AppSpecification{} = source_spec, %AppSpecification{} = target_spec) do
+    case fetch_app_paths(source_spec, target_spec) do
+      {:ok, source_path, target_path} ->
+        {:ok, DiffEngine.compute_diff_stat(source_path, target_path)}
+
+      {:error, %ComparisonError{} = error} ->
+        {:error, error}
+    end
+  end
+
   defp fetch_app_paths(source_spec, target_spec) do
     [{:source, source_spec}, {:target, target_spec}]
     |> Enum.reduce({%{}, []}, fn {field, spec}, {paths, errors} ->

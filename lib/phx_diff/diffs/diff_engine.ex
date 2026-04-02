@@ -16,6 +16,32 @@ defmodule PhxDiff.Diffs.DiffEngine do
     |> String.replace(~r/#{target_path}\//, "")
   end
 
+  @spec compute_diff_stat(String.t(), String.t()) :: String.t()
+  def compute_diff_stat(source_path, target_path) do
+    {:ok, stat} = git_diff_stat(source_path, target_path)
+
+    stat
+    |> String.replace(source_path <> "/", "")
+    |> String.replace(target_path <> "/", "")
+  end
+
+  defp git_diff_stat(source_path, target_path) do
+    case System.cmd("git", [
+           "-c",
+           "core.quotepath=false",
+           "diff",
+           "--no-index",
+           "--no-color",
+           "--stat",
+           source_path,
+           target_path
+         ]) do
+      {"", 0} -> {:ok, ""}
+      {output, 1} -> {:ok, output}
+      other -> {:error, other}
+    end
+  end
+
   defp git_diff(source_path, target_path) do
     case System.cmd("git", [
            "-c",

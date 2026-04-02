@@ -57,6 +57,13 @@ defmodule PhxDiff do
   defdelegate fetch_diff(source_spec, target_spec), to: PhxDiff.Diffs
 
   @doc """
+  Fetch a git diff --stat summary between two app specifications
+  """
+  @spec fetch_diff_stat(AppSpecification.t(), AppSpecification.t()) ::
+          {:ok, String.t()} | {:error, ComparisonError.t()}
+  defdelegate fetch_diff_stat(source_spec, target_spec), to: PhxDiff.Diffs
+
+  @doc """
   List all files for an app specification
   """
   @spec list_app_files(AppSpecification.t()) ::
