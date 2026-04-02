@@ -2,7 +2,7 @@
 
 This document proposes a plain-text, machine-readable API so LLMs can discover available Phoenix versions, retrieve upgrade diffs, and read individual generated files.
 
-Status: partially implemented. `/llms.txt`, `/versions`, and `/browse/<app_spec>/raw/<path>` are shipped. The diff endpoints (`/compare/.../diff`, `/compare/.../diff/stat`) and file-listing endpoint (`/browse/.../files.txt`) remain proposals.
+Status: partially implemented. `/llms.txt`, `/versions`, `/browse/<app_spec>/raw/<path>`, and `/browse/<app_spec>/files.txt` are shipped. The diff endpoints (`/compare/.../diff`, `/compare/.../diff/stat`) remain proposals.
 
 ## Goals
 
@@ -18,7 +18,7 @@ Status: partially implemented. `/llms.txt`, `/versions`, and `/browse/<app_spec>
 
 **Implemented.** A static plain-text discovery file following the [llms.txt](https://llmstxt.org) convention. No `Cache-Control` header is set (the proposal suggested a 24-hour cache).
 
-The body only references the two currently implemented endpoints (`/versions` and `/browse/<app_spec>/raw/<path>`). It will be updated as additional endpoints ship.
+The body references the currently implemented endpoints. It will be updated as additional endpoints ship.
 
 Actual output:
 
@@ -32,6 +32,7 @@ All endpoints return plain text. Generated apps use the name `sample_app` / `Sam
 ## Endpoints
 
 GET /versions — list all versions and their available app specs
+GET /browse/<app_spec>/files.txt — list all files in a generated app
 GET /browse/<app_spec>/raw/<path> — fetch a specific file from a generated app
 
 ## App specs
@@ -44,12 +45,11 @@ Examples:
   /browse/1.7.10%20--umbrella/raw/config/dev.exs
 ```
 
-Once the diff and file-listing endpoints ship, the body should be updated to include:
+Once the diff endpoints ship, the body should be updated to include:
 
 ```
 GET /compare/<source>...<target>/diff — unified diff between two versions
 GET /compare/<source>...<target>/diff/stat — summary of changed files and line counts
-GET /browse/<app_spec>/files.txt — list all files in a generated app
 ```
 
 along with the "How to upgrade a Phoenix app" workflow and `?exclude=` option documentation.
@@ -153,9 +153,7 @@ Example response for `GET /compare/1.7.14...1.8.0/diff/stat`:
 
 #### `GET /browse/<app_spec>/files.txt`
 
-**Not yet implemented.**
-
-Would return a plain-text list of all file paths in a generated Phoenix app, one path per line. This lets an LLM discover what files exist before fetching specific ones.
+**Implemented.** Returns a plain-text list of all file paths in a generated Phoenix app, one path per line. This lets an LLM discover what files exist before fetching specific ones via `/raw/<path>`. Returns `404` for unknown app specs or invalid versions. No `Cache-Control` header is set.
 
 Example response for `GET /browse/1.8.5/files.txt`:
 
@@ -233,12 +231,10 @@ Steps 3–4 require the diff endpoints which are not yet implemented.
 
 ### Inspecting a generated app
 
-Step 3 requires the file-listing endpoint which is not yet implemented. Individual files can already be fetched via step 4.
-
 1. `GET /llms.txt` — discover endpoints and capabilities
 2. `GET /versions` — find available versions and supported variants
-3. `GET /browse/<app_spec>/files.txt` — list all files in the generated app _(not yet implemented)_
-4. `GET /browse/<app_spec>/raw/<path>` — read individual files (**implemented**)
+3. `GET /browse/<app_spec>/files.txt` — list all files in the generated app
+4. `GET /browse/<app_spec>/raw/<path>` — read individual files
 
 ## Routing
 
@@ -247,7 +243,7 @@ The LLM endpoints share URL structure with the browser routes and are plain-text
 | Browser (LiveView) | LLM (plain text) | Status |
 |---|---|---|
 | `GET /compare/:diff_spec` | `GET /compare/:diff_spec/diff` | not yet implemented |
-| `GET /browse/:app_spec` | `GET /browse/:app_spec/files.txt` | not yet implemented |
+| `GET /browse/:app_spec` | `GET /browse/:app_spec/files.txt` | **implemented** |
 | `GET /browse/:app_spec/files/*path` | `GET /browse/:app_spec/raw/*path` | **implemented** |
 | — | `GET /versions` (LLM only) | **implemented** |
 | — | `GET /llms.txt` (LLM only) | **implemented** |
@@ -258,6 +254,7 @@ This avoids duplicating URL hierarchy under a separate `/api/` prefix. The curre
 scope "/", PhxDiffWeb do
   get "/llms.txt", LLMTextController, :show
   get "/versions", VersionController, :index
+  get "/browse/:app_specification/files.txt", FileListController, :index
   get "/browse/:app_specification/raw/*path", RawFileController, :show
 end
 ```
