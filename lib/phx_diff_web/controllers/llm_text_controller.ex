@@ -17,11 +17,15 @@ defmodule PhxDiffWeb.LLMTextController do
   ## App specs
 
   An app spec is a version string optionally followed by a phx.new flag, separated by a space.
-  Use the app specs exactly as listed in /versions, URL-encoding spaces as %20.
+  Use the app specs exactly as listed in /versions.
+
+  Note: spaces in app specs must be encoded as %20 in URLs.
 
   Examples:
-    /browse/1.7.10/raw/config/dev.exs          (no flag)
-    /browse/1.7.10%20--umbrella/raw/config/dev.exs
+    /browse/1.7.10/files.txt                          (default, no flag)
+    /browse/1.7.10%20--umbrella/files.txt             (umbrella flag)
+    /browse/1.7.10/raw/config/dev.exs                 (fetch a file, no flag)
+    /browse/1.7.10%20--umbrella/raw/config/dev.exs    (fetch a file, umbrella flag)
   """
 
   def show(conn, _params) do
