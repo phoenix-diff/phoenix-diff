@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Deploy a branch to the staging environment.
+# Usage: scripts/deploy-staging.sh [pr-number]
+#
+# If a PR number is given, deploys that PR's branch.
+# Otherwise, deploys the current branch (pushing first if needed).
+
+arg="${1:-}"
+
+if [[ -n "$arg" ]]; then
+  branch=$(gh pr view "$arg" --json headRefName --jq '.headRefName')
+  echo "Resolved PR #${arg} to branch: ${branch}"
+else
+  branch=$(git rev-parse --abbrev-ref HEAD)
+  echo "Deploying current branch: ${branch}"
+
+  if [[ -n $(git status --porcelain=v2 --branch | grep 'branch.ab' | grep -v '+0' || true) ]]; then
+    echo "Local is ahead of remote, pushing..."
+    git push origin "$branch"
+  fi
+fi
+
+echo "Triggering CD workflow for branch '${branch}' → Staging..."
+gh workflow run cd.yaml --ref "$branch" --field environment=Staging
+
+# Brief pause so GitHub registers the run
+sleep 2
+
+echo ""
+echo "Deployment triggered. Latest run:"
+gh run list --workflow=cd.yaml --branch "$branch" --limit 1 --json name,status,url
