@@ -2,16 +2,15 @@ defmodule PhxDiffWeb.FileListControllerTest do
   use PhxDiffWeb.ConnCase, async: true
 
   describe "GET /browse/:app_specification/files.txt" do
-    test "returns 200 with text/plain file list", %{conn: conn} do
+    test "returns 200 with text/plain file list and cache headers", %{conn: conn} do
       conn = get(conn, ~p"/browse/1.7.1/files.txt")
 
       assert conn.status == 200
       assert get_resp_header(conn, "content-type") == ["text/plain"]
+      assert get_resp_header(conn, "cache-control") == ["public, max-age=86400"]
       assert conn.resp_body =~ "mix.exs\n"
       assert conn.resp_body =~ ".gitignore\n"
       assert conn.resp_body =~ ".formatter.exs\n"
-      lines = String.split(conn.resp_body, "\n", trim: true)
-      assert length(lines) > 0
       assert String.ends_with?(conn.resp_body, "\n")
     end
 
@@ -22,8 +21,14 @@ defmodule PhxDiffWeb.FileListControllerTest do
       assert conn.resp_body =~ "mix.exs\n"
     end
 
-    test "returns 404 for unknown or malformed app spec", %{conn: conn} do
-      assert_error_sent(404, fn -> get(conn, ~p"/browse/0.0.0/files.txt") end)
+    test "returns 404 for unknown or malformed app spec without public cache headers", %{
+      conn: conn
+    } do
+      {_status, headers, _body} =
+        assert_error_sent(404, fn -> get(conn, ~p"/browse/0.0.0/files.txt") end)
+
+      assert {"cache-control", "max-age=0, private, must-revalidate"} in headers
+
       assert_error_sent(404, fn -> get(conn, ~p"/browse/not-a-version/files.txt") end)
     end
   end

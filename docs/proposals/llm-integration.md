@@ -153,7 +153,7 @@ Example response for `GET /compare/1.7.14...1.8.0/diff/stat`:
 
 #### `GET /browse/<app_spec>/files.txt`
 
-**Implemented.** Returns a plain-text list of all file paths in a generated Phoenix app, one path per line. This lets an LLM discover what files exist before fetching specific ones via `/raw/<path>`. Returns `404` for unknown app specs or invalid versions. No `Cache-Control` header is set.
+**Implemented.** Returns a plain-text list of all file paths in a generated Phoenix app, one path per line. This lets an LLM discover what files exist before fetching specific ones via `/raw/<path>`. Returns `404` for unknown app specs or invalid versions. Cached for 24 hours on success.
 
 Example response for `GET /browse/1.8.5/files.txt`:
 

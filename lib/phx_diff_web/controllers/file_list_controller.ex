@@ -3,6 +3,8 @@ defmodule PhxDiffWeb.FileListController do
 
   alias PhxDiffWeb.Params
 
+  @cache_max_age_seconds :timer.hours(24) |> System.convert_time_unit(:millisecond, :second)
+
   defmodule NotFoundError do
     defexception plug_status: 404
 
@@ -16,6 +18,7 @@ defmodule PhxDiffWeb.FileListController do
 
       conn
       |> put_resp_content_type("text/plain", nil)
+      |> put_resp_header("cache-control", "public, max-age=#{@cache_max_age_seconds}")
       |> send_resp(200, body)
     else
       _ -> raise NotFoundError
