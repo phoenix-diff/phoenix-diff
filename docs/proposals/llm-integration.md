@@ -1,14 +1,16 @@
 # LLM Integration Proposal
 
-This document proposes a plain-text, machine-readable API so LLMs can discover available Phoenix versions, retrieve upgrade diffs, and read individual generated files.
+This document proposes a machine-readable, cacheable HTTP API so LLMs can discover available Phoenix versions, retrieve upgrade diffs, and read individual generated files.
 
-Status: partially implemented. `/llms.txt`, `/versions`, `/browse/<app_spec>/raw/<path>`, and `/browse/<app_spec>/files.txt` are shipped. The diff endpoints (`/compare/.../diff`, `/compare/.../diff/stat`) remain proposals.
+Status: partially implemented. `/llms.txt`, `/versions`, `/browse/<app_spec>/raw/<path>`, `/browse/<app_spec>/files.txt`, and `/compare/.../diff/manifest` are shipped. The `/compare/.../diff` endpoint remains a proposal.
 
 ## Goals
 
 1. Let an LLM autonomously upgrade a Phoenix application between any two versions.
 2. Let an LLM inspect a generated Phoenix app at any version (e.g. to scaffold a new project or answer "what does a fresh 1.8.5 app look like?").
-3. Keep the interface simple — plain text, cacheable, no auth.
+3. Keep the interface simple — machine-readable, cacheable, no auth.
+
+Response formats are chosen per resource: listings and unified diffs use `text/plain`, raw file reads use the file's content type, and `/compare/<source>...<target>/diff/manifest` uses `application/json`.
 
 ## Proposed endpoints
 
@@ -18,20 +20,20 @@ Status: partially implemented. `/llms.txt`, `/versions`, `/browse/<app_spec>/raw
 
 **Implemented.** A static plain-text discovery file following the [llms.txt](https://llmstxt.org) convention. No `Cache-Control` header is set (the proposal suggested a 24-hour cache).
 
-The body references the currently implemented endpoints. It will be updated as additional endpoints ship.
-
-Actual output:
+The current body references only the currently implemented endpoints. Once `/diff` ships, the body should be updated to something like:
 
 ```
 # PhxDiff
 
 PhxDiff generates diffs between Phoenix Framework versions so you can upgrade your app.
 
-All endpoints return plain text. Generated apps use the name `sample_app` / `SampleApp` — replace these with your app's actual names.
+Endpoints are machine-readable. Listings and diffs are plain text, `/compare/<source>...<target>/diff/manifest` returns JSON, and `/browse/<app_spec>/raw/<path>` returns the file's content type. Generated apps use the name `sample_app` / `SampleApp` — replace these with your app's actual names.
 
 ## Endpoints
 
 GET /versions — list all versions and their available app specs
+GET /compare/<source>...<target>/diff — unified diff between two versions
+GET /compare/<source>...<target>/diff/manifest — normalized JSON change manifest for LLMs
 GET /browse/<app_spec>/files.txt — list all files in a generated app
 GET /browse/<app_spec>/raw/<path> — fetch a specific file from a generated app
 
@@ -45,22 +47,13 @@ Examples:
   /browse/1.7.10%20--umbrella/raw/config/dev.exs
 ```
 
-Once the diff endpoints ship, the body should be updated to include:
-
-```
-GET /compare/<source>...<target>/diff — unified diff between two versions
-GET /compare/<source>...<target>/diff/stat — summary of changed files and line counts
-```
-
-along with the "How to upgrade a Phoenix app" workflow and `?exclude=` option documentation.
-
 ### Versions
 
 #### `GET /versions`
 
 **Implemented.** Returns all known Phoenix versions and their supported variants. Plain text, one version per line. No `Cache-Control` header is set (cheap to assemble).
 
-The format differs from the original proposal: variants are listed as full app spec strings (the exact value to use in a URL), not as a `default` keyword or bare flag. The default variant is listed as just the version number. The header comment example references `/browse/.../files.txt` which is not yet implemented.
+The format differs from the original proposal: variants are listed as full app spec strings (the exact value to use in a URL), not as a `default` keyword or bare flag. The default variant is listed as just the version number.
 
 Actual response format:
 
@@ -86,7 +79,7 @@ Versions are listed in descending order (newest first).
 
 **Not yet implemented.**
 
-Would return a raw unified diff (`text/plain`) between two generated Phoenix app versions. The diff would be generated via `git diff --no-index` with the histogram algorithm. Only the `diff` and `diff/stat` sub-paths are supported.
+Would return a raw unified diff (`text/plain`) between two generated Phoenix app versions. The diff would be generated via `git diff --no-index` with the histogram algorithm.
 
 - `<source>` and `<target>` are URL-encoded app specifications (see below)
 - `?exclude=<path_prefix>` — exclude repo-relative path prefixes from the diff; repeated params are combined
@@ -133,21 +126,97 @@ diff --git a/config/config.exs b/config/config.exs
 ...
 ```
 
-#### `GET /compare/<source>...<target>/diff/stat`
+#### `GET /compare/<source>...<target>/diff/manifest`
 
-**Not yet implemented.**
+**Implemented.** Returns a normalized JSON manifest of file-level changes. This endpoint is intended as the LLM-first overview format: much smaller and more structured than the full unified diff. It is advisory only; `/diff` remains the authoritative patch representation.
 
-Would return a `git diff --stat` summary of changed files and line counts. This lets an LLM survey the scope of a diff before fetching the full content or individual files.
+The manifest should be derived from Git's machine-readable diff metadata, but the response format should be owned by PhxDiff rather than exposing raw Git output directly. That keeps the API stable and removes presentation-oriented parsing work from the client.
 
-Example response for `GET /compare/1.7.14...1.8.0/diff/stat`:
+Suggested Git command:
 
+```bash
+git -c core.quotepath=false \
+  diff --no-index -M --numstat -z --diff-algorithm=histogram -- "$source_path" "$target_path"
 ```
- mix.exs          | 4 ++--
- config/config.exs | 2 +-
- lib/sample_app_web/endpoint.ex | 3 ++-
- ...
- 15 files changed, 42 insertions(+), 38 deletions(-)
+
+`-M` uses Git's default rename-detection threshold (approximately 50% similarity). This threshold is not configurable via the API. If the threshold is tuned in a future release, some entries may shift between `renamed` and separate `deleted`/`added` pairs.
+
+This emits repeated NUL-delimited triples of:
+
+1. `<added>\t<deleted>\t`
+2. `<old_path>`
+3. `<new_path>`
+
+After stripping the source and target directory prefixes, the output shape is:
+
+```text
+54\t0\t | assets/css/app.scss | assets/css/app.scss
+0\t63\t | assets/js/socket.js | /dev/null
+39\t0\t | /dev/null | lib/sample_app_web/live/page_live.ex
+10\t0\t | lib/sample_app_web/templates/page/index.html.eex | lib/sample_app_web/live/page_live.html.leex
+-\t-\t | priv/static/favicon.ico | priv/static/favicon.ico
 ```
+
+Interpretation rules:
+
+- `old_path == /dev/null` means `added`
+- `new_path == /dev/null` means `deleted`
+- `old_path != new_path` with neither side `/dev/null` means `renamed`
+- `old_path == new_path` means `modified`
+- `added == "-"` and `deleted == "-"` means a binary change, so `binary: true` should be set and line counts omitted
+
+Suggested response format:
+
+```json
+{
+  "source": { "version": "1.7.14", "flags": ["--no-ecto"] },
+  "target": { "version": "1.8.0", "flags": ["--no-ecto"] },
+  "total_files": 6,
+  "total_added": 67,
+  "total_deleted": 12,
+  "files": [
+    { "path": "gone.txt", "status": "deleted", "added": 0, "deleted": 8 },
+    { "path": "lib/sample_app_web/components/layouts.ex", "status": "renamed", "old_path": "lib/sample_app_web/views/layout_view.ex", "added": 5, "deleted": 3 },
+    { "path": "mix.exs", "status": "modified", "added": 1, "deleted": 1 },
+    { "path": "new.txt", "status": "renamed", "old_path": "old.txt" },
+    { "path": "new_only.txt", "status": "added", "added": 12, "deleted": 0 },
+    { "path": "priv/static/favicon.ico", "status": "modified", "binary": true }
+  ]
+}
+```
+
+Field semantics:
+
+- `source` and `target` are objects that echo the resolved app specifications in structured form, so the response is self-describing even when cached or passed between tools. Each contains:
+  - `version` (string, always present) — the Phoenix version (e.g. `"1.8.0"`)
+  - `flags` (array of strings, always present) — the `phx.new` flags for that app spec, or `[]` when there are none
+  - Additional fields may be added in the future (e.g. post-generation commands) as app specs gain new dimensions
+- `total_files` is the number of entries in `files`
+- `total_added` and `total_deleted` are the sums of `added` and `deleted` across all entries in `files` (binary entries contribute 0). These let an LLM gauge upgrade size at a glance without iterating the array.
+- `files` is ordered alphabetically by `path`. This provides deterministic ordering independent of Git internals.
+- `path` is the canonical target-side path for the entry. For `modified` and `added`, it is the file's current path in the target app. For `deleted`, it is the path that existed in the source app and no longer exists in the target. For `renamed`, it is the destination path and `old_path` is the source path.
+- `status` is one of `modified`, `added`, `deleted`, or `renamed`. This v1 manifest intentionally models only content/path changes relevant to generated Phoenix apps; mode-only changes and type changes are out of scope. Clients should ignore unknown object fields and tolerate unknown future `status` values.
+- `old_path` is present only for `renamed` entries
+- `added` and `deleted` are present on `renamed` entries when the content also changed (rename-with-modification); omitted when only the path changed
+- `added` and `deleted` should be included for `modified`, `added`, and `deleted` text files. For `added` entries `deleted` is always 0, and for `deleted` entries `added` is always 0; both fields are still included for uniformity so clients can sum line counts without branching on status. For binary entries, textual line counts are not meaningful and these fields should be omitted.
+- `binary: true` marks entries where the file content is binary. It may appear on `modified`, `added`, `deleted`, or `renamed` entries.
+
+Why add a manifest endpoint:
+
+- Git's human-oriented `--stat` output includes spacing and ASCII bars that are unnecessary for LLMs
+- Raw `--numstat -z` output is machine-readable, but still needs PhxDiff to normalize path pairs into explicit `modified`, `added`, `deleted`, and `renamed` entries
+- A JSON manifest gives the model an advisory file inventory before it fetches `/diff` or individual files
+- The manifest can encode binary changes explicitly instead of relying on Git-specific placeholders
+
+Behavior notes:
+
+- This endpoint does not support `?exclude=<path_prefix>`; it always returns the full file-level change inventory for the selected comparison. Clients may use it to decide which `/diff` request to fetch next, but should treat the manifest as advisory rather than expecting totals to match a later filtered diff.
+- If source and target are identical, return `200` with an empty JSON manifest: `{ "source": { "version": "<version>", "flags": [] }, "target": { "version": "<version>", "flags": [] }, "total_files": 0, "total_added": 0, "total_deleted": 0, "files": [] }`. (The `/diff` endpoint returns an empty body for the same case; the manifest always returns valid JSON so clients need not special-case the response.)
+- If Git does not detect a rename, emit separate `deleted` and `added` entries rather than inferring one
+- Rename detection uses Git's default `-M` threshold (see above) rather than a PhxDiff-specific inference pass.
+- Response should use `application/json`
+- No `Content-Disposition` header (JSON is rendered inline by browsers; the diff endpoint uses it because `.diff` files trigger downloads)
+- Cached for 24 hours on success, `no-store` on 404
 
 ### File access
 
@@ -221,12 +290,12 @@ The encoding format is intentionally space-delimited so it can remain forward-co
 
 ### Upgrading a Phoenix app
 
-Steps 3–4 require the diff endpoints which are not yet implemented.
+Step 4 requires `/diff` which is not yet implemented.
 
 1. `GET /llms.txt` — discover endpoints and capabilities
 2. `GET /versions` — find available versions and supported variants
-3. `GET /compare/<source>...<target>/diff/stat` — check the scope of changes _(not yet implemented)_
-4. `GET /compare/<source>...<target>/diff` — get the full diff (use `?exclude=assets/vendor` if stat shows too many vendored changes) _(not yet implemented)_
+3. `GET /compare/<source>...<target>/diff/manifest` — inspect the normalized file-level change inventory
+4. `GET /compare/<source>...<target>/diff` — get the full diff for the files that matter (use `?exclude=assets/vendor` if the manifest shows too many vendored changes) _(not yet implemented)_
 5. Apply the diff, replacing `sample_app`/`SampleApp` with real app/module names
 
 ### Inspecting a generated app
@@ -238,11 +307,12 @@ Steps 3–4 require the diff endpoints which are not yet implemented.
 
 ## Routing
 
-The LLM endpoints share URL structure with the browser routes and are plain-text representations of the same resources:
+The LLM endpoints share URL structure with the browser routes and are machine-readable representations of the same resources:
 
-| Browser (LiveView) | LLM (plain text) | Status |
+| Browser (LiveView) | LLM (machine-readable) | Status |
 |---|---|---|
 | `GET /compare/:diff_spec` | `GET /compare/:diff_spec/diff` | not yet implemented |
+| — | `GET /compare/:diff_spec/diff/manifest` | **implemented** |
 | `GET /browse/:app_spec` | `GET /browse/:app_spec/files.txt` | **implemented** |
 | `GET /browse/:app_spec/files/*path` | `GET /browse/:app_spec/raw/*path` | **implemented** |
 | — | `GET /versions` (LLM only) | **implemented** |
@@ -254,6 +324,7 @@ This avoids duplicating URL hierarchy under a separate `/api/` prefix. The curre
 scope "/", PhxDiffWeb do
   get "/llms.txt", LLMTextController, :show
   get "/versions", VersionController, :index
+  get "/compare/:diff_specification/diff/manifest", DiffManifestController, :show
   get "/browse/:app_specification/files.txt", FileListController, :index
   get "/browse/:app_specification/raw/*path", RawFileController, :show
 end
@@ -266,7 +337,7 @@ scope "/", PhxDiffWeb do
   get "/llms.txt", LLMTextController, :show
   get "/versions", VersionController, :index
   get "/compare/:diff_specification/diff", DiffController, :show
-  get "/compare/:diff_specification/diff/stat", DiffController, :stat
+  get "/compare/:diff_specification/diff/manifest", DiffManifestController, :show
   get "/browse/:app_specification/files.txt", FileListController, :index
   get "/browse/:app_specification/raw/*path", RawFileController, :show
 end

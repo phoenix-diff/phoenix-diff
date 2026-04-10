@@ -6,11 +6,13 @@ defmodule PhxDiffWeb.LLMTextController do
 
   PhxDiff generates diffs between Phoenix Framework versions so you can upgrade your app.
 
-  All endpoints return plain text. Generated apps use the name `sample_app` / `SampleApp` — replace these with your app's actual names.
+  Endpoints are machine-readable. Listings and diffs are plain text, `/compare/<source>...<target>/diff/manifest` returns JSON, and `/browse/<app_spec>/raw/<path>` returns the file's content type. Generated apps use the name `sample_app` / `SampleApp` — replace these with your app's actual names.
 
   ## Endpoints
 
   GET /versions — list all versions and their available app specs
+  GET /compare/<source>...<target>/diff — unified diff between two versions
+  GET /compare/<source>...<target>/diff/manifest — normalized JSON change manifest for LLMs
   GET /browse/<app_spec>/files.txt — list all files in a generated app
   GET /browse/<app_spec>/raw/<path> — fetch a specific file from a generated app
 

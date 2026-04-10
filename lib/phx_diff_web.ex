@@ -45,7 +45,7 @@ defmodule PhxDiffWeb do
   def controller do
     quote do
       use Phoenix.Controller,
-        formats: [:html],
+        formats: [:html, :json],
         layouts: [html: PhxDiffWeb.Layouts]
 
       use Gettext, backend: PhxDiffWeb.Gettext

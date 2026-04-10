@@ -32,6 +32,12 @@ defmodule PhxDiffWeb.Router do
   end
 
   scope "/", PhxDiffWeb do
+    pipe_through :api
+
+    get "/compare/:diff_specification/diff/manifest", DiffManifestController, :show
+  end
+
+  scope "/", PhxDiffWeb do
     pipe_through :browser
 
     get "/", PageController, :index

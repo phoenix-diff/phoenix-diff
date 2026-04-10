@@ -3,6 +3,16 @@ defmodule PhxDiff.Diffs do
 
   alias PhxDiff.AppSpecification
   alias PhxDiff.ComparisonError
+  alias PhxDiff.DiffManifest
+  alias PhxDiff.DiffManifest.AddedFile
+  alias PhxDiff.DiffManifest.BinaryAddedFile
+  alias PhxDiff.DiffManifest.BinaryDeletedFile
+  alias PhxDiff.DiffManifest.BinaryModifiedFile
+  alias PhxDiff.DiffManifest.BinaryRenamedFile
+  alias PhxDiff.DiffManifest.DeletedFile
+  alias PhxDiff.DiffManifest.ModifiedFile
+  alias PhxDiff.DiffManifest.PureRenamedFile
+  alias PhxDiff.DiffManifest.RenamedFile
   alias PhxDiff.Diffs.AppRepo
   alias PhxDiff.Diffs.DiffEngine
 
@@ -52,6 +62,118 @@ defmodule PhxDiff.Diffs do
       AppSpecification.new(version, [])
     end
   end
+
+  @spec fetch_diff_manifest(AppSpecification.t(), AppSpecification.t()) ::
+          {:ok, DiffManifest.t()} | {:error, ComparisonError.t()}
+  def fetch_diff_manifest(%AppSpecification{} = source_spec, %AppSpecification{} = target_spec) do
+    case fetch_app_paths(source_spec, target_spec) do
+      {:ok, source_path, target_path} ->
+        {:ok, entries} = DiffEngine.compute_numstat(source_path, target_path)
+        manifest = build_manifest(source_spec, target_spec, entries)
+        {:ok, manifest}
+
+      {:error, %ComparisonError{} = error} ->
+        {:error, error}
+    end
+  end
+
+  defp build_manifest(source_spec, target_spec, entries) do
+    files =
+      entries
+      |> Enum.map(&build_file_entry/1)
+      |> Enum.sort_by(& &1.path)
+
+    non_binary = Enum.reject(files, &binary_entry?/1)
+    total_added = Enum.sum(Enum.map(non_binary, &entry_added/1))
+    total_deleted = Enum.sum(Enum.map(non_binary, &entry_deleted/1))
+
+    %DiffManifest{
+      source: source_spec,
+      target: target_spec,
+      total_files: length(files),
+      total_added: total_added,
+      total_deleted: total_deleted,
+      files: files
+    }
+  end
+
+  defp build_file_entry({stats, old_path, new_path}) do
+    binary = stats == "-\t-\t"
+    {added, deleted} = if binary, do: {0, 0}, else: parse_stats(stats)
+    status = determine_status(old_path, new_path)
+    path = canonical_path(status, old_path, new_path)
+
+    build_struct(status, path, old_path, binary, added, deleted)
+  end
+
+  defp determine_status("/dev/null", _new_path), do: :added
+  defp determine_status(_old_path, "/dev/null"), do: :deleted
+  defp determine_status(old_path, new_path) when old_path != new_path, do: :renamed
+  defp determine_status(_old_path, _new_path), do: :modified
+
+  defp canonical_path(:added, _old, new), do: new
+  defp canonical_path(:deleted, old, _new), do: old
+  defp canonical_path(:renamed, _old, new), do: new
+  defp canonical_path(:modified, old, _new), do: old
+
+  defp parse_stats(stats) do
+    [added_str, deleted_str, ""] = String.split(stats, "\t")
+    {String.to_integer(added_str), String.to_integer(deleted_str)}
+  end
+
+  defp build_struct(:added, path, _old_path, true, _added, _deleted) do
+    %BinaryAddedFile{path: path}
+  end
+
+  defp build_struct(:added, path, _old_path, false, added, _deleted) do
+    %AddedFile{path: path, added: added}
+  end
+
+  defp build_struct(:deleted, path, _old_path, true, _added, _deleted) do
+    %BinaryDeletedFile{path: path}
+  end
+
+  defp build_struct(:deleted, path, _old_path, false, _added, deleted) do
+    %DeletedFile{path: path, deleted: deleted}
+  end
+
+  defp build_struct(:modified, path, _old_path, true, _added, _deleted) do
+    %BinaryModifiedFile{path: path}
+  end
+
+  defp build_struct(:modified, path, _old_path, false, added, deleted) do
+    %ModifiedFile{path: path, added: added, deleted: deleted}
+  end
+
+  defp build_struct(:renamed, path, old_path, true, _added, _deleted) do
+    %BinaryRenamedFile{path: path, old_path: old_path}
+  end
+
+  defp build_struct(:renamed, path, old_path, false, 0, 0) do
+    %PureRenamedFile{path: path, old_path: old_path}
+  end
+
+  defp build_struct(:renamed, path, old_path, false, added, deleted) do
+    %RenamedFile{path: path, old_path: old_path, added: added, deleted: deleted}
+  end
+
+  defp binary_entry?(%BinaryAddedFile{}), do: true
+  defp binary_entry?(%BinaryDeletedFile{}), do: true
+  defp binary_entry?(%BinaryModifiedFile{}), do: true
+  defp binary_entry?(%BinaryRenamedFile{}), do: true
+  defp binary_entry?(_entry), do: false
+
+  defp entry_added(%AddedFile{added: added}), do: added
+  defp entry_added(%ModifiedFile{added: added}), do: added
+  defp entry_added(%RenamedFile{added: added}), do: added
+  defp entry_added(%PureRenamedFile{}), do: 0
+  defp entry_added(%DeletedFile{}), do: 0
+
+  defp entry_deleted(%DeletedFile{deleted: deleted}), do: deleted
+  defp entry_deleted(%ModifiedFile{deleted: deleted}), do: deleted
+  defp entry_deleted(%RenamedFile{deleted: deleted}), do: deleted
+  defp entry_deleted(%PureRenamedFile{}), do: 0
+  defp entry_deleted(%AddedFile{}), do: 0
 
   @spec fetch_diff(AppSpecification.t(), AppSpecification.t()) ::
           {:ok, diff} | {:error, ComparisonError.t()}
