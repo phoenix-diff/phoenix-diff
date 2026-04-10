@@ -79,23 +79,25 @@ Versions are listed in descending order (newest first).
 
 **Not yet implemented.**
 
-Would return a raw unified diff (`text/plain`) between two generated Phoenix app versions. The diff would be generated via `git diff --no-index` with the histogram algorithm.
+Would return a raw unified diff (`text/plain; charset=utf-8`) between two generated Phoenix app versions. The diff would be generated via `git diff --no-index` with the histogram algorithm and `-M` rename detection — the same flags used by the `/diff/manifest` endpoint — so rename detection and diff output are consistent between the two.
 
 - `<source>` and `<target>` are URL-encoded app specifications (see below)
-- `?exclude=<path_prefix>` — exclude repo-relative path prefixes from the diff; repeated params are combined
+- `?include=<path_prefix>` — include only matching repo-relative path prefixes in the diff; repeated params are combined
 - Binary files appear as `Binary files a/<path> and b/<path> differ` with no content — use `/browse/<app_spec>/raw/<path>` to fetch the actual file
-- Returns `200` with an empty body when source and target are identical
+- Returns `200` with an empty body when source and target are identical, or when `?include=` filters match no files in an otherwise valid comparison
 - Returns `404` with a plain `Not Found` body for unknown versions or invalid specs. Descriptive error messages (e.g. distinguishing "unknown version" from "unsupported variant") are a potential future enhancement.
 - Response includes `Content-Disposition: inline; filename="<source>...<target>.diff"` for convenient browser downloads
 - Cached for 24 hours on success, `no-store` on 404
 
-Exclude semantics:
+Include semantics:
 
 - Matching is case-sensitive and prefix-based on normalized repo-relative paths
-- `?exclude=assets/vendor` excludes `assets/vendor/**`
-- `?exclude=mix.exs` excludes only `mix.exs`
+- When no `include` params are provided, the full diff is returned
+- `?include=assets/vendor` includes `assets/vendor/**`
+- `?include=mix.exs` includes only `mix.exs`
+- For `renamed` entries, `include` matches either the source path or destination path; for `deleted` entries, it matches the source-side path exposed as `path` in the manifest
 - Empty values are invalid
-- Any exclude containing `.` or `..` path segments after normalization is invalid
+- Any include containing `.` or `..` path segments after normalization is invalid
 
 Example response for `GET /compare/1.7.14...1.8.0/diff`:
 
@@ -210,7 +212,7 @@ Why add a manifest endpoint:
 
 Behavior notes:
 
-- This endpoint does not support `?exclude=<path_prefix>`; it always returns the full file-level change inventory for the selected comparison. Clients may use it to decide which `/diff` request to fetch next, but should treat the manifest as advisory rather than expecting totals to match a later filtered diff.
+- This endpoint does not support `?include=<path_prefix>`; it always returns the full file-level change inventory for the selected comparison. Clients may use it to decide which `/diff` request to fetch next, but should treat the manifest as advisory rather than expecting totals to match a later filtered diff.
 - If source and target are identical, return `200` with an empty JSON manifest: `{ "source": { "version": "<version>", "flags": [] }, "target": { "version": "<version>", "flags": [] }, "total_files": 0, "total_added": 0, "total_deleted": 0, "files": [] }`. (The `/diff` endpoint returns an empty body for the same case; the manifest always returns valid JSON so clients need not special-case the response.)
 - If Git does not detect a rename, emit separate `deleted` and `added` entries rather than inferring one
 - Rename detection uses Git's default `-M` threshold (see above) rather than a PhxDiff-specific inference pass.
@@ -295,7 +297,7 @@ Step 4 requires `/diff` which is not yet implemented.
 1. `GET /llms.txt` — discover endpoints and capabilities
 2. `GET /versions` — find available versions and supported variants
 3. `GET /compare/<source>...<target>/diff/manifest` — inspect the normalized file-level change inventory
-4. `GET /compare/<source>...<target>/diff` — get the full diff for the files that matter (use `?exclude=assets/vendor` if the manifest shows too many vendored changes) _(not yet implemented)_
+4. `GET /compare/<source>...<target>/diff` — get the full diff for the files that matter (for example, use `?include=mix.exs&include=config` to focus on upgrade-relevant files) _(not yet implemented)_
 5. Apply the diff, replacing `sample_app`/`SampleApp` with real app/module names
 
 ### Inspecting a generated app
