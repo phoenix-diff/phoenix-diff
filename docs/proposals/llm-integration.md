@@ -2,7 +2,7 @@
 
 This document proposes a machine-readable, cacheable HTTP API so LLMs can discover available Phoenix versions, retrieve upgrade diffs, and read individual generated files.
 
-Status: partially implemented. `/llms.txt`, `/versions`, `/browse/<app_spec>/raw/<path>`, and `/browse/<app_spec>/files.txt` are shipped. The diff endpoints (`/compare/.../diff`, `/compare/.../diff/manifest`) remain proposals.
+Status: partially implemented. `/llms.txt`, `/versions`, `/browse/<app_spec>/raw/<path>`, `/browse/<app_spec>/files.txt`, and `/compare/.../diff/manifest` are shipped. The `/compare/.../diff` endpoint remains a proposal.
 
 ## Goals
 
@@ -20,7 +20,7 @@ Response formats are chosen per resource: listings and unified diffs use `text/p
 
 **Implemented.** A static plain-text discovery file following the [llms.txt](https://llmstxt.org) convention. No `Cache-Control` header is set (the proposal suggested a 24-hour cache).
 
-The current body references only the currently implemented endpoints. Once the diff endpoints ship, the body should be updated to something like:
+The current body references only the currently implemented endpoints. Once `/diff` ships, the body should be updated to something like:
 
 ```
 # PhxDiff
@@ -128,9 +128,7 @@ diff --git a/config/config.exs b/config/config.exs
 
 #### `GET /compare/<source>...<target>/diff/manifest`
 
-**Not yet implemented.**
-
-Would return a normalized JSON manifest of file-level changes. This endpoint is intended as the LLM-first overview format: much smaller and more structured than the full unified diff. It is advisory only; `/diff` remains the authoritative patch representation.
+**Implemented.** Returns a normalized JSON manifest of file-level changes. This endpoint is intended as the LLM-first overview format: much smaller and more structured than the full unified diff. It is advisory only; `/diff` remains the authoritative patch representation.
 
 The manifest should be derived from Git's machine-readable diff metadata, but the response format should be owned by PhxDiff rather than exposing raw Git output directly. That keeps the API stable and removes presentation-oriented parsing work from the client.
 
@@ -292,11 +290,11 @@ The encoding format is intentionally space-delimited so it can remain forward-co
 
 ### Upgrading a Phoenix app
 
-Steps 3–4 require the diff endpoints which are not yet implemented.
+Step 4 requires `/diff` which is not yet implemented.
 
 1. `GET /llms.txt` — discover endpoints and capabilities
 2. `GET /versions` — find available versions and supported variants
-3. `GET /compare/<source>...<target>/diff/manifest` — inspect the normalized file-level change inventory _(not yet implemented)_
+3. `GET /compare/<source>...<target>/diff/manifest` — inspect the normalized file-level change inventory
 4. `GET /compare/<source>...<target>/diff` — get the full diff for the files that matter (use `?exclude=assets/vendor` if the manifest shows too many vendored changes) _(not yet implemented)_
 5. Apply the diff, replacing `sample_app`/`SampleApp` with real app/module names
 
@@ -314,7 +312,7 @@ The LLM endpoints share URL structure with the browser routes and are machine-re
 | Browser (LiveView) | LLM (machine-readable) | Status |
 |---|---|---|
 | `GET /compare/:diff_spec` | `GET /compare/:diff_spec/diff` | not yet implemented |
-| — | `GET /compare/:diff_spec/diff/manifest` | not yet implemented |
+| — | `GET /compare/:diff_spec/diff/manifest` | **implemented** |
 | `GET /browse/:app_spec` | `GET /browse/:app_spec/files.txt` | **implemented** |
 | `GET /browse/:app_spec/files/*path` | `GET /browse/:app_spec/raw/*path` | **implemented** |
 | — | `GET /versions` (LLM only) | **implemented** |
@@ -326,6 +324,7 @@ This avoids duplicating URL hierarchy under a separate `/api/` prefix. The curre
 scope "/", PhxDiffWeb do
   get "/llms.txt", LLMTextController, :show
   get "/versions", VersionController, :index
+  get "/compare/:diff_specification/diff/manifest", DiffManifestController, :show
   get "/browse/:app_specification/files.txt", FileListController, :index
   get "/browse/:app_specification/raw/*path", RawFileController, :show
 end
@@ -338,7 +337,7 @@ scope "/", PhxDiffWeb do
   get "/llms.txt", LLMTextController, :show
   get "/versions", VersionController, :index
   get "/compare/:diff_specification/diff", DiffController, :show
-  get "/compare/:diff_specification/diff/manifest", DiffController, :manifest
+  get "/compare/:diff_specification/diff/manifest", DiffManifestController, :show
   get "/browse/:app_specification/files.txt", FileListController, :index
   get "/browse/:app_specification/raw/*path", RawFileController, :show
 end
