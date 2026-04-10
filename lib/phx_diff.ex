@@ -7,11 +7,22 @@ defmodule PhxDiff do
     deps: [],
     exports: [
       AppSpecification,
-      ComparisonError
+      ComparisonError,
+      DiffManifest,
+      DiffManifest.AddedFile,
+      DiffManifest.BinaryAddedFile,
+      DiffManifest.BinaryDeletedFile,
+      DiffManifest.BinaryModifiedFile,
+      DiffManifest.BinaryRenamedFile,
+      DiffManifest.DeletedFile,
+      DiffManifest.ModifiedFile,
+      DiffManifest.PureRenamedFile,
+      DiffManifest.RenamedFile
     ]
 
   alias PhxDiff.AppSpecification
   alias PhxDiff.ComparisonError
+  alias PhxDiff.DiffManifest
 
   @type diff :: String.t()
   @type version :: Version.t()
@@ -55,6 +66,13 @@ defmodule PhxDiff do
   @spec fetch_diff(AppSpecification.t(), AppSpecification.t()) ::
           {:ok, diff} | {:error, ComparisonError.t()}
   defdelegate fetch_diff(source_spec, target_spec), to: PhxDiff.Diffs
+
+  @doc """
+  Fetch a structured JSON manifest of file-level changes between two app specifications
+  """
+  @spec fetch_diff_manifest(AppSpecification.t(), AppSpecification.t()) ::
+          {:ok, DiffManifest.t()} | {:error, ComparisonError.t()}
+  defdelegate fetch_diff_manifest(source_spec, target_spec), to: PhxDiff.Diffs
 
   @doc """
   List all files for an app specification
