@@ -9,6 +9,9 @@ defmodule PhxDiff do
       AppSpecification,
       ComparisonError,
       DiffManifest,
+      Diff.Patch,
+      Diff.Chunk,
+      Diff.Line,
       DiffManifest.AddedFile,
       DiffManifest.BinaryAddedFile,
       DiffManifest.BinaryDeletedFile,
@@ -59,6 +62,12 @@ defmodule PhxDiff do
   """
   @spec default_app_specification(version) :: AppSpecification.t()
   defdelegate default_app_specification(version), to: PhxDiff.Diffs
+
+  @doc """
+  Parse a unified diff string into a list of patches.
+  """
+  @spec parse_diff(diff) :: {:ok, [PhxDiff.Diff.Patch.t()]} | {:error, :unrecognized_format}
+  defdelegate parse_diff(diff), to: PhxDiff.DiffParser, as: :parse
 
   @doc """
   Fetch the diff between two app specifications

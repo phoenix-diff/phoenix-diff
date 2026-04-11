@@ -40,7 +40,6 @@ defmodule PhxDiff.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:git_diff, github: "mononym/git_diff"},
       {:phoenix, "~> 1.7.21"},
       {:phoenix_pubsub, "~> 2.0"},
       {:phoenix_html, "~> 4.0"},
@@ -90,7 +89,8 @@ defmodule PhxDiff.MixProject do
       {:ex_unit_notifier, "~> 1.2", only: :test, runtime: false},
       {:mox, "~> 1.0", only: :test},
       {:floki, ">= 0.30.0", only: :test},
-      {:tidewave, "~> 0.5", only: :dev}
+      {:tidewave, "~> 0.5", only: :dev},
+      {:nimble_parsec, "~> 1.0", runtime: false}
     ]
   end
 

@@ -18,8 +18,8 @@ defmodule PhxDiffWeb.CompareLive.DiffViewerComponent.ParsedDiff.Patch do
   @type status :: :added | :removed | :renamed | :changed
   @type summary :: %{additions: non_neg_integer(), deletions: non_neg_integer()}
 
-  @spec build(GitDiff.Patch.t()) :: t
-  def build(%GitDiff.Patch{} = patch) do
+  @spec build(PhxDiff.Diff.Patch.t()) :: t
+  def build(%PhxDiff.Diff.Patch{} = patch) do
     display_filename = Renderers.filename_diff(patch.from, patch.to)
 
     %__MODULE__{
@@ -31,10 +31,13 @@ defmodule PhxDiffWeb.CompareLive.DiffViewerComponent.ParsedDiff.Patch do
     }
   end
 
-  defp calculate_status(%GitDiff.Patch{headers: %{"new file mode" => _}}), do: :added
-  defp calculate_status(%GitDiff.Patch{headers: %{"deleted file mode" => _}}), do: :removed
-  defp calculate_status(%GitDiff.Patch{headers: %{"rename from" => _}}), do: :renamed
-  defp calculate_status(%GitDiff.Patch{}), do: :changed
+  defp calculate_status(%PhxDiff.Diff.Patch{headers: %{"new file mode" => _}}), do: :added
+
+  defp calculate_status(%PhxDiff.Diff.Patch{headers: %{"deleted file mode" => _}}),
+    do: :removed
+
+  defp calculate_status(%PhxDiff.Diff.Patch{headers: %{"rename from" => _}}), do: :renamed
+  defp calculate_status(%PhxDiff.Diff.Patch{}), do: :changed
 
   defp d2h_html_id(display_filename) do
     display_filename

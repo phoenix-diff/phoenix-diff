@@ -9,7 +9,7 @@ defmodule PhxDiffWeb.CompareLive.DiffViewerComponent.ParsedDiff do
 
   @spec parse(String.t()) :: {:ok, t} | {:error, :unrecognized_format}
   def parse(diff) when is_binary(diff) do
-    with {:ok, patches} <- GitDiff.parse_patch(diff) do
+    with {:ok, patches} <- PhxDiff.parse_diff(diff) do
       {patches, count} =
         Enum.map_reduce(patches, 0, fn patch, acc -> {Patch.build(patch), acc + 1} end)
 
