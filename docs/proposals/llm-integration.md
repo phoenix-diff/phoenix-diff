@@ -2,7 +2,7 @@
 
 This document proposes a machine-readable, cacheable HTTP API so LLMs can discover available Phoenix versions, retrieve upgrade diffs, and read individual generated files.
 
-Status: partially implemented. `/llms.txt`, `/versions`, `/browse/<app_spec>/raw/<path>`, `/browse/<app_spec>/files.txt`, and `/compare/.../diff/manifest` are shipped. The `/compare/.../diff` endpoint remains a proposal.
+Status: fully implemented. All endpoints described in this document are shipped.
 
 ## Goals
 
@@ -20,31 +20,54 @@ Response formats are chosen per resource: listings and unified diffs use `text/p
 
 **Implemented.** A static plain-text discovery file following the [llms.txt](https://llmstxt.org) convention. No `Cache-Control` header is set (the proposal suggested a 24-hour cache).
 
-The current body references only the currently implemented endpoints. Once `/diff` ships, the body should be updated to something like:
+The shipped body references all implemented endpoints, including `/diff`. Actual body as of implementation:
 
 ```
 # PhxDiff
 
 PhxDiff generates diffs between Phoenix Framework versions so you can upgrade your app.
 
-Endpoints are machine-readable. Listings and diffs are plain text, `/compare/<source>...<target>/diff/manifest` returns JSON, and `/browse/<app_spec>/raw/<path>` returns the file's content type. Generated apps use the name `sample_app` / `SampleApp` — replace these with your app's actual names.
+Endpoints are machine-readable. Listings and diffs are plain text, `/compare/<source_app_spec>...<target_app_spec>/diff/manifest` returns JSON, and `/browse/<app_spec>/raw/<path>` returns the file contents with the file's content type. Generated apps use the name `sample_app` / `SampleApp` — replace these with your app's actual names.
 
 ## Endpoints
 
 GET /versions — list all versions and their available app specs
-GET /compare/<source>...<target>/diff — unified diff between two versions
-GET /compare/<source>...<target>/diff/manifest — normalized JSON change manifest for LLMs
+
+GET /compare/<source_app_spec>...<target_app_spec>/diff — unified diff between two versions
+    → /compare/<source_app_spec>...<target_app_spec> (visual diff page for users)
+GET /compare/<source_app_spec>...<target_app_spec>/diff/manifest — normalized JSON change manifest
+Note: the ... separating source and target is three literal dots.
+
 GET /browse/<app_spec>/files.txt — list all files in a generated app
+    → /browse/<app_spec> (file browser page for users)
 GET /browse/<app_spec>/raw/<path> — fetch a specific file from a generated app
+    → /browse/<app_spec>/files/<path> (file view page for users)
 
 ## App specs
 
 An app spec is a version string optionally followed by a phx.new flag, separated by a space.
-Use the app specs exactly as listed in /versions, URL-encoding spaces as %20.
+Use the app specs exactly as listed in /versions.
+
+Note: spaces in app specs must be encoded as %20 in URLs.
 
 Examples:
-  /browse/1.7.10/raw/config/dev.exs          (no flag)
-  /browse/1.7.10%20--umbrella/raw/config/dev.exs
+  /browse/1.7.10/files.txt                          (default, no flag)
+  /browse/1.7.10%20--umbrella/files.txt             (umbrella flag)
+  /browse/1.7.10/raw/config/dev.exs                 (fetch a file, no flag)
+  /browse/1.7.10%20--umbrella/raw/config/dev.exs    (fetch a file, umbrella flag)
+  /compare/1.7.14%20--no-ecto...1.8.0%20--no-ecto/diff/manifest
+                                                   (compare flagged specs; both spaces encoded)
+
+
+## Upgrading a Phoenix app
+
+1. GET /versions — find available versions and supported variants
+2. GET /compare/<source_app_spec>...<target_app_spec>/diff/manifest — inspect the normalized file-level change inventory
+3. GET /compare/<source_app_spec>...<target_app_spec>/diff — get the full unified diff (use ?include=<path_prefix> to focus on specific files or directories)
+4. Apply the diff, replacing `sample_app`/`SampleApp` with your app's actual names
+
+The ?include= param is prefix-based and repeatable. For example:
+  /compare/1.7.14...1.8.0/diff?include=mix.exs&include=config
 ```
 
 ### Versions
@@ -77,25 +100,24 @@ Versions are listed in descending order (newest first).
 
 #### `GET /compare/<source>...<target>/diff`
 
-**Not yet implemented.**
-
-Would return a raw unified diff (`text/plain`) between two generated Phoenix app versions. The diff would be generated via `git diff --no-index` with the histogram algorithm.
+**Implemented.** Returns a raw unified diff (`text/plain; charset=utf-8`) between two generated Phoenix app versions. Generated via `git diff --no-index` with the histogram algorithm and `-M` rename detection — the same flags used by the `/diff/manifest` endpoint — so rename detection and diff output are consistent between the two.
 
 - `<source>` and `<target>` are URL-encoded app specifications (see below)
-- `?exclude=<path_prefix>` — exclude repo-relative path prefixes from the diff; repeated params are combined
+- `?include=<path_prefix>` — include only matching repo-relative path prefixes in the diff; repeated params are combined
 - Binary files appear as `Binary files a/<path> and b/<path> differ` with no content — use `/browse/<app_spec>/raw/<path>` to fetch the actual file
-- Returns `200` with an empty body when source and target are identical
-- Returns `404` with a plain `Not Found` body for unknown versions or invalid specs. Descriptive error messages (e.g. distinguishing "unknown version" from "unsupported variant") are a potential future enhancement.
+- Returns `200` with an empty body when source and target are identical, or when `?include=` filters match no files in an otherwise valid comparison
+- Returns `404` with a plain `Not found` body for unknown versions or invalid specs. Descriptive error messages (e.g. distinguishing "unknown version" from "unsupported variant") are a potential future enhancement.
 - Response includes `Content-Disposition: inline; filename="<source>...<target>.diff"` for convenient browser downloads
 - Cached for 24 hours on success, `no-store` on 404
 
-Exclude semantics:
+Include semantics:
 
 - Matching is case-sensitive and prefix-based on normalized repo-relative paths
-- `?exclude=assets/vendor` excludes `assets/vendor/**`
-- `?exclude=mix.exs` excludes only `mix.exs`
-- Empty values are invalid
-- Any exclude containing `.` or `..` path segments after normalization is invalid
+- When no `include` params are provided, the full diff is returned
+- `?include=assets/vendor` includes `assets/vendor/**`
+- `?include=mix.exs` includes only `mix.exs`
+- For `renamed` entries, `include` matches either the source path or destination path; for `deleted` entries, it matches the source-side path exposed as `path` in the manifest
+- Empty values and include values containing `.` or `..` path segments are not validated server-side in the current implementation; clients should avoid them
 
 Example response for `GET /compare/1.7.14...1.8.0/diff`:
 
@@ -210,7 +232,7 @@ Why add a manifest endpoint:
 
 Behavior notes:
 
-- This endpoint does not support `?exclude=<path_prefix>`; it always returns the full file-level change inventory for the selected comparison. Clients may use it to decide which `/diff` request to fetch next, but should treat the manifest as advisory rather than expecting totals to match a later filtered diff.
+- This endpoint does not support `?include=<path_prefix>`; it always returns the full file-level change inventory for the selected comparison. Clients may use it to decide which `/diff` request to fetch next, but should treat the manifest as advisory rather than expecting totals to match a later filtered diff.
 - If source and target are identical, return `200` with an empty JSON manifest: `{ "source": { "version": "<version>", "flags": [] }, "target": { "version": "<version>", "flags": [] }, "total_files": 0, "total_added": 0, "total_deleted": 0, "files": [] }`. (The `/diff` endpoint returns an empty body for the same case; the manifest always returns valid JSON so clients need not special-case the response.)
 - If Git does not detect a rename, emit separate `deleted` and `added` entries rather than inferring one
 - Rename detection uses Git's default `-M` threshold (see above) rather than a PhxDiff-specific inference pass.
@@ -290,12 +312,10 @@ The encoding format is intentionally space-delimited so it can remain forward-co
 
 ### Upgrading a Phoenix app
 
-Step 4 requires `/diff` which is not yet implemented.
-
 1. `GET /llms.txt` — discover endpoints and capabilities
 2. `GET /versions` — find available versions and supported variants
 3. `GET /compare/<source>...<target>/diff/manifest` — inspect the normalized file-level change inventory
-4. `GET /compare/<source>...<target>/diff` — get the full diff for the files that matter (use `?exclude=assets/vendor` if the manifest shows too many vendored changes) _(not yet implemented)_
+4. `GET /compare/<source>...<target>/diff` — get the full diff for the files that matter (for example, use `?include=mix.exs&include=config` to focus on upgrade-relevant files)
 5. Apply the diff, replacing `sample_app`/`SampleApp` with real app/module names
 
 ### Inspecting a generated app
@@ -311,26 +331,14 @@ The LLM endpoints share URL structure with the browser routes and are machine-re
 
 | Browser (LiveView) | LLM (machine-readable) | Status |
 |---|---|---|
-| `GET /compare/:diff_spec` | `GET /compare/:diff_spec/diff` | not yet implemented |
+| `GET /compare/:diff_spec` | `GET /compare/:diff_spec/diff` | **implemented** |
 | — | `GET /compare/:diff_spec/diff/manifest` | **implemented** |
 | `GET /browse/:app_spec` | `GET /browse/:app_spec/files.txt` | **implemented** |
 | `GET /browse/:app_spec/files/*path` | `GET /browse/:app_spec/raw/*path` | **implemented** |
 | — | `GET /versions` (LLM only) | **implemented** |
 | — | `GET /llms.txt` (LLM only) | **implemented** |
 
-This avoids duplicating URL hierarchy under a separate `/api/` prefix. The current router scope (no pipeline, so no browser session/CSRF middleware):
-
-```elixir
-scope "/", PhxDiffWeb do
-  get "/llms.txt", LLMTextController, :show
-  get "/versions", VersionController, :index
-  get "/compare/:diff_specification/diff/manifest", DiffManifestController, :show
-  get "/browse/:app_specification/files.txt", FileListController, :index
-  get "/browse/:app_specification/raw/*path", RawFileController, :show
-end
-```
-
-Target routing once all endpoints are implemented:
+This avoids duplicating URL hierarchy under a separate `/api/` prefix. Router scope (no pipeline, so no browser session/CSRF middleware):
 
 ```elixir
 scope "/", PhxDiffWeb do

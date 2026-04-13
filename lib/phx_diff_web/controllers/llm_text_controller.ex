@@ -6,15 +6,21 @@ defmodule PhxDiffWeb.LLMTextController do
 
   PhxDiff generates diffs between Phoenix Framework versions so you can upgrade your app.
 
-  Endpoints are machine-readable. Listings and diffs are plain text, `/compare/<source>...<target>/diff/manifest` returns JSON, and `/browse/<app_spec>/raw/<path>` returns the file's content type. Generated apps use the name `sample_app` / `SampleApp` — replace these with your app's actual names.
+  Endpoints are machine-readable. Listings and diffs are plain text, `/compare/<source_app_spec>...<target_app_spec>/diff/manifest` returns JSON, and `/browse/<app_spec>/raw/<path>` returns the file contents with the file's content type. Generated apps use the name `sample_app` / `SampleApp` — replace these with your app's actual names.
 
   ## Endpoints
 
   GET /versions — list all versions and their available app specs
-  GET /compare/<source>...<target>/diff — unified diff between two versions
-  GET /compare/<source>...<target>/diff/manifest — normalized JSON change manifest for LLMs
+
+  GET /compare/<source_app_spec>...<target_app_spec>/diff — unified diff between two versions
+      → /compare/<source_app_spec>...<target_app_spec> (visual diff page for users)
+  GET /compare/<source_app_spec>...<target_app_spec>/diff/manifest — normalized JSON change manifest
+  Note: the ... separating source and target is three literal dots.
+
   GET /browse/<app_spec>/files.txt — list all files in a generated app
+      → /browse/<app_spec> (file browser page for users)
   GET /browse/<app_spec>/raw/<path> — fetch a specific file from a generated app
+      → /browse/<app_spec>/files/<path> (file view page for users)
 
   ## App specs
 
@@ -28,6 +34,19 @@ defmodule PhxDiffWeb.LLMTextController do
     /browse/1.7.10%20--umbrella/files.txt             (umbrella flag)
     /browse/1.7.10/raw/config/dev.exs                 (fetch a file, no flag)
     /browse/1.7.10%20--umbrella/raw/config/dev.exs    (fetch a file, umbrella flag)
+    /compare/1.7.14%20--no-ecto...1.8.0%20--no-ecto/diff/manifest
+                                                     (compare flagged specs; both spaces encoded)
+
+
+  ## Upgrading a Phoenix app
+
+  1. GET /versions — find available versions and supported variants
+  2. GET /compare/<source_app_spec>...<target_app_spec>/diff/manifest — inspect the normalized file-level change inventory
+  3. GET /compare/<source_app_spec>...<target_app_spec>/diff — get the full unified diff (use ?include=<path_prefix> to focus on specific files or directories)
+  4. Apply the diff, replacing `sample_app`/`SampleApp` with your app's actual names
+
+  The ?include= param is prefix-based and repeatable. For example:
+    /compare/1.7.14...1.8.0/diff?include=mix.exs&include=config
   """
 
   def show(conn, _params) do

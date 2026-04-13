@@ -70,6 +70,12 @@ defmodule PhxDiff do
   defdelegate parse_diff(diff), to: PhxDiff.DiffParser, as: :parse
 
   @doc """
+  Renders a list of parsed patches back to a unified diff string.
+  """
+  @spec render_diff([PhxDiff.Diff.Patch.t()]) :: diff
+  defdelegate render_diff(patches), to: PhxDiff.DiffParser, as: :to_string
+
+  @doc """
   Fetch the diff between two app specifications
   """
   @spec fetch_diff(AppSpecification.t(), AppSpecification.t()) ::

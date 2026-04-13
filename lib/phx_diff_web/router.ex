@@ -20,6 +20,10 @@ defmodule PhxDiffWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :text_api do
+    plug :accepts, ["text"]
+  end
+
   pipeline :require_admin do
     plug :admin_basic_auth
   end
@@ -29,6 +33,12 @@ defmodule PhxDiffWeb.Router do
     get "/versions", VersionController, :index
     get "/browse/:app_specification/files.txt", FileListController, :index
     get "/browse/:app_specification/raw/*path", RawFileController, :show
+  end
+
+  scope "/", PhxDiffWeb do
+    pipe_through :text_api
+
+    get "/compare/:diff_specification/diff", DiffController, :show
   end
 
   scope "/", PhxDiffWeb do
