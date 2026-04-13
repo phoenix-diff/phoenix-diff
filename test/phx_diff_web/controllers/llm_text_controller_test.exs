@@ -6,7 +6,7 @@ defmodule PhxDiffWeb.LLMTextControllerTest do
       conn = get(conn, ~p"/llms.txt")
 
       assert conn.status == 200
-      assert get_resp_header(conn, "content-type") == ["text/plain"]
+      assert get_resp_header(conn, "content-type") == ["text/plain; charset=utf-8"]
       assert conn.resp_body =~ "PhxDiff"
       assert conn.resp_body =~ "/versions"
     end
