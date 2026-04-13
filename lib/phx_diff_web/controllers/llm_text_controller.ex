@@ -51,7 +51,7 @@ defmodule PhxDiffWeb.LLMTextController do
 
   def show(conn, _params) do
     conn
-    |> put_resp_content_type("text/plain", nil)
+    |> put_resp_content_type("text/plain", "utf-8")
     |> send_resp(200, @body)
   end
 end
