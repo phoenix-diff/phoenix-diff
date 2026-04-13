@@ -44,6 +44,7 @@ defmodule PhxDiffWeb.Telemetry do
         end,
         unit: {:native, :millisecond}
       ),
+      sum("phoenix.socket_drain.count"),
 
       # VM Metrics
       summary("vm.memory.total", unit: {:byte, :kilobyte}),
