@@ -14,14 +14,12 @@ defmodule PhxDiff.Application do
     # List all child processes to be supervised
     children = [
       PhxDiff,
-      # Start the Telemetry supervisor
       PhxDiffWeb.Telemetry,
-      # Start the PubSub system
       {Phoenix.PubSub, name: PhxDiff.PubSub},
-      # Start the endpoint when the application starts
-      PhxDiffWeb.Endpoint
       # Start a worker by calling: PhxDiff.Worker.start_link(arg)
       # {PhxDiff.Worker, arg},
+      # Start to serve requests, typically the last entry
+      PhxDiffWeb.Endpoint
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
