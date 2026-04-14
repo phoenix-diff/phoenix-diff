@@ -461,9 +461,9 @@ defmodule PhxDiffWeb.CoreComponents do
     # with our gettext backend as first argument. Translations are
     # available in the errors.po file (as we use the "errors" domain).
     if count = opts[:count] do
-      Gettext.dngettext(SampleAppWeb.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(PhxDiffWeb.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(SampleAppWeb.Gettext, "errors", msg, opts)
+      Gettext.dgettext(PhxDiffWeb.Gettext, "errors", msg, opts)
     end
   end
 

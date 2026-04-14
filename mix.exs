@@ -116,8 +116,8 @@ defmodule PhxDiff.MixProject do
         "cmd --cd assets yarn install"
       ],
       "assets.deploy": [
-        "tailwind default --minify",
-        "esbuild default --minify",
+        "tailwind phx_diff --minify",
+        "esbuild phx_diff --minify",
         "phx.digest"
       ]
     ]
