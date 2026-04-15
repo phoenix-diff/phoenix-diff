@@ -11,13 +11,18 @@ defmodule PhxDiff.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
-      preferred_cli_env: [
-        ci: :test
-      ],
       releases: releases(),
       default_release: :phx_diff,
       dialyzer: dialyzer(System.get_env()),
       docs: docs()
+    ]
+  end
+
+  def cli do
+    [
+      preferred_envs: [
+        ci: :test
+      ]
     ]
   end
 
