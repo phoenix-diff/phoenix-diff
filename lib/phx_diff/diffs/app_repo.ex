@@ -4,6 +4,7 @@ defmodule PhxDiff.Diffs.AppRepo do
   alias PhxDiff.AppSpecification
   alias PhxDiff.Diffs.AppRepo.AppGenerator
   alias PhxDiff.Diffs.AppRepo.AppSpecPath
+  alias PhxDiff.Diffs.AppRepo.S3Seeder
 
   @type version :: PhxDiff.Diffs.version()
 
@@ -55,6 +56,12 @@ defmodule PhxDiff.Diffs.AppRepo do
     with {:ok, app_dir} <- AppGenerator.generate(app_spec) do
       store().store_generated_app(app_spec, app_dir)
     end
+  end
+
+  @spec seed_s3_sample_apps(keyword) ::
+          {:ok, [S3Seeder.result()]} | {:error, :unable_to_list_local_apps}
+  def seed_s3_sample_apps(options) when is_list(options) do
+    S3Seeder.seed(options)
   end
 
   @spec list_app_files(AppSpecification.t()) ::

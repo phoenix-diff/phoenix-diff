@@ -120,6 +120,11 @@ defmodule PhxDiff do
           {:ok, String.t()} | {:error, :unknown_version}
   defdelegate generate_sample_app(app_spec), to: PhxDiff.Diffs
 
+  @doc false
+  @spec seed_s3_sample_apps(keyword) ::
+          {:ok, [map()]} | {:error, :unable_to_list_local_apps}
+  defdelegate seed_s3_sample_apps(options), to: PhxDiff.Diffs
+
   @doc """
   Fetch the github url to the sample app for the given app specification
   """

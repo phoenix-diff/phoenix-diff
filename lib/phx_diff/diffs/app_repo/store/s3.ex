@@ -10,6 +10,28 @@ defmodule PhxDiff.Diffs.AppRepo.Store.S3 do
 
   @archive_extension ".tgz"
 
+  @spec app_key(AppSpecification.t()) :: String.t()
+  def app_key(%AppSpecification{} = app_spec) do
+    Path.join(normalized_prefix(), AppSpecPath.path(app_spec)) <> @archive_extension
+  end
+
+  @spec put_archive(AppSpecification.t(), binary()) :: :ok | {:error, :storage_unavailable}
+  def put_archive(%AppSpecification{} = app_spec, archive) when is_binary(archive) do
+    case request(S3Client.put_object(bucket(), app_key(app_spec), archive)) do
+      {:ok, _response} -> :ok
+      _ -> {:error, :storage_unavailable}
+    end
+  end
+
+  @spec archive_exists?(AppSpecification.t()) :: {:ok, boolean()} | {:error, :storage_unavailable}
+  def archive_exists?(%AppSpecification{} = app_spec) do
+    case request(S3Client.head_object(bucket(), app_key(app_spec))) do
+      {:ok, %{status_code: 200}} -> {:ok, true}
+      {:error, {:http_error, 404, _response}} -> {:ok, false}
+      _ -> {:error, :storage_unavailable}
+    end
+  end
+
   @impl true
   def list_app_specs do
     prefix = normalized_prefix()
@@ -62,7 +84,7 @@ defmodule PhxDiff.Diffs.AppRepo.Store.S3 do
   @impl true
   def store_generated_app(%AppSpecification{} = app_spec, source_path) do
     with {:ok, archive} <- Archive.create(source_path),
-         {:ok, _response} <- request(S3Client.put_object(bucket(), app_key(app_spec), archive)),
+         :ok <- put_archive(app_spec, archive),
          :ok <- Archive.extract(archive, app_path(app_spec)) do
       {:ok, app_path(app_spec)}
     else
@@ -139,10 +161,6 @@ defmodule PhxDiff.Diffs.AppRepo.Store.S3 do
   defp app_path(app_spec) do
     PhxDiff.Config.app_repo_cache_path()
     |> Path.join(AppSpecPath.path(app_spec))
-  end
-
-  defp app_key(app_spec) do
-    Path.join(normalized_prefix(), AppSpecPath.path(app_spec)) <> @archive_extension
   end
 
   defp normalized_prefix do

@@ -52,6 +52,10 @@ defmodule PhxDiff.Diffs do
           {:ok, String.t()} | {:error, :unknown_version}
   defdelegate generate_sample_app(app_spec), to: AppRepo
 
+  @spec seed_s3_sample_apps(keyword) ::
+          {:ok, [map()]} | {:error, :unable_to_list_local_apps}
+  defdelegate seed_s3_sample_apps(options), to: AppRepo
+
   @spec get_github_sample_app_base_url(AppSpecification.t()) :: String.t()
   defdelegate get_github_sample_app_base_url(app_spec), to: AppRepo
 
