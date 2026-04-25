@@ -3,18 +3,10 @@ defmodule PhxDiff.Diffs.AppRepo do
 
   alias PhxDiff.AppSpecification
   alias PhxDiff.Diffs.AppRepo.AppGenerator
+  alias PhxDiff.Diffs.AppRepo.AppSpecPath
+  alias PhxDiff.Diffs.AppRepo.Store.FileSystem
 
   @type version :: PhxDiff.Diffs.version()
-
-  @args_to_path_mappings [
-    {[], "default"},
-    {["--live"], "live"},
-    {["--no-ecto"], "no-ecto"},
-    {["--no-live"], "no-live"},
-    {["--no-html"], "no-html"},
-    {["--binary-id"], "binary-id"},
-    {["--umbrella"], "umbrella"}
-  ]
 
   @spec all_versions() :: [version]
   def all_versions do
@@ -47,26 +39,22 @@ defmodule PhxDiff.Diffs.AppRepo do
   @spec fetch_app_path(AppSpecification.t()) ::
           {:ok, String.t()} | {:error, :invalid_version}
   def fetch_app_path(%AppSpecification{} = app_specification) do
-    if app_generated_for_specification?(app_specification) do
-      {:ok, app_path(app_specification)}
-    else
-      {:error, :invalid_version}
-    end
+    store().fetch_app_path(app_specification)
   end
 
   @spec list_sample_apps_for_version(Version.t()) :: [AppSpecification.t()]
   def list_sample_apps_for_version(%Version{} = version) do
-    PhxDiff.Config.app_repo_path()
-    |> Path.join("#{version}/*")
-    |> Path.wildcard()
-    |> Enum.map(&path_to_app_spec/1)
+    case store().list_app_specs_for_version(version) do
+      {:ok, app_specs} -> app_specs
+      {:error, :storage_unavailable} -> []
+    end
   end
 
   @spec generate_sample_app(AppSpecification.t()) ::
           {:ok, String.t()} | {:error, :unknown_version}
   def generate_sample_app(%AppSpecification{} = app_spec) do
     with {:ok, app_dir} <- AppGenerator.generate(app_spec) do
-      store_generated_app(app_spec, app_dir)
+      store().store_generated_app(app_spec, app_dir)
     end
   end
 
@@ -131,60 +119,17 @@ defmodule PhxDiff.Diffs.AppRepo do
   @spec get_github_sample_app_base_url(AppSpecification.t()) :: String.t()
   def get_github_sample_app_base_url(%AppSpecification{} = app_spec) do
     PhxDiff.Config.github_sample_app_base_url()
-    |> Path.join(app_spec_path(app_spec))
-  end
-
-  defp store_generated_app(app_spec, source_path) do
-    destination_path = app_path(app_spec)
-
-    File.rm_rf(destination_path)
-    File.mkdir_p!(destination_path)
-
-    File.rename!(source_path, destination_path)
-
-    {:ok, destination_path}
-  end
-
-  defp app_generated_for_specification?(app_spec) do
-    app_spec in app_specifications_for_pre_generated_apps()
-  end
-
-  defp app_path(app_spec) do
-    PhxDiff.Config.app_repo_path()
-    |> Path.join(app_spec_path(app_spec))
-  end
-
-  defp app_spec_path(%AppSpecification{} = app_spec) do
-    Path.join(
-      to_string(app_spec.phoenix_version),
-      phx_new_arguments_to_path(app_spec.phx_new_arguments)
-    )
-  end
-
-  for {args, path} <- @args_to_path_mappings do
-    defp phx_new_arguments_to_path(unquote(args)), do: unquote(path)
-  end
-
-  for {args, path} <- @args_to_path_mappings do
-    defp phx_new_arguments_from_path(unquote(path)), do: unquote(args)
+    |> Path.join(AppSpecPath.path(app_spec))
   end
 
   defp app_specifications_for_pre_generated_apps do
-    PhxDiff.Config.app_repo_path()
-    |> Path.join("*/*")
-    |> Path.wildcard()
-    |> Enum.map(&path_to_app_spec/1)
+    case store().list_app_specs() do
+      {:ok, app_specs} -> app_specs
+      {:error, :storage_unavailable} -> []
+    end
   end
 
-  defp path_to_app_spec(path) do
-    path
-    |> Path.relative_to(PhxDiff.Config.app_repo_path())
-    |> Path.split()
-    |> then(fn [serialized_version, serialized_arguments] ->
-      %AppSpecification{
-        phoenix_version: Version.parse!(serialized_version),
-        phx_new_arguments: phx_new_arguments_from_path(serialized_arguments)
-      }
-    end)
+  defp store do
+    Application.get_env(:phx_diff, :app_repo_store, FileSystem)
   end
 end
