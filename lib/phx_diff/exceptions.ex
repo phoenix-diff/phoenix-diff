@@ -6,7 +6,7 @@ defmodule PhxDiff.ComparisonError do
   alias PhxDiff.AppSpecification
 
   @type field :: :source | :target
-  @type error :: :unknown_version
+  @type error :: :unknown_version | :storage_unavailable
 
   @type t :: %__MODULE__{
           source: AppSpecification.t(),

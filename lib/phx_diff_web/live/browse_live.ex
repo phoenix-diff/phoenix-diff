@@ -10,6 +10,14 @@ defmodule PhxDiffWeb.BrowseLive do
     end
   end
 
+  defmodule ServiceUnavailableError do
+    defexception plug_status: 503
+
+    def message(_) do
+      "Service unavailable"
+    end
+  end
+
   @impl true
   def mount(_params, _session, socket) do
     {:ok, socket}
@@ -30,6 +38,7 @@ defmodule PhxDiffWeb.BrowseLive do
         case PhxDiff.read_app_file(app_spec, relative_path) do
           {:ok, content} -> {content, false}
           {:error, :binary_file} -> {nil, true}
+          {:error, :storage_unavailable} -> raise ServiceUnavailableError
           {:error, :not_found} -> raise NotFoundError
         end
 
@@ -42,6 +51,7 @@ defmodule PhxDiffWeb.BrowseLive do
        |> assign(:binary_file, binary?)
        |> assign(:page_title, "#{relative_path} — v#{app_spec.phoenix_version}")}
     else
+      {:error, :storage_unavailable} -> raise ServiceUnavailableError
       {:error, :invalid_version} -> raise NotFoundError
       :error -> raise NotFoundError
     end
@@ -57,6 +67,7 @@ defmodule PhxDiffWeb.BrowseLive do
          to: ~p"/browse/#{app_spec}/files/#{Path.split(default_file)}"
        )}
     else
+      {:error, :storage_unavailable} -> raise ServiceUnavailableError
       {:error, :invalid_version} -> raise NotFoundError
       :error -> raise NotFoundError
     end

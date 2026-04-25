@@ -10,6 +10,11 @@ defmodule PhxDiffWeb.DiffManifestController do
     def message(_), do: "Not found"
   end
 
+  defmodule ServiceUnavailableError do
+    defexception plug_status: 503
+    def message(_), do: "Service unavailable"
+  end
+
   # Runs before action/2 so the hook is on the conn captured by WrapperError
   plug :register_no_store_on_error
 
@@ -20,8 +25,20 @@ defmodule PhxDiffWeb.DiffManifestController do
       |> put_resp_header("cache-control", "public, max-age=#{@cache_max_age_seconds}")
       |> render(:show, manifest: manifest)
     else
-      _ -> raise NotFoundError
+      {:error, %PhxDiff.ComparisonError{} = error} ->
+        if storage_unavailable?(error),
+          do: raise(ServiceUnavailableError),
+          else: raise(NotFoundError)
+
+      _ ->
+        raise NotFoundError
     end
+  end
+
+  defp storage_unavailable?(%PhxDiff.ComparisonError{errors: errors}) do
+    errors
+    |> Keyword.values()
+    |> Enum.any?(&(&1 == :storage_unavailable))
   end
 
   defp register_no_store_on_error(conn, _opts) do

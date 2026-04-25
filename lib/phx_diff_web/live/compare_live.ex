@@ -2,15 +2,23 @@ defmodule PhxDiffWeb.CompareLive do
   @moduledoc false
   use PhxDiffWeb, :live_view
 
-  alias Ecto.Changeset
   alias Phoenix.LiveView.Socket
   alias PhxDiff.AppSpecification
+  alias PhxDiff.ComparisonError
 
   defmodule NotFoundError do
     defexception plug_status: 404
 
     def message(_) do
       "Not found"
+    end
+  end
+
+  defmodule ServiceUnavailableError do
+    defexception plug_status: 503
+
+    def message(_) do
+      "Service unavailable"
     end
   end
 
@@ -33,6 +41,11 @@ defmodule PhxDiffWeb.CompareLive do
       socket = assign_app_specs(socket, diff_specification.source, diff_specification.target)
       {:noreply, socket}
     else
+      {:error, %ComparisonError{} = error} ->
+        if storage_unavailable?(error),
+          do: raise(ServiceUnavailableError),
+          else: raise(NotFoundError)
+
       _ ->
         raise NotFoundError
     end
@@ -53,7 +66,7 @@ defmodule PhxDiffWeb.CompareLive do
           Socket.t(),
           AppSpecification.t(),
           AppSpecification.t()
-        ) :: {:ok, Socket.t()} | {:error, Changeset.t()}
+        ) :: {:ok, Socket.t()} | {:error, ComparisonError.t()}
   defp fetch_and_assign_diff_when_connected(socket, source_app_spec, target_app_spec) do
     with {:ok, diff} <- PhxDiff.fetch_diff(source_app_spec, target_app_spec) do
       {:ok,
@@ -65,6 +78,12 @@ defmodule PhxDiffWeb.CompareLive do
 
   defp page_title(%AppSpecification{} = source, %AppSpecification{} = target) do
     "v#{source.phoenix_version} to v#{target.phoenix_version}"
+  end
+
+  defp storage_unavailable?(%ComparisonError{errors: errors}) do
+    errors
+    |> Keyword.values()
+    |> Enum.any?(&(&1 == :storage_unavailable))
   end
 
   defp github_url(%AppSpecification{} = app_spec) do

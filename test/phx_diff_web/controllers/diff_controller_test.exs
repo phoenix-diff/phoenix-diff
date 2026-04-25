@@ -1,6 +1,10 @@
 defmodule PhxDiffWeb.DiffControllerTest do
   use PhxDiffWeb.ConnCase, async: true
 
+  import Mox
+
+  alias PhxDiff.S3Simulator
+
   describe "GET /compare/:diff_specification/diff" do
     test "returns 200 with correct response headers", %{conn: conn} do
       conn = get(conn, ~p"/compare/1.7.14...1.8.0/diff")
@@ -109,5 +113,28 @@ defmodule PhxDiffWeb.DiffControllerTest do
         get(conn, ~p"/compare/1.7.14...not-a-version/diff")
       end)
     end
+
+    @tag :tmp_dir
+    test "returns 503 when app storage is unavailable", %{conn: conn, tmp_dir: tmp_dir} do
+      sim = start_supervised!(S3Simulator)
+      S3Simulator.trigger_internal_server_errors(sim, operation: :get_object)
+
+      stub_s3_repo_config(S3Simulator.base_url(sim), tmp_dir)
+
+      {_status, headers, _body} =
+        assert_error_sent(503, fn -> get(conn, ~p"/compare/1.7.14...1.8.0/diff") end)
+
+      assert {"cache-control", "no-store"} in headers
+    end
+  end
+
+  defp stub_s3_repo_config(endpoint, tmp_dir) do
+    PhxDiff.Config.Mock
+    |> stub(:app_repo_backend, fn -> :s3 end)
+    |> stub(:app_repo_cache_path, fn -> Path.join(tmp_dir, "cache") end)
+    |> stub(:app_repo_s3_bucket, fn -> "sample-apps" end)
+    |> stub(:app_repo_s3_prefix, fn -> "sample-app" end)
+    |> stub(:app_repo_s3_region, fn -> "us-east-1" end)
+    |> stub(:s3_base_url, fn -> endpoint end)
   end
 end

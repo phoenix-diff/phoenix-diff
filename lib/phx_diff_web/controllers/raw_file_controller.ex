@@ -9,6 +9,12 @@ defmodule PhxDiffWeb.RawFileController do
     def message(_), do: "Not found"
   end
 
+  defmodule ServiceUnavailableError do
+    defexception plug_status: 503
+
+    def message(_), do: "Service unavailable"
+  end
+
   def show(conn, %{"app_specification" => app_spec_slug, "path" => path_segments}) do
     relative_path = Path.join(path_segments)
 
@@ -20,6 +26,7 @@ defmodule PhxDiffWeb.RawFileController do
       |> put_resp_content_type(content_type, nil)
       |> send_resp(200, content)
     else
+      {:error, :storage_unavailable} -> raise ServiceUnavailableError
       :error -> raise NotFoundError
     end
   end
@@ -27,6 +34,7 @@ defmodule PhxDiffWeb.RawFileController do
   defp read_file(app_spec, relative_path) do
     case PhxDiff.read_raw_app_file(app_spec, relative_path) do
       {:ok, content} -> {:ok, content}
+      {:error, :storage_unavailable} -> {:error, :storage_unavailable}
       {:error, _} -> :error
     end
   end

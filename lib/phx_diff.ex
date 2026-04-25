@@ -93,21 +93,22 @@ defmodule PhxDiff do
   List all files for an app specification
   """
   @spec list_app_files(AppSpecification.t()) ::
-          {:ok, [String.t()]} | {:error, :invalid_version}
+          {:ok, [String.t()]} | {:error, :invalid_version | :storage_unavailable}
   defdelegate list_app_files(app_spec), to: PhxDiff.Diffs
 
   @doc """
   Read a file from an app specification
   """
   @spec read_app_file(AppSpecification.t(), String.t()) ::
-          {:ok, String.t()} | {:error, :invalid_version | :not_found | :binary_file}
+          {:ok, String.t()}
+          | {:error, :invalid_version | :storage_unavailable | :not_found | :binary_file}
   defdelegate read_app_file(app_spec, relative_path), to: PhxDiff.Diffs
 
   @doc """
   Read raw file bytes from an app specification, including binary files
   """
   @spec read_raw_app_file(AppSpecification.t(), String.t()) ::
-          {:ok, binary()} | {:error, :invalid_version | :not_found}
+          {:ok, binary()} | {:error, :invalid_version | :storage_unavailable | :not_found}
   defdelegate read_raw_app_file(app_spec, relative_path), to: PhxDiff.Diffs
 
   @doc """

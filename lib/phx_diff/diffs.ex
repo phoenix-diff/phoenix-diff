@@ -36,15 +36,16 @@ defmodule PhxDiff.Diffs do
   defdelegate list_sample_apps_for_version(version), to: AppRepo
 
   @spec list_app_files(AppSpecification.t()) ::
-          {:ok, [String.t()]} | {:error, :invalid_version}
+          {:ok, [String.t()]} | {:error, :invalid_version | :storage_unavailable}
   defdelegate list_app_files(app_spec), to: AppRepo
 
   @spec read_app_file(AppSpecification.t(), String.t()) ::
-          {:ok, String.t()} | {:error, :invalid_version | :not_found | :binary_file}
+          {:ok, String.t()}
+          | {:error, :invalid_version | :storage_unavailable | :not_found | :binary_file}
   defdelegate read_app_file(app_spec, relative_path), to: AppRepo
 
   @spec read_raw_app_file(AppSpecification.t(), String.t()) ::
-          {:ok, binary()} | {:error, :invalid_version | :not_found}
+          {:ok, binary()} | {:error, :invalid_version | :storage_unavailable | :not_found}
   defdelegate read_raw_app_file(app_spec, relative_path), to: AppRepo
 
   @spec generate_sample_app(AppSpecification.t()) ::
@@ -201,6 +202,9 @@ defmodule PhxDiff.Diffs do
 
         {:error, :invalid_version} ->
           {paths, Keyword.put(errors, field, :unknown_version)}
+
+        {:error, :storage_unavailable} ->
+          {paths, Keyword.put(errors, field, :storage_unavailable)}
       end
     end)
     |> case do

@@ -36,7 +36,7 @@ defmodule PhxDiff.Diffs.AppRepo do
   end
 
   @spec fetch_app_path(AppSpecification.t()) ::
-          {:ok, String.t()} | {:error, :invalid_version}
+          {:ok, String.t()} | {:error, :invalid_version | :storage_unavailable}
   def fetch_app_path(%AppSpecification{} = app_specification) do
     store().fetch_app_path(app_specification)
   end
@@ -58,7 +58,7 @@ defmodule PhxDiff.Diffs.AppRepo do
   end
 
   @spec list_app_files(AppSpecification.t()) ::
-          {:ok, [String.t()]} | {:error, :invalid_version}
+          {:ok, [String.t()]} | {:error, :invalid_version | :storage_unavailable}
   def list_app_files(%AppSpecification{} = app_spec) do
     with {:ok, root} <- fetch_app_path(app_spec) do
       files =
@@ -74,7 +74,8 @@ defmodule PhxDiff.Diffs.AppRepo do
   end
 
   @spec read_app_file(AppSpecification.t(), String.t()) ::
-          {:ok, String.t()} | {:error, :invalid_version | :not_found | :binary_file}
+          {:ok, String.t()}
+          | {:error, :invalid_version | :storage_unavailable | :not_found | :binary_file}
   def read_app_file(%AppSpecification{} = app_spec, relative_path) do
     with {:ok, content} <- read_file_bytes(app_spec, relative_path) do
       if String.contains?(content, <<0>>) do
@@ -86,7 +87,7 @@ defmodule PhxDiff.Diffs.AppRepo do
   end
 
   @spec read_raw_app_file(AppSpecification.t(), String.t()) ::
-          {:ok, binary()} | {:error, :invalid_version | :not_found}
+          {:ok, binary()} | {:error, :invalid_version | :storage_unavailable | :not_found}
   def read_raw_app_file(%AppSpecification{} = app_spec, relative_path) do
     read_file_bytes(app_spec, relative_path)
   end

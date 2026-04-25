@@ -11,6 +11,12 @@ defmodule PhxDiffWeb.FileListController do
     def message(_), do: "Not found"
   end
 
+  defmodule ServiceUnavailableError do
+    defexception plug_status: 503
+
+    def message(_), do: "Service unavailable"
+  end
+
   def index(conn, %{"app_specification" => app_spec_slug}) do
     with {:ok, app_spec} <- Params.decode_app_spec(app_spec_slug),
          {:ok, files} <- PhxDiff.list_app_files(app_spec) do
@@ -21,6 +27,7 @@ defmodule PhxDiffWeb.FileListController do
       |> put_resp_header("cache-control", "public, max-age=#{@cache_max_age_seconds}")
       |> send_resp(200, body)
     else
+      {:error, :storage_unavailable} -> raise ServiceUnavailableError
       _ -> raise NotFoundError
     end
   end

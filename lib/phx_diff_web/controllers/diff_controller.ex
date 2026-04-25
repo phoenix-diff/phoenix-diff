@@ -10,6 +10,11 @@ defmodule PhxDiffWeb.DiffController do
     def message(_), do: "Not found"
   end
 
+  defmodule ServiceUnavailableError do
+    defexception plug_status: 503
+    def message(_), do: "Service unavailable"
+  end
+
   plug :register_no_store_on_error
 
   def show(conn, %{"diff_specification" => slug}) do
@@ -30,7 +35,13 @@ defmodule PhxDiffWeb.DiffController do
       |> put_resp_header("content-disposition", ~s(inline; filename="#{slug_label}.diff"))
       |> send_resp(200, body)
     else
-      _ -> raise NotFoundError
+      {:error, %PhxDiff.ComparisonError{} = error} ->
+        if storage_unavailable?(error),
+          do: raise(ServiceUnavailableError),
+          else: raise(NotFoundError)
+
+      _ ->
+        raise NotFoundError
     end
   end
 
@@ -64,6 +75,12 @@ defmodule PhxDiffWeb.DiffController do
   defp strip_diff_prefix("a/" <> rest), do: rest
   defp strip_diff_prefix("b/" <> rest), do: rest
   defp strip_diff_prefix(path), do: path
+
+  defp storage_unavailable?(%PhxDiff.ComparisonError{errors: errors}) do
+    errors
+    |> Keyword.values()
+    |> Enum.any?(&(&1 == :storage_unavailable))
+  end
 
   defp register_no_store_on_error(conn, _opts) do
     Plug.Conn.register_before_send(conn, fn conn ->
