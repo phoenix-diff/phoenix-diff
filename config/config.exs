@@ -23,6 +23,9 @@ config :phx_diff,
   github_sample_app_base_url:
     "https://github.com/phoenix-diff/phoenix-diff/tree/master/priv/data/sample-app"
 
+config :ex_aws,
+  http_client: ExAws.Request.Req
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.25.9",

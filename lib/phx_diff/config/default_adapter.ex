@@ -15,4 +15,9 @@ defmodule PhxDiff.Config.DefaultAdapter do
 
   @impl true
   def app_generator_workspace_path, do: "tmp"
+
+  @impl true
+  def s3_base_url do
+    Application.fetch_env!(:phx_diff, :s3_base_url)
+  end
 end
