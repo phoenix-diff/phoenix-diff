@@ -16,6 +16,9 @@ config :esbuild,
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]
 
+config :ex_aws,
+  http_client: ExAws.Request.Req
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
@@ -47,9 +50,10 @@ config :tailwind,
       --input=assets/css/app.css
       --output=priv/static/assets/app.css
     ),
+
+    # Import environment specific config. This must remain at the bottom
+    # of this file so it overrides the configuration defined above.
     cd: Path.expand("..", __DIR__)
   ]
 
-# Import environment specific config. This must remain at the bottom
-# of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
