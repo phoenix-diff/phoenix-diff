@@ -3,6 +3,10 @@ defmodule PhxDiff.CaptureJSONLog do
   Captures and parses JSON log output
   """
 
+  # Revisit when Elixir exposes capture_log formatter options directly.
+  @dialyzer {:nowarn_function, capture_json_log: 1}
+  @dialyzer {:nowarn_function, parse_json_logs: 1}
+  @spec capture_json_log((-> any())) :: [map()]
   def capture_json_log(function) when is_function(function) do
     ExUnit.CaptureLog.capture_log(
       [
