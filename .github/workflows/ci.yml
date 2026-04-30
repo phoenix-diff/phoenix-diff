@@ -10,8 +10,8 @@ jobs:
       - uses: erlef/setup-beam@v1
         id: beam
         with:
-          otp-version: '27.3'
-          elixir-version: '1.18.3'
+          otp-version: '28.5'
+          elixir-version: '1.19.5'
       - name: Restore the build cache
         uses: actions/cache/restore@v5
         id: build_cache
@@ -73,8 +73,8 @@ jobs:
       # Download phoenix so we yarn install works correctly
       - uses: erlef/setup-beam@v1
         with:
-          otp-version: '27.3'
-          elixir-version: '1.18.3'
+          otp-version: '28.5'
+          elixir-version: '1.19.5'
       - uses: actions/cache@v5
         with:
           path: |
