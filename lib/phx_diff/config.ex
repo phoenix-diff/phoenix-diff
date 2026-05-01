@@ -11,6 +11,12 @@ defmodule PhxDiff.Config do
   end
 
   @impl true
+  @spec app_repo_store() :: module()
+  def app_repo_store do
+    adapter().app_repo_store()
+  end
+
+  @impl true
   @spec app_generator_workspace_path() :: String.t()
   def app_generator_workspace_path do
     adapter().app_generator_workspace_path()

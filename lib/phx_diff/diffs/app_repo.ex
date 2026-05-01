@@ -4,7 +4,6 @@ defmodule PhxDiff.Diffs.AppRepo do
   alias PhxDiff.AppSpecification
   alias PhxDiff.Diffs.AppRepo.AppGenerator
   alias PhxDiff.Diffs.AppRepo.AppSpecPath
-  alias PhxDiff.Diffs.AppRepo.Store.FileSystem
 
   @type version :: PhxDiff.Diffs.version()
 
@@ -129,7 +128,5 @@ defmodule PhxDiff.Diffs.AppRepo do
     end
   end
 
-  defp store do
-    Application.get_env(:phx_diff, :app_repo_store, FileSystem)
-  end
+  defp store, do: PhxDiff.Config.app_repo_store()
 end
