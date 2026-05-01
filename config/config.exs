@@ -19,6 +19,7 @@ config :phx_diff, PhxDiffWeb.Endpoint,
   live_view: [signing_salt: "NpCfQvr9hr3z/LRwF8WZL5LmKP0wC9e3"]
 
 config :phx_diff,
+  app_repo_store: PhxDiff.Diffs.AppRepo.Store.FileSystem,
   github_sample_app_base_url:
     "https://github.com/phoenix-diff/phoenix-diff/tree/master/priv/data/sample-app"
 
