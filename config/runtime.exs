@@ -16,12 +16,14 @@ import Config
 #
 # Alternatively, you can use `mix phx.gen.release` to generate a `bin/server`
 # script that automatically sets the env var above.
-if System.get_env("PHX_SERVER") do
-  config :phx_diff, PhxDiffWeb.Endpoint, server: true
-end
+if config_env() != :test do
+  if System.get_env("PHX_SERVER") do
+    config :phx_diff, PhxDiffWeb.Endpoint, server: true
+  end
 
-config :phx_diff, PhxDiffWeb.Endpoint,
-  http: [port: String.to_integer(System.get_env("PORT", "4000"))]
+  config :phx_diff, PhxDiffWeb.Endpoint,
+    http: [port: String.to_integer(System.get_env("PORT", "4000"))]
+end
 
 if config_env() == :dev && System.get_env("ALLOW_EXTERNAL_ACCESS") == "true" do
   # Allow access beyond localhost
@@ -98,87 +100,89 @@ if config_env() == :prod do
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 end
 
-# Enables website analytics tracking scripts
-if System.get_env("RENDER_TRACKING_SCRIPTS") == "true" do
-  config :phx_diff, render_tracking_scripts: true
-end
-
-git_sha =
-  with {:ok, "ref: " <> contents} <- File.read(".git/HEAD"),
-       path = String.trim(contents),
-       {:ok, sha} <- File.read(".git/#{path}") do
-    String.trim(sha)
-  else
-    _ -> nil
+if config_env() != :test do
+  # Enables website analytics tracking scripts
+  if System.get_env("RENDER_TRACKING_SCRIPTS") == "true" do
+    config :phx_diff, render_tracking_scripts: true
   end
 
-deployment_env = System.get_env("DEPLOYMENT_ENV", to_string(config_env()))
-{:ok, hostname} = :inet.gethostname()
+  git_sha =
+    with {:ok, "ref: " <> contents} <- File.read(".git/HEAD"),
+         path = String.trim(contents),
+         {:ok, sha} <- File.read(".git/#{path}") do
+      String.trim(sha)
+    else
+      _ -> nil
+    end
 
-# Set the honeybadger environment name for all envs
-config :honeybadger,
-  environment_name: System.get_env("HONEYBADGER_ENV_NAME", deployment_env),
-  revision: git_sha
+  deployment_env = System.get_env("DEPLOYMENT_ENV", to_string(config_env()))
+  {:ok, hostname} = :inet.gethostname()
 
-# OpenTelemetry configuration
-config :opentelemetry,
-  span_processor: :batch,
-  traces_exporter: :otlp,
-  resource: [
-    "deployment.environment": deployment_env,
-    "service.version": git_sha,
-    "host.id": hostname,
-    "host.name": hostname
-  ]
+  # Set the honeybadger environment name for all envs
+  config :honeybadger,
+    environment_name: System.get_env("HONEYBADGER_ENV_NAME", deployment_env),
+    revision: git_sha
 
-case System.fetch_env("OTEL_EXPORTER") do
-  {:ok, "stdout"} ->
-    config :opentelemetry, traces_exporter: {:otel_exporter_stdout, []}
+  # OpenTelemetry configuration
+  config :opentelemetry,
+    span_processor: :batch,
+    traces_exporter: :otlp,
+    resource: [
+      "deployment.environment": deployment_env,
+      "service.version": git_sha,
+      "host.id": hostname,
+      "host.name": hostname
+    ]
 
-  {:ok, "honeycomb"} ->
-    config :opentelemetry_exporter,
-      otlp_protocol: :grpc,
-      otlp_compression: :gzip,
-      otlp_endpoint: "https://api.honeycomb.io:443",
-      otlp_headers: [
-        {"x-honeycomb-team", System.fetch_env!("OTEL_HONEYCOMB_API_KEY")},
-        {"x-honeycomb-dataset", System.fetch_env!("OTEL_HONEYCOMB_DATASET")}
-      ]
+  case System.fetch_env("OTEL_EXPORTER") do
+    {:ok, "stdout"} ->
+      config :opentelemetry, traces_exporter: {:otel_exporter_stdout, []}
 
-  {:ok, "grafana-cloud"} ->
-    encoded_credential =
-      Base.encode64(
-        "#{System.fetch_env!("GRAFANA_USERNAME")}:#{System.fetch_env!("GRAFANA_API_KEY")}"
-      )
+    {:ok, "honeycomb"} ->
+      config :opentelemetry_exporter,
+        otlp_protocol: :grpc,
+        otlp_compression: :gzip,
+        otlp_endpoint: "https://api.honeycomb.io:443",
+        otlp_headers: [
+          {"x-honeycomb-team", System.fetch_env!("OTEL_HONEYCOMB_API_KEY")},
+          {"x-honeycomb-dataset", System.fetch_env!("OTEL_HONEYCOMB_DATASET")}
+        ]
 
-    config :opentelemetry_exporter,
-      otlp_protocol: :grpc,
-      otlp_compression: :gzip,
-      otlp_endpoint: "https://tempo-us-central1.grafana.net:443",
-      otlp_headers: [
-        {"authorization", "Basic #{encoded_credential}"}
-      ]
+    {:ok, "grafana-cloud"} ->
+      encoded_credential =
+        Base.encode64(
+          "#{System.fetch_env!("GRAFANA_USERNAME")}:#{System.fetch_env!("GRAFANA_API_KEY")}"
+        )
 
-  {:ok, "signoz-local"} ->
-    config :opentelemetry_exporter,
-      otlp_protocol: :http_protobuf,
-      otlp_endpoint: "http://localhost:4318"
+      config :opentelemetry_exporter,
+        otlp_protocol: :grpc,
+        otlp_compression: :gzip,
+        otlp_endpoint: "https://tempo-us-central1.grafana.net:443",
+        otlp_headers: [
+          {"authorization", "Basic #{encoded_credential}"}
+        ]
 
-  :error ->
-    # Disabled by default
-    config :opentelemetry, traces_exporter: :none
-end
+    {:ok, "signoz-local"} ->
+      config :opentelemetry_exporter,
+        otlp_protocol: :http_protobuf,
+        otlp_endpoint: "http://localhost:4318"
 
-# Log format
-default_log_format = if config_env() == :prod, do: "json"
+    :error ->
+      # Disabled by default
+      config :opentelemetry, traces_exporter: :none
+  end
 
-case System.get_env("LOG_FORMAT", default_log_format) do
-  "json" ->
-    config :logger, :console,
-      format: {PhxDiff.Logging.Formatter, :format},
-      colors: [enabled: false],
-      metadata: :all
+  # Log format
+  default_log_format = if config_env() == :prod, do: "json"
 
-  _ ->
-    :ok
+  case System.get_env("LOG_FORMAT", default_log_format) do
+    "json" ->
+      config :logger, :console,
+        format: {PhxDiff.Logging.Formatter, :format},
+        colors: [enabled: false],
+        metadata: :all
+
+    _ ->
+      :ok
+  end
 end
