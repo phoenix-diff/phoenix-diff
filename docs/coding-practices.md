@@ -47,6 +47,7 @@ dialyzer
 - Put application environment reads and default config lookups in the matching `DefaultAdapter` module.
 - Store default application config values in `config/config.exs` instead of hard-coding fallback values at call sites.
 - Add new adapter callbacks when feature code needs a new configurable value so tests can swap config with Mox.
+- Avoid runtime config side effects in test environment: wrap config that reads files, environment variables, or makes network calls in `if config_env() != :test do ... end` blocks in `config/runtime.exs`. Tests run in the `:test` environment and should not depend on external resources.
 - To stub core config in a test, import Mox, use `PhxDiff.MockedConfigCase` when the case template does not already include it, and stub the mock adapter:
 
 ```elixir
