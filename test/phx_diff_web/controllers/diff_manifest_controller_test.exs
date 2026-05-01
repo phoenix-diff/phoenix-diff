@@ -217,7 +217,7 @@ defmodule PhxDiffWeb.DiffManifestControllerTest do
 
   defp stub_s3_repo_config(endpoint, tmp_dir) do
     PhxDiff.Config.Mock
-    |> stub(:app_repo_backend, fn -> :s3 end)
+    |> stub(:app_repo_store, fn -> PhxDiff.Diffs.AppRepo.Store.S3 end)
     |> stub(:app_repo_cache_path, fn -> Path.join(tmp_dir, "cache") end)
     |> stub(:app_repo_s3_bucket, fn -> "sample-apps" end)
     |> stub(:app_repo_s3_prefix, fn -> "sample-app" end)

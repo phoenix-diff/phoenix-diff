@@ -3,16 +3,11 @@ defmodule PhxDiff.Config.DefaultAdapter do
 
   @behaviour PhxDiff.Config.Adapter
 
-  alias PhxDiff.Diffs.AppRepo.Store.FileSystem
-  alias PhxDiff.Diffs.AppRepo.Store.S3
-
   @impl true
   def app_repo_path, do: Application.app_dir(:phx_diff, "priv/data/sample-app")
 
   @impl true
-  def app_repo_store do
-    Application.get_env(:phx_diff, :app_repo_store, configured_store())
-  end
+  def app_repo_store, do: Application.fetch_env!(:phx_diff, :app_repo_store)
 
   @impl true
   def app_repo_backend do
@@ -55,12 +50,5 @@ defmodule PhxDiff.Config.DefaultAdapter do
   @impl true
   def s3_base_url do
     System.get_env("AWS_ENDPOINT_URL_S3") || Application.fetch_env!(:phx_diff, :s3_base_url)
-  end
-
-  defp configured_store do
-    case app_repo_backend() do
-      :s3 -> S3
-      :file_system -> FileSystem
-    end
   end
 end
