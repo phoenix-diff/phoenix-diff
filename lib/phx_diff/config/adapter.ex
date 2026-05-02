@@ -3,7 +3,6 @@ defmodule PhxDiff.Config.Adapter do
 
   @callback app_repo_path() :: String.t()
   @callback app_repo_store() :: module()
-  @callback app_repo_backend() :: :file_system | :s3
   @callback app_repo_cache_path() :: String.t()
   @callback app_repo_s3_bucket() :: String.t()
   @callback app_repo_s3_prefix() :: String.t()

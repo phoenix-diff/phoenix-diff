@@ -17,12 +17,6 @@ defmodule PhxDiff.Config do
   end
 
   @impl true
-  @spec app_repo_backend() :: :file_system | :s3
-  def app_repo_backend do
-    adapter().app_repo_backend()
-  end
-
-  @impl true
   @spec app_repo_cache_path() :: String.t()
   def app_repo_cache_path do
     adapter().app_repo_cache_path()

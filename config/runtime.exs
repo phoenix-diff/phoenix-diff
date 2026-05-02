@@ -101,6 +101,26 @@ if config_env() == :prod do
 end
 
 if config_env() != :test do
+  config :phx_diff,
+    app_repo_cache_path:
+      System.get_env("APP_REPO_CACHE_PATH", Path.join(System.tmp_dir!(), "phx-diff/sample-app-cache"))
+
+  if bucket = System.get_env("APP_REPO_S3_BUCKET") do
+    config :phx_diff, app_repo_s3_bucket: bucket
+  end
+
+  if prefix = System.get_env("APP_REPO_S3_PREFIX") do
+    config :phx_diff, app_repo_s3_prefix: prefix
+  end
+
+  if region = System.get_env("AWS_REGION") do
+    config :phx_diff, app_repo_s3_region: region
+  end
+
+  if s3_url = System.get_env("AWS_ENDPOINT_URL_S3") do
+    config :phx_diff, s3_base_url: s3_url
+  end
+
   # Enables website analytics tracking scripts
   if System.get_env("RENDER_TRACKING_SCRIPTS") == "true" do
     config :phx_diff, render_tracking_scripts: true

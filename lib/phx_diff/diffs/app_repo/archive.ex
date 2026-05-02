@@ -91,9 +91,16 @@ defmodule PhxDiff.Diffs.AppRepo.Archive do
   end
 
   defp add_file(tar, source_file, archive_file) do
-    :erl_tar.add(tar, source_file, archive_file, [])
-  catch
-    {:error, _reason} = error -> error
+    case File.stat(source_file, access: :read) do
+      {:ok, stat} ->
+        if stat.access == :none do
+          {:error, :eacces}
+        else
+          :erl_tar.add(tar, source_file, archive_file, [])
+        end
+
+      {:error, _reason} = error -> error
+    end
   end
 
   defp validate_entries([], _destination_path), do: {:error, :empty}

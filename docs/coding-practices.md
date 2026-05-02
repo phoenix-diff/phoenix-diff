@@ -43,7 +43,7 @@ dialyzer
 
 - Access application environment values through the config adapter layer, not directly from feature modules.
 - Core modules should call `PhxDiff.Config`; web modules should call `PhxDiffWeb.Config`.
-- Read OS environment variables in `config/runtime.exs`, write them into the application environment, then expose them through the config module.
+- Read OS environment variables in `config/runtime.exs`, write them into the application environment, then expose them through the config module. Wrap env var reads in `if config_env() != :test` so environment variables don't accidentally change test behavior.
 - Put application environment reads and default config lookups in the matching `DefaultAdapter` module.
 - Store default application config values in `config/config.exs` instead of hard-coding fallback values at call sites.
 - Add new adapter callbacks when feature code needs a new configurable value so tests can swap config with Mox.
