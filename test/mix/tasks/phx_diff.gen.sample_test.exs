@@ -1,34 +1,43 @@
 defmodule Mix.Tasks.PhxDiff.Gen.SampleTest do
   use PhxDiff.MockedConfigCase, async: true
 
+  import Mox
+
   alias Mix.Tasks.PhxDiff.Gen
   alias PhxDiff.AppSpecification
+  alias PhxDiff.Diffs.AppRepo.Store.FileSystem
   alias PhxDiff.TestSupport.DiffFixtures
-
-  test "outputs the appropriate instructions after generating an app" do
-    Gen.Sample.run(["1.5.2", "--live"])
-
-    assert_receive {:mix_shell, :info, [msg]}
-
-    assert msg == """
-
-           Successfully generated sample app.
-
-           To add this to version control, run:
-
-               git add priv/data/sample-app/1.5.2/live
-               git add -f priv/data/sample-app/1.5.2/live/config/prod.secret.exs
-           """
-  end
 
   @diffs_to_compare [
     {{"1.4.16", []}, {"1.4.17", []}},
     {{"1.5.2", ["--live"]}, {"1.5.3", ["--live"]}},
     {{"1.5.9", []}, {"1.5.9", ["--live"]}},
-    {{"1.6.0-rc.1", []}, "1.6.0", []}
+    {{"1.6.0-rc.1", []}, {"1.6.0", []}}
   ]
 
-  describe "diff generation" do
+  describe "filesystem app repo store adapter" do
+    setup do
+      stub(PhxDiff.Config.Mock, :app_repo_store, fn -> FileSystem end)
+
+      :ok
+    end
+
+    test "outputs the appropriate instructions after generating an app" do
+      Gen.Sample.run(["1.5.2", "--live"])
+
+      assert_receive {:mix_shell, :info, [msg]}
+
+      assert msg == """
+
+             Successfully generated sample app.
+
+             To add this to version control, run:
+
+                 git add priv/data/sample-app/1.5.2/live
+                 git add -f priv/data/sample-app/1.5.2/live/config/prod.secret.exs
+             """
+    end
+
     for {{version_1, v1_opts}, {version_2, v2_opts}} <- @diffs_to_compare do
       test "returns known diff comparing #{version_1} #{Enum.join(v1_opts, " ")} to #{version_2} #{Enum.join(v2_opts, " ")}" do
         v1_app_spec =
