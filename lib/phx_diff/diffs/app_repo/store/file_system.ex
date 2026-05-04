@@ -1,7 +1,7 @@
 defmodule PhxDiff.Diffs.AppRepo.Store.FileSystem do
   @moduledoc false
 
-  @behaviour PhxDiff.Diffs.AppRepo.Store
+  @behaviour PhxDiff.Diffs.AppRepo.Store.Adapter
 
   alias PhxDiff.AppSpecification
   alias PhxDiff.Diffs.AppRepo.AppSpecPath

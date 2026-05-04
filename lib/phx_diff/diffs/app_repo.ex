@@ -4,6 +4,7 @@ defmodule PhxDiff.Diffs.AppRepo do
   alias PhxDiff.AppSpecification
   alias PhxDiff.Diffs.AppRepo.AppGenerator
   alias PhxDiff.Diffs.AppRepo.AppSpecPath
+  alias PhxDiff.Diffs.AppRepo.Store
 
   @type version :: PhxDiff.Diffs.version()
 
@@ -38,22 +39,21 @@ defmodule PhxDiff.Diffs.AppRepo do
   @spec fetch_app_path(AppSpecification.t()) ::
           {:ok, String.t()} | {:error, :invalid_version}
   def fetch_app_path(%AppSpecification{} = app_specification) do
-    store().fetch_app_path(app_specification)
+    Store.fetch_app_path(app_specification)
   end
 
   @spec list_sample_apps_for_version(Version.t()) :: [AppSpecification.t()]
   def list_sample_apps_for_version(%Version{} = version) do
-    case store().list_app_specs_for_version(version) do
-      {:ok, app_specs} -> app_specs
-      {:error, :storage_unavailable} -> []
-    end
+    {:ok, app_specs} = Store.list_app_specs_for_version(version)
+
+    app_specs
   end
 
   @spec generate_sample_app(AppSpecification.t()) ::
           {:ok, String.t()} | {:error, :unknown_version}
   def generate_sample_app(%AppSpecification{} = app_spec) do
     with {:ok, app_dir} <- AppGenerator.generate(app_spec) do
-      store().store_generated_app(app_spec, app_dir)
+      Store.store_generated_app(app_spec, app_dir)
     end
   end
 
@@ -122,11 +122,8 @@ defmodule PhxDiff.Diffs.AppRepo do
   end
 
   defp app_specifications_for_pre_generated_apps do
-    case store().list_app_specs() do
-      {:ok, app_specs} -> app_specs
-      {:error, :storage_unavailable} -> []
-    end
-  end
+    {:ok, app_specs} = Store.list_app_specs()
 
-  defp store, do: PhxDiff.Config.app_repo_store()
+    app_specs
+  end
 end
