@@ -101,6 +101,20 @@ if config_env() == :prod do
 end
 
 if config_env() != :test do
+  s3_config =
+    for {config_key, env_var} <- [
+          app_repo_s3_bucket: "APP_REPO_S3_BUCKET",
+          app_repo_s3_region: "AWS_REGION",
+          s3_base_url: "AWS_ENDPOINT_URL_S3",
+          s3_access_key_id: "AWS_ACCESS_KEY_ID",
+          s3_secret_access_key: "AWS_SECRET_ACCESS_KEY"
+        ],
+        {:ok, value} <- [System.fetch_env(env_var)] do
+      {config_key, value}
+    end
+
+  if Enum.any?(s3_config), do: config(:phx_diff, s3_config)
+
   # Enables website analytics tracking scripts
   if System.get_env("RENDER_TRACKING_SCRIPTS") == "true" do
     config :phx_diff, render_tracking_scripts: true

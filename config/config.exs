@@ -20,6 +20,7 @@ config :phx_diff, PhxDiffWeb.Endpoint,
 
 config :phx_diff,
   app_repo_store: PhxDiff.Diffs.AppRepo.Store.FileSystem,
+  app_repo_s3_prefix: "sample-app",
   github_sample_app_base_url:
     "https://github.com/phoenix-diff/phoenix-diff/tree/master/priv/data/sample-app"
 

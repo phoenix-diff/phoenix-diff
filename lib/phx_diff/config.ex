@@ -17,6 +17,24 @@ defmodule PhxDiff.Config do
   end
 
   @impl true
+  @spec app_repo_s3_bucket() :: String.t()
+  def app_repo_s3_bucket do
+    adapter().app_repo_s3_bucket()
+  end
+
+  @impl true
+  @spec app_repo_s3_prefix() :: String.t()
+  def app_repo_s3_prefix do
+    adapter().app_repo_s3_prefix()
+  end
+
+  @impl true
+  @spec app_repo_s3_region() :: String.t()
+  def app_repo_s3_region do
+    adapter().app_repo_s3_region()
+  end
+
+  @impl true
   @spec app_generator_workspace_path() :: String.t()
   def app_generator_workspace_path do
     adapter().app_generator_workspace_path()
@@ -34,6 +52,18 @@ defmodule PhxDiff.Config do
   @impl true
   def s3_base_url do
     adapter().s3_base_url()
+  end
+
+  @impl true
+  @spec s3_access_key_id() :: String.t()
+  def s3_access_key_id do
+    adapter().s3_access_key_id()
+  end
+
+  @impl true
+  @spec s3_secret_access_key() :: String.t()
+  def s3_secret_access_key do
+    adapter().s3_secret_access_key()
   end
 
   defp adapter do

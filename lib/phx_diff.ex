@@ -8,6 +8,7 @@ defmodule PhxDiff do
     exports: [
       AppSpecification,
       ComparisonError,
+      Config,
       DiffManifest,
       Diff.Patch,
       Diff.Chunk,
