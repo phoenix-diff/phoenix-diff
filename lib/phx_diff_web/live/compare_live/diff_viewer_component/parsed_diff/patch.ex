@@ -3,6 +3,7 @@ defmodule PhxDiffWeb.CompareLive.DiffViewerComponent.ParsedDiff.Patch do
 
   import Bitwise
 
+  alias PhxDiff.Diff.Patch
   alias PhxDiffWeb.CompareLive.DiffViewerComponent.Renderers
 
   defstruct [:display_filename, :display_filename_hash, :status, :html_anchor, :summary]
@@ -18,26 +19,25 @@ defmodule PhxDiffWeb.CompareLive.DiffViewerComponent.ParsedDiff.Patch do
   @type status :: :added | :removed | :renamed | :changed
   @type summary :: %{additions: non_neg_integer(), deletions: non_neg_integer()}
 
-  @spec build(PhxDiff.Diff.Patch.t()) :: t
-  def build(%PhxDiff.Diff.Patch{} = patch) do
+  @spec build(Patch.t()) :: t
+  def build(%Patch{} = patch) do
     display_filename = Renderers.filename_diff(patch.from, patch.to)
 
     %__MODULE__{
       display_filename: display_filename,
-      display_filename_hash: :crypto.hash(:sha256, display_filename) |> Base.url_encode64(),
+      display_filename_hash: :sha256 |> :crypto.hash(display_filename) |> Base.url_encode64(),
       status: calculate_status(patch),
       html_anchor: d2h_html_id(display_filename),
       summary: calculate_summary(patch)
     }
   end
 
-  defp calculate_status(%PhxDiff.Diff.Patch{headers: %{"new file mode" => _}}), do: :added
+  defp calculate_status(%Patch{headers: %{"new file mode" => _}}), do: :added
 
-  defp calculate_status(%PhxDiff.Diff.Patch{headers: %{"deleted file mode" => _}}),
-    do: :removed
+  defp calculate_status(%Patch{headers: %{"deleted file mode" => _}}), do: :removed
 
-  defp calculate_status(%PhxDiff.Diff.Patch{headers: %{"rename from" => _}}), do: :renamed
-  defp calculate_status(%PhxDiff.Diff.Patch{}), do: :changed
+  defp calculate_status(%Patch{headers: %{"rename from" => _}}), do: :renamed
+  defp calculate_status(%Patch{}), do: :changed
 
   defp d2h_html_id(display_filename) do
     display_filename
@@ -52,8 +52,7 @@ defmodule PhxDiffWeb.CompareLive.DiffViewerComponent.ParsedDiff.Patch do
     # https://github.com/rtfpessoa/diff2html/blob/2c7e03d2660c0597eb15cc9db9ef652f57a1e224/src/utils.ts#L40-L54
     for char <- to_charlist(str), reduce: 0 do
       hash ->
-        ((hash <<< 5) - hash + char)
-        |> truncate_to_32bit_signed_integer()
+        truncate_to_32bit_signed_integer((hash <<< 5) - hash + char)
     end
   end
 

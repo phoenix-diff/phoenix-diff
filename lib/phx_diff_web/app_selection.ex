@@ -20,8 +20,7 @@ defmodule PhxDiffWeb.AppSelection do
   embedded_schema do
     field :version, Fields.Version
 
-    field :variant, Ecto.Enum,
-      values: [:default, :no_ecto, :live, :no_live, :no_html, :binary_id, :umbrella]
+    field :variant, Ecto.Enum, values: [:default, :no_ecto, :live, :no_live, :no_html, :binary_id, :umbrella]
   end
 
   def new(%AppSpecification{} = app_spec) do

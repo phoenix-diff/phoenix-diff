@@ -29,8 +29,7 @@ defmodule PhxDiff.TestSupport.DiffFixtures do
   end
 
   # NOTE: This function is only designed to be called from iEX
-  def save_diff_fixture!(version_1, version_2)
-      when is_binary(version_1) and is_binary(version_2) do
+  def save_diff_fixture!(version_1, version_2) when is_binary(version_1) and is_binary(version_2) do
     app_spec_1 = PhxDiff.default_app_specification(Version.parse!(version_1))
     app_spec_2 = PhxDiff.default_app_specification(Version.parse!(version_2))
 
@@ -40,7 +39,8 @@ defmodule PhxDiff.TestSupport.DiffFixtures do
   def save_diff_fixture!(%AppSpecification{} = app_spec_1, %AppSpecification{} = app_spec_2) do
     {:ok, diff} = PhxDiff.fetch_diff(app_spec_1, app_spec_2)
 
-    file_path(app_spec_1, app_spec_2)
+    app_spec_1
+    |> file_path(app_spec_2)
     |> File.write!(diff)
   end
 

@@ -89,7 +89,8 @@ defmodule PhxDiffWeb.BrowseLiveTest do
 
       # Find file tree links
       file_links =
-        Floki.find(parsed, "#file-tree a")
+        parsed
+        |> Floki.find("#file-tree a")
         |> Enum.map(&Floki.text/1)
         |> Enum.map(&String.trim/1)
 
@@ -102,7 +103,8 @@ defmodule PhxDiffWeb.BrowseLiveTest do
       parsed = Floki.parse_document!(html)
 
       active_links =
-        Floki.find(parsed, "#file-tree .text-primary")
+        parsed
+        |> Floki.find("#file-tree .text-primary")
         |> Enum.map(&Floki.text/1)
         |> Enum.map(&String.trim/1)
 

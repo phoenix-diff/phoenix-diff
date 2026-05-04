@@ -1,8 +1,8 @@
 defmodule PhxDiff.Config do
   @moduledoc false
-  use Boundary
-
   @behaviour PhxDiff.Config.Adapter
+
+  use Boundary
 
   @impl true
   @spec app_repo_path() :: String.t()

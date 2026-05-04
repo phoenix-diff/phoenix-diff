@@ -27,9 +27,6 @@ defmodule PhxDiff.Diffs.AppRepo.AppGenerator.MixArchivesDirectories do
       with :ok <- install_hex(working_dir),
            :ok <- install_phx_new(working_dir, version) do
         move_to_archives_repo(workspace_path, version, working_dir)
-      else
-        {:error, :unknown_version} ->
-          {:error, :unknown_version}
       end
     end)
   end

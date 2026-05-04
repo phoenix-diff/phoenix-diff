@@ -110,7 +110,7 @@ defmodule PhxDiff.DiffParser.HeaderLineParser do
         nil -> nil
       end
     else
-      case String.replace_prefix(rest, "a/", "") |> split_unquoted_pair(" b/") do
+      case rest |> String.replace_prefix("a/", "") |> split_unquoted_pair(" b/") do
         {file_a, file_b} -> {file_a, file_b}
         nil -> nil
       end
@@ -144,7 +144,7 @@ defmodule PhxDiff.DiffParser.HeaderLineParser do
     if String.starts_with?(rest, "\"") do
       parse_quoted_pair(String.replace_suffix(rest, " differ", ""), " and ")
     else
-      case String.replace_suffix(rest, " differ", "") |> split_unquoted_pair(" and ") do
+      case rest |> String.replace_suffix(" differ", "") |> split_unquoted_pair(" and ") do
         {from, to} -> {parse_metadata_path(from), parse_metadata_path(to)}
         nil -> nil
       end
@@ -206,8 +206,7 @@ defmodule PhxDiff.DiffParser.HeaderLineParser do
 
   defp unescape_c_string("", acc), do: IO.iodata_to_binary(acc)
 
-  defp unescape_c_string(<<"\\", d1, d2, d3, rest::binary>>, acc)
-       when d1 in ?0..?7 and d2 in ?0..?7 and d3 in ?0..?7 do
+  defp unescape_c_string(<<"\\", d1, d2, d3, rest::binary>>, acc) when d1 in ?0..?7 and d2 in ?0..?7 and d3 in ?0..?7 do
     codepoint = (d1 - ?0) * 64 + (d2 - ?0) * 8 + (d3 - ?0)
     unescape_c_string(rest, [acc, <<codepoint>>])
   end
@@ -218,9 +217,7 @@ defmodule PhxDiff.DiffParser.HeaderLineParser do
   defp unescape_c_string(<<"\\\"", rest::binary>>, acc), do: unescape_c_string(rest, [acc, "\""])
   defp unescape_c_string(<<"\\\\", rest::binary>>, acc), do: unescape_c_string(rest, [acc, "\\"])
 
-  defp unescape_c_string(<<"\\", char::utf8, rest::binary>>, acc),
-    do: unescape_c_string(rest, [acc, <<char::utf8>>])
+  defp unescape_c_string(<<"\\", char::utf8, rest::binary>>, acc), do: unescape_c_string(rest, [acc, <<char::utf8>>])
 
-  defp unescape_c_string(<<char::utf8, rest::binary>>, acc),
-    do: unescape_c_string(rest, [acc, <<char::utf8>>])
+  defp unescape_c_string(<<char::utf8, rest::binary>>, acc), do: unescape_c_string(rest, [acc, <<char::utf8>>])
 end

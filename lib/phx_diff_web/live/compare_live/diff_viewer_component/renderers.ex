@@ -12,7 +12,8 @@ defmodule PhxDiffWeb.CompareLive.DiffViewerComponent.Renderers do
     to_path_segments = Path.split(to)
 
     prefix_path_segments =
-      Enum.zip([from_path_segments, to_path_segments])
+      [from_path_segments, to_path_segments]
+      |> Enum.zip()
       |> Enum.take_while(&match?({x, x}, &1))
       |> Enum.map(&elem(&1, 0))
 
@@ -20,7 +21,8 @@ defmodule PhxDiffWeb.CompareLive.DiffViewerComponent.Renderers do
     to_path_segments = to_path_segments -- prefix_path_segments
 
     suffix_path_segments =
-      Enum.zip([Enum.reverse(from_path_segments), Enum.reverse(to_path_segments)])
+      [Enum.reverse(from_path_segments), Enum.reverse(to_path_segments)]
+      |> Enum.zip()
       |> Enum.take_while(&match?({x, x}, &1))
       |> Enum.map(&elem(&1, 0))
       |> Enum.reverse()
@@ -46,8 +48,7 @@ defmodule PhxDiffWeb.CompareLive.DiffViewerComponent.Renderers do
         # Identical paths
         Path.join(prefix_path_segments)
 
-      {prefix_path_segments, [_ | _] = from_path_segments, [_ | _] = to_path_segments,
-       suffix_path_segments}
+      {prefix_path_segments, [_ | _] = from_path_segments, [_ | _] = to_path_segments, suffix_path_segments}
       when prefix_path_segments != [] or suffix_path_segments != [] ->
         Path.join([
           maybe_join_path(prefix_path_segments),

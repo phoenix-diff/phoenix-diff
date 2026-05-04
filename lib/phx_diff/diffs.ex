@@ -208,8 +208,7 @@ defmodule PhxDiff.Diffs do
         {:ok, source_path, target_path}
 
       {_, errors} ->
-        {:error,
-         ComparisonError.exception(source: source_spec, target: target_spec, errors: errors)}
+        {:error, ComparisonError.exception(source: source_spec, target: target_spec, errors: errors)}
     end
   end
 end

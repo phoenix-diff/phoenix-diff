@@ -4,6 +4,7 @@ defmodule PhxDiffWeb.RawFileController do
   alias PhxDiffWeb.Params
 
   defmodule NotFoundError do
+    @moduledoc false
     defexception plug_status: 404
 
     def message(_), do: "Not found"

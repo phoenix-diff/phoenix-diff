@@ -1,10 +1,11 @@
 defmodule PhxDiff.OpenTelemetry do
   @moduledoc false
 
-  @tracer_id __MODULE__
+  alias OpenTelemetry.Span
 
   require OpenTelemetry.Tracer
-  alias OpenTelemetry.Span
+
+  @tracer_id __MODULE__
 
   @diff_generate_start_event [:phx_diff, :diffs, :generate, :start]
   @diff_generate_stop_event [:phx_diff, :diffs, :generate, :stop]

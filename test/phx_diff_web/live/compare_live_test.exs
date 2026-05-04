@@ -3,9 +3,9 @@ defmodule PhxDiffWeb.CompareLiveTest do
 
   import Mox
   import Phoenix.LiveViewTest
+  import PhxDiff.CaptureJSONLog
   import PhxDiff.TestSupport.OpenTelemetryTestExporter, only: [subscribe_to_otel_spans: 1]
   import PhxDiff.TestSupport.Sigils
-  import PhxDiff.CaptureJSONLog
 
   alias PhxDiff.AppSpecification
   alias PhxDiff.TestSupport.DiffFixtures
@@ -13,7 +13,7 @@ defmodule PhxDiffWeb.CompareLiveTest do
   setup [:subscribe_to_otel_spans]
 
   test "interacting with diff form", %{conn: conn} do
-    {:ok, view, _html} = conn |> live(~p"/compare/1.7.1...1.7.2")
+    {:ok, view, _html} = live(conn, ~p"/compare/1.7.1...1.7.2")
 
     form_data = get_form_data(view)
 
@@ -124,7 +124,7 @@ defmodule PhxDiffWeb.CompareLiveTest do
   end
 
   test "toggling line by line or side by side", %{conn: conn} do
-    {:ok, view, _html} = conn |> live(~p"/compare/1.7.1...1.7.2")
+    {:ok, view, _html} = live(conn, ~p"/compare/1.7.1...1.7.2")
 
     assert display_mode_button_active?(view, "Line by line")
     refute display_mode_button_active?(view, "Side by side")
@@ -158,9 +158,7 @@ defmodule PhxDiffWeb.CompareLiveTest do
   end
 
   test "allows comparing variants of the same version", %{conn: conn} do
-    {:ok, view, _html} =
-      conn
-      |> live(~p"/compare/1.5.9...1.5.9 --live")
+    {:ok, view, _html} = live(conn, ~p"/compare/1.5.9...1.5.9 --live")
 
     assert_diff_rendered(
       view,
@@ -170,9 +168,7 @@ defmodule PhxDiffWeb.CompareLiveTest do
       )
     )
 
-    {:ok, view, _html} =
-      conn
-      |> live(~p"/compare/1.7.0-rc.0 --no-ecto...1.7.0-rc.0")
+    {:ok, view, _html} = live(conn, ~p"/compare/1.7.0-rc.0 --no-ecto...1.7.0-rc.0")
 
     assert_diff_rendered(
       view,
@@ -187,7 +183,8 @@ defmodule PhxDiffWeb.CompareLiveTest do
     {:ok, view, _html} = live(conn, ~p"/compare/1.5.9...1.5.9 --live")
 
     [data_target_url] =
-      element(view, ".diff-results-container")
+      view
+      |> element(".diff-results-container")
       |> render()
       |> Floki.parse_fragment!()
       |> Floki.attribute("data-target-url")
@@ -198,9 +195,7 @@ defmodule PhxDiffWeb.CompareLiveTest do
   @arrow_symbol "→"
 
   test "displays the file list in a diff2html compatible format", %{conn: conn} do
-    {:ok, view, _html} =
-      conn
-      |> live(~p"/compare/1.7.1...1.7.2")
+    {:ok, view, _html} = live(conn, ~p"/compare/1.7.1...1.7.2")
 
     mix_exs_file_list_element =
       view
@@ -274,11 +269,10 @@ defmodule PhxDiffWeb.CompareLiveTest do
 
   test "generates logs with appropriate metadata attached", %{conn: conn} do
     diff_logs =
-      capture_json_log(fn ->
-        {:ok, _view, _html} =
-          conn
-          |> live(~p"/compare/1.5.9...1.5.9 --live")
-      end)
+      fn ->
+        {:ok, _view, _html} = live(conn, ~p"/compare/1.5.9...1.5.9 --live")
+      end
+      |> capture_json_log()
       |> Enum.filter(&match?(%{"event.domain" => "diffs"}, &1))
 
     assert compare_log =
@@ -297,7 +291,8 @@ defmodule PhxDiffWeb.CompareLiveTest do
 
   defp assert_diff_rendered(view, expected_diff) do
     diff_from_view =
-      element(view, ".diff-results-container")
+      view
+      |> element(".diff-results-container")
       |> render()
       |> Floki.parse_fragment!()
       |> Floki.attribute("data-diff")
@@ -307,7 +302,8 @@ defmodule PhxDiffWeb.CompareLiveTest do
   end
 
   defp diff_results_container_display_mode(view) do
-    element(view, ".diff-results-container")
+    view
+    |> element(".diff-results-container")
     |> render()
     |> Floki.parse_fragment!()
     |> Floki.attribute("data-view-type")
@@ -327,15 +323,15 @@ defmodule PhxDiffWeb.CompareLiveTest do
     %{
       source: %{
         version:
-          Floki.attribute(
-            document,
+          document
+          |> Floki.attribute(
             ~S|#[name="diff_selection[source][version]"] [selected=selected]|,
             "value"
           )
           |> List.first(),
         variant:
-          Floki.attribute(
-            document,
+          document
+          |> Floki.attribute(
             ~S|#[name="diff_selection[source][variant]"] [selected=selected]|,
             "value"
           )
@@ -343,15 +339,15 @@ defmodule PhxDiffWeb.CompareLiveTest do
       },
       target: %{
         version:
-          Floki.attribute(
-            document,
+          document
+          |> Floki.attribute(
             ~S|#[name="diff_selection[target][version]"] [selected=selected]|,
             "value"
           )
           |> List.first(),
         variant:
-          Floki.attribute(
-            document,
+          document
+          |> Floki.attribute(
             ~S|#[name="diff_selection[target][variant]"] [selected=selected]|,
             "value"
           )

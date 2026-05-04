@@ -38,11 +38,9 @@ defmodule PhxDiff.Diffs.DiffEngine do
 
   @spec compute_numstat(String.t(), String.t()) :: {:ok, [{String.t(), String.t(), String.t()}]}
   def compute_numstat(source_path, target_path) do
-    case git_numstat(source_path, target_path) do
-      {:ok, output} ->
-        entries = parse_numstat(output, source_path, target_path)
-        {:ok, entries}
-    end
+    {:ok, output} = git_numstat(source_path, target_path)
+    entries = parse_numstat(output, source_path, target_path)
+    {:ok, entries}
   end
 
   defp git_numstat(source_path, target_path) do

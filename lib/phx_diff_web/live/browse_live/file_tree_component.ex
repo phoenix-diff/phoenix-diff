@@ -151,8 +151,7 @@ defmodule PhxDiffWeb.BrowseLive.FileTreeComponent do
 
   defp tree_to_sorted_list(tree) do
     {files, dirs} =
-      tree
-      |> Enum.split_with(fn {key, _val} -> key == :files end)
+      Enum.split_with(tree, fn {key, _val} -> key == :files end)
 
     sorted_files =
       case files do

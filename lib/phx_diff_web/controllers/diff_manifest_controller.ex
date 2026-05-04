@@ -3,9 +3,10 @@ defmodule PhxDiffWeb.DiffManifestController do
 
   alias PhxDiffWeb.Params
 
-  @cache_max_age_seconds :timer.hours(24) |> System.convert_time_unit(:millisecond, :second)
+  @cache_max_age_seconds 24 |> :timer.hours() |> System.convert_time_unit(:millisecond, :second)
 
   defmodule NotFoundError do
+    @moduledoc false
     defexception plug_status: 404
     def message(_), do: "Not found"
   end

@@ -45,8 +45,7 @@ defmodule PhxDiff.TestSupport.TelemetryHelpers do
     quote do
       test_pid = self()
 
-      assert_received {:telemetry_event, unquote(event_name), unquote(match),
-                       %{test_pid: ^test_pid}}
+      assert_received {:telemetry_event, unquote(event_name), unquote(match), %{test_pid: ^test_pid}}
     end
   end
 
@@ -59,8 +58,7 @@ defmodule PhxDiff.TestSupport.TelemetryHelpers do
     quote do
       test_pid = self()
 
-      refute_received {:telemetry_event, unquote(event_name), unquote(match),
-                       %{test_pid: ^test_pid}}
+      refute_received {:telemetry_event, unquote(event_name), unquote(match), %{test_pid: ^test_pid}}
     end
   end
 end

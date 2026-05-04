@@ -46,9 +46,7 @@ defmodule PhxDiff.OpenTelemetryTest do
         end)
       )
 
-      assert_receive(
-        {:otel_span, %{name: :"PhxDiff.Diffs.get_diff/3", status: %{code: :error}} = span}
-      )
+      assert_receive({:otel_span, %{name: :"PhxDiff.Diffs.get_diff/3", status: %{code: :error}} = span})
 
       assert span.events == []
     end

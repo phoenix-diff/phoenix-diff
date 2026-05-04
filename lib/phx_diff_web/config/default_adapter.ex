@@ -1,8 +1,8 @@
 defmodule PhxDiffWeb.Config.DefaultAdapter do
   @moduledoc false
-  alias PhxDiffWeb.Config.AdminDashboardCredential
-
   @behaviour PhxDiffWeb.Config.Adapter
+
+  alias PhxDiffWeb.Config.AdminDashboardCredential
 
   @impl true
   def admin_dashboard_credentials do

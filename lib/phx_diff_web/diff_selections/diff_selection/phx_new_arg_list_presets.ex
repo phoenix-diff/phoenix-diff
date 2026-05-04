@@ -59,11 +59,8 @@ defmodule PhxDiffWeb.DiffSelections.DiffSelection.PhxNewArgListPresets do
 
   # A lower number returned means it will have higher priority in being used as the default variant
   for {{id, arg_list}, index} <- Enum.with_index(@mappings) do
-    def priority_for_default_preset(%PhxNewArgListPreset{
-          id: unquote(id),
-          arg_list: unquote(arg_list)
-        }),
-        do: unquote(index)
+    def priority_for_default_preset(%PhxNewArgListPreset{id: unquote(id), arg_list: unquote(arg_list)}),
+      do: unquote(index)
   end
 
   # Highest number to make it the lowest priority

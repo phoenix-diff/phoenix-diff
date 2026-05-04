@@ -39,7 +39,8 @@ defmodule PhxDiff.ComparisonError do
   end
 
   defp pretty(term) do
-    inspect(term, pretty: true)
+    term
+    |> inspect(pretty: true)
     |> String.split("\n")
     |> Enum.map_join("\n", &("    " <> &1))
   end

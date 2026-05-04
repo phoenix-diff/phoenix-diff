@@ -64,7 +64,7 @@ defmodule PhxDiffWeb.BrowseLive.AppSelectionForm do
       |> assign(:app_selection, app_selection)
       |> assign(:form, form)
       |> assign(:variant_options, variant_options_for_version(app_spec.phoenix_version))
-      |> assign_new(:all_versions, fn -> PhxDiff.all_versions() |> Enum.map(&to_string/1) end)
+      |> assign_new(:all_versions, fn -> Enum.map(PhxDiff.all_versions(), &to_string/1) end)
 
     {:ok, socket}
   end

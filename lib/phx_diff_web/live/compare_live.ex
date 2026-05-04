@@ -7,6 +7,7 @@ defmodule PhxDiffWeb.CompareLive do
   alias PhxDiff.AppSpecification
 
   defmodule NotFoundError do
+    @moduledoc false
     defexception plug_status: 404
 
     def message(_) do
@@ -16,9 +17,7 @@ defmodule PhxDiffWeb.CompareLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok,
-     socket
-     |> assign(:no_changes?, false)}
+    {:ok, assign(socket, :no_changes?, false)}
   end
 
   @impl true

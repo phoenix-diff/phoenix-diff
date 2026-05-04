@@ -1,11 +1,11 @@
 defmodule Mix.Tasks.PhxDiff.Gen.Sample do
-  @moduledoc false
-  alias PhxDiff.AppSpecification
-  use Mix.Task
+  @shortdoc "Generate a sample app for a phoenix version"
 
+  @moduledoc false
+  use Mix.Task
   use Boundary, deps: [PhxDiff]
 
-  @shortdoc "Generate a sample app for a phoenix version"
+  alias PhxDiff.AppSpecification
 
   def run(args) when is_list(args) do
     with {:ok, version_arg, remaining_args} <- pop_version_arg(args),

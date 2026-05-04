@@ -21,8 +21,7 @@ if config_env() != :test do
     config :phx_diff, PhxDiffWeb.Endpoint, server: true
   end
 
-  config :phx_diff, PhxDiffWeb.Endpoint,
-    http: [port: String.to_integer(System.get_env("PORT", "4000"))]
+  config :phx_diff, PhxDiffWeb.Endpoint, http: [port: String.to_integer(System.get_env("PORT", "4000"))]
 end
 
 if config_env() == :dev && System.get_env("ALLOW_EXTERNAL_ACCESS") == "true" do
@@ -55,7 +54,7 @@ if config_env() == :prod do
 
   # Configure the allowed origins
   check_origin =
-    case System.get_env("ALLOWED_ORIGINS", "") |> String.split() do
+    case "ALLOWED_ORIGINS" |> System.get_env("") |> String.split() do
       [_ | _] = origins -> origins
       _ -> true
     end
@@ -150,9 +149,7 @@ if config_env() != :test do
 
     {:ok, "grafana-cloud"} ->
       encoded_credential =
-        Base.encode64(
-          "#{System.fetch_env!("GRAFANA_USERNAME")}:#{System.fetch_env!("GRAFANA_API_KEY")}"
-        )
+        Base.encode64("#{System.fetch_env!("GRAFANA_USERNAME")}:#{System.fetch_env!("GRAFANA_API_KEY")}")
 
       config :opentelemetry_exporter,
         otlp_protocol: :grpc,

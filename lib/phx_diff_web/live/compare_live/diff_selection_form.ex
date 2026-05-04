@@ -89,7 +89,7 @@ defmodule PhxDiffWeb.CompareLive.DiffSelectionForm do
         {k, v}, socket ->
           assign(socket, k, v)
       end)
-      |> assign_new(:all_versions, fn -> PhxDiff.all_versions() |> Enum.map(&to_string/1) end)
+      |> assign_new(:all_versions, fn -> Enum.map(PhxDiff.all_versions(), &to_string/1) end)
       |> then(fn socket ->
         diff_selection = %DiffSelection{
           source: AppSelection.new(socket.assigns.source_app_spec),
