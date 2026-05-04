@@ -23,7 +23,7 @@ defmodule Mix.Tasks.PhxDiff.Gen.SampleTest do
       :ok
     end
 
-    test "outputs the appropriate instructions after generating an app" do
+    test "outputs the appropriate git instructions after generating an app" do
       Gen.Sample.run(["1.5.2", "--live"])
 
       assert_receive {:mix_shell, :info, [msg]}
@@ -61,7 +61,7 @@ defmodule Mix.Tasks.PhxDiff.Gen.SampleTest do
       :ok
     end
 
-    test "outputs the appropriate instructions after generating an app" do
+    test "outputs no post-store instructions after generating an app" do
       Gen.Sample.run(["1.5.2", "--live"])
 
       assert_receive {:mix_shell, :info, [msg]}
@@ -69,11 +69,6 @@ defmodule Mix.Tasks.PhxDiff.Gen.SampleTest do
       assert msg == """
 
              Successfully generated sample app.
-
-             To add this to version control, run:
-
-                 git add priv/data/sample-app/1.5.2/live
-                 git add -f priv/data/sample-app/1.5.2/live/config/prod.secret.exs
              """
     end
 

@@ -4,6 +4,7 @@ defmodule PhxDiff.Diffs.AppRepo.Store.FileSystem do
   @behaviour PhxDiff.Diffs.AppRepo.Store.Adapter
 
   alias PhxDiff.AppSpecification
+  alias PhxDiff.AppStorageInfo
   alias PhxDiff.Diffs.AppRepo.AppSpecPath
 
   @impl true
@@ -48,7 +49,18 @@ defmodule PhxDiff.Diffs.AppRepo.Store.FileSystem do
 
     File.rename!(source_path, destination_path)
 
-    {:ok, destination_path}
+    {:ok, AppStorageInfo.new(destination_path, post_store_instructions(destination_path))}
+  end
+
+  defp post_store_instructions(app_path) do
+    app_path = Path.relative_to(app_path, Application.app_dir(:phx_diff))
+
+    """
+    To add this to version control, run:
+
+        git add #{app_path}
+        git add -f #{app_path}/config/prod.secret.exs
+    """
   end
 
   defp app_path(app_spec) do

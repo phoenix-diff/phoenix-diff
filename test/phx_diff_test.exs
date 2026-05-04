@@ -177,12 +177,18 @@ defmodule PhxDiffTest do
     test "stores the newly generated sample app in config.app_repo_path", %{tmp_dir: tmp_dir} do
       stub_repo_paths(tmp_dir)
 
-      assert {:ok, storage_dir} =
+      assert {:ok,
+              %PhxDiff.AppStorageInfo{
+                app_path: storage_dir,
+                post_store_instructions: post_store_instructions
+              }} =
                ~V[1.5.3]
                |> PhxDiff.default_app_specification()
                |> PhxDiff.generate_sample_app()
 
       assert storage_dir == Path.join(PhxDiff.Config.app_repo_path(), "1.5.3/live")
+      assert post_store_instructions =~ "To add this to version control, run:"
+      assert post_store_instructions =~ "git add #{storage_dir}"
 
       assert_file(Path.join(storage_dir, "mix.exs"))
 

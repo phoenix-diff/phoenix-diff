@@ -4,6 +4,7 @@ defmodule PhxDiff.Diffs.AppRepo.Store do
   @behaviour PhxDiff.Diffs.AppRepo.Store.Adapter
 
   alias PhxDiff.AppSpecification
+  alias PhxDiff.AppStorageInfo
 
   @impl true
   @spec list_app_specs() :: {:ok, [AppSpecification.t()]}
@@ -24,7 +25,8 @@ defmodule PhxDiff.Diffs.AppRepo.Store do
   end
 
   @impl true
-  @spec store_generated_app(AppSpecification.t(), String.t()) :: {:ok, String.t()}
+  @spec store_generated_app(AppSpecification.t(), String.t()) ::
+          {:ok, AppStorageInfo.t()}
   def store_generated_app(%AppSpecification{} = app_spec, source_path) do
     adapter().store_generated_app(app_spec, source_path)
   end

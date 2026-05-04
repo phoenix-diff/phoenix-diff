@@ -2,6 +2,7 @@ defmodule PhxDiff.Diffs do
   @moduledoc false
 
   alias PhxDiff.AppSpecification
+  alias PhxDiff.AppStorageInfo
   alias PhxDiff.ComparisonError
   alias PhxDiff.DiffManifest
   alias PhxDiff.DiffManifest.AddedFile
@@ -48,7 +49,7 @@ defmodule PhxDiff.Diffs do
   defdelegate read_raw_app_file(app_spec, relative_path), to: AppRepo
 
   @spec generate_sample_app(AppSpecification.t()) ::
-          {:ok, String.t()} | {:error, :unknown_version}
+          {:ok, AppStorageInfo.t()} | {:error, :unknown_version}
   defdelegate generate_sample_app(app_spec), to: AppRepo
 
   @spec get_github_sample_app_base_url(AppSpecification.t()) :: String.t()

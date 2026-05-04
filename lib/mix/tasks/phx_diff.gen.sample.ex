@@ -10,18 +10,8 @@ defmodule Mix.Tasks.PhxDiff.Gen.Sample do
   def run(args) when is_list(args) do
     with {:ok, version_arg, remaining_args} <- pop_version_arg(args),
          {:ok, version} <- parse_version(version_arg),
-         {:ok, app_path} <- generate_app_path(AppSpecification.new(version, remaining_args)) do
-      app_path = Path.relative_to(app_path, Application.app_dir(:phx_diff))
-
-      Mix.shell().info("""
-
-      Successfully generated sample app.
-
-      To add this to version control, run:
-
-          git add #{app_path}
-          git add -f #{app_path}/config/prod.secret.exs
-      """)
+         {:ok, result} <- generate_app(AppSpecification.new(version, remaining_args)) do
+      Mix.shell().info(success_message(result.post_store_instructions))
     else
       {:error, :invalid_version, version} ->
         Mix.shell().error([:red, "Invalid version: ", inspect(version)])
@@ -63,10 +53,25 @@ defmodule Mix.Tasks.PhxDiff.Gen.Sample do
     end
   end
 
-  def generate_app_path(app_specification) do
+  def generate_app(app_specification) do
     case PhxDiff.generate_sample_app(app_specification) do
-      {:ok, app_path} -> {:ok, app_path}
+      {:ok, result} -> {:ok, result}
       {:error, :unknown_version} -> {:error, :unknown_version, app_specification}
     end
+  end
+
+  defp success_message(nil) do
+    """
+
+    Successfully generated sample app.
+    """
+  end
+
+  defp success_message(post_store_instructions) do
+    """
+
+    Successfully generated sample app.
+
+    """ <> post_store_instructions
   end
 end

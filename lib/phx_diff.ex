@@ -7,6 +7,7 @@ defmodule PhxDiff do
     deps: [],
     exports: [
       AppSpecification,
+      AppStorageInfo,
       ComparisonError,
       DiffManifest,
       Diff.Patch,
@@ -24,6 +25,7 @@ defmodule PhxDiff do
     ]
 
   alias PhxDiff.AppSpecification
+  alias PhxDiff.AppStorageInfo
   alias PhxDiff.ComparisonError
   alias PhxDiff.Diff.Patch
   alias PhxDiff.DiffManifest
@@ -114,10 +116,10 @@ defmodule PhxDiff do
   @doc """
   Generates a sample application for the given app specification
 
-  Returns the path of the generated app
+  Returns the path of the generated app and any post-store instructions
   """
   @spec generate_sample_app(AppSpecification.t()) ::
-          {:ok, String.t()} | {:error, :unknown_version}
+          {:ok, AppStorageInfo.t()} | {:error, :unknown_version}
   defdelegate generate_sample_app(app_spec), to: PhxDiff.Diffs
 
   @doc """

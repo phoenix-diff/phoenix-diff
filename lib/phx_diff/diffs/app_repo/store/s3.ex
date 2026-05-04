@@ -4,6 +4,7 @@ defmodule PhxDiff.Diffs.AppRepo.Store.S3 do
   @behaviour PhxDiff.Diffs.AppRepo.Store.Adapter
 
   alias PhxDiff.AppSpecification
+  alias PhxDiff.AppStorageInfo
   alias PhxDiff.Diffs.AppRepo.AppSpecPath
 
   @impl true
@@ -48,7 +49,7 @@ defmodule PhxDiff.Diffs.AppRepo.Store.S3 do
 
     File.rename!(source_path, destination_path)
 
-    {:ok, destination_path}
+    {:ok, AppStorageInfo.new(destination_path, nil)}
   end
 
   defp app_path(app_spec) do

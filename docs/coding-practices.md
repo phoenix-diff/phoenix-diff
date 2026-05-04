@@ -11,6 +11,7 @@ Each namespace layer follows the same structure:
 - The parent module is the public face of that layer: it contains business logic and delegates to child modules when necessary.
 - Child modules are internal (`@moduledoc false`) and invisible outside the layer, unless they are public structs belonging to a cohesive namespace (e.g. `PhxDiff.Diff.Patch`).
 - Public structs belong at or near the layer's namespace root (e.g. `PhxDiff.DiffManifest`, not `PhxDiff.Diffs.DiffManifest`).
+- Public specs in higher-level modules must not reference types from internal implementation modules. If a return type is simple, define it inline in the spec; if it is reused or represents a domain concept, promote it to a public type at or near the layer's namespace root.
 - Flow is strictly top-down: parents call children, never the reverse.
 
 ## Facade Adapter Pattern

@@ -2,6 +2,7 @@ defmodule PhxDiff.Diffs.AppRepo do
   @moduledoc false
 
   alias PhxDiff.AppSpecification
+  alias PhxDiff.AppStorageInfo
   alias PhxDiff.Diffs.AppRepo.AppGenerator
   alias PhxDiff.Diffs.AppRepo.AppSpecPath
   alias PhxDiff.Diffs.AppRepo.Store
@@ -50,7 +51,7 @@ defmodule PhxDiff.Diffs.AppRepo do
   end
 
   @spec generate_sample_app(AppSpecification.t()) ::
-          {:ok, String.t()} | {:error, :unknown_version}
+          {:ok, AppStorageInfo.t()} | {:error, :unknown_version}
   def generate_sample_app(%AppSpecification{} = app_spec) do
     with {:ok, app_dir} <- AppGenerator.generate(app_spec) do
       Store.store_generated_app(app_spec, app_dir)
