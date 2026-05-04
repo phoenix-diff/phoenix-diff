@@ -13,6 +13,17 @@ Each namespace layer follows the same structure:
 - Public structs belong at or near the layer's namespace root (e.g. `PhxDiff.DiffManifest`, not `PhxDiff.Diffs.DiffManifest`).
 - Flow is strictly top-down: parents call children, never the reverse.
 
+## Facade Adapter Pattern
+
+Use this pattern when a feature needs swappable implementations behind a stable module API, such as configuration or storage.
+
+- **Facade module** — the stable module called by feature code, e.g. `PhxDiff.Config` or `PhxDiff.Diffs.AppRepo.Store`. It declares `@behaviour Namespace.Adapter`, exposes public functions with `@spec`, and delegates each call to the configured adapter.
+- **Adapter behaviour module** — the callback contract under the facade namespace, e.g. `PhxDiff.Config.Adapter` or `PhxDiff.Diffs.AppRepo.Store.Adapter`. It owns the `@callback` definitions and only includes return values that real adapters can return.
+- **Concrete adapter module** — an implementation of the behaviour, e.g. `PhxDiff.Config.DefaultAdapter` or `PhxDiff.Diffs.AppRepo.Store.FileSystem`. It declares `@behaviour Namespace.Adapter` and contains implementation-specific reads, file access, service calls, or default lookups.
+- **Configuration entry point** — the place the facade uses to find its adapter. For app configuration, read `Application.get_env/3` only in the facade's private `adapter/0`. For feature adapters selected by config, route through `PhxDiff.Config` or `PhxDiffWeb.Config` rather than reading application env directly.
+
+When recreating the pattern, feature code should call the facade, never the concrete adapter. Tests should swap the adapter at the configuration layer when mocking is needed.
+
 ## Code Organization
 
 - **`PhxDiff`** — core business logic (diff computation, app specs, file access)
