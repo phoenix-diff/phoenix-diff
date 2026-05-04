@@ -10,14 +10,16 @@ defmodule PhxDiff.DiffParser do
   rest_of_line = utf8_string([not: ?\n], min: 0)
 
   chunk_header =
-    ignore(string("@@ -"))
-    |> concat(integer(min: 1) |> unwrap_and_tag(:fs))
-    |> optional(ignore(string(",")) |> concat(integer(min: 1) |> unwrap_and_tag(:fc)))
+    "@@ -"
+    |> string()
+    |> ignore()
+    |> concat([min: 1] |> integer() |> unwrap_and_tag(:fs))
+    |> optional("," |> string() |> ignore() |> concat([min: 1] |> integer() |> unwrap_and_tag(:fc)))
     |> ignore(string(" +"))
-    |> concat(integer(min: 1) |> unwrap_and_tag(:ts))
-    |> optional(ignore(string(",")) |> concat(integer(min: 1) |> unwrap_and_tag(:tc)))
+    |> concat([min: 1] |> integer() |> unwrap_and_tag(:ts))
+    |> optional("," |> string() |> ignore() |> concat([min: 1] |> integer() |> unwrap_and_tag(:tc)))
     |> ignore(string(" @@"))
-    |> concat(rest_of_line |> unwrap_and_tag(:ctx))
+    |> concat(unwrap_and_tag(rest_of_line, :ctx))
 
   defparsecp(:parse_chunk_header_tokens, chunk_header, inline: true)
 
@@ -31,7 +33,7 @@ defmodule PhxDiff.DiffParser do
     trailing_newline? = String.ends_with?(diff, "\n")
 
     with {:ok, state} <- diff |> split_lines() |> parse_lines({[], nil, nil}),
-         result <- finalize(state) |> mark_trailing_newline(trailing_newline?),
+         result = state |> finalize() |> mark_trailing_newline(trailing_newline?),
          false <- result == [] do
       {:ok, result}
     else
@@ -94,64 +96,33 @@ defmodule PhxDiff.DiffParser do
     do:
       {:ok,
        {maybe_push_patch(patches, current_patch, current_chunk),
-        %Patch{raw_headers: [line]} |> HeaderLineParser.parse_header_line(line), nil}}
+        HeaderLineParser.parse_header_line(%Patch{raw_headers: [line]}, line), nil}}
 
   # Chunk header
   defp process_line(<<"@@", _::binary>> = line, {patches, current_patch, current_chunk}),
     do: {:ok, {patches, maybe_push_chunk(current_patch, current_chunk), parse_chunk_header(line)}}
 
   # Content lines (hot path) — dispatch on first byte when inside a chunk
-  defp process_line(
-         <<"+", _::binary>> = line,
-         {patches, current_patch, %Chunk{} = current_chunk}
-       ),
-       do:
-         {:ok,
-          {patches, current_patch,
-           %{current_chunk | lines: [parse_line(line) | current_chunk.lines]}}}
+  defp process_line(<<"+", _::binary>> = line, {patches, current_patch, %Chunk{} = current_chunk}),
+    do: {:ok, {patches, current_patch, %{current_chunk | lines: [parse_line(line) | current_chunk.lines]}}}
 
-  defp process_line(
-         <<"-", _::binary>> = line,
-         {patches, current_patch, %Chunk{} = current_chunk}
-       ),
-       do:
-         {:ok,
-          {patches, current_patch,
-           %{current_chunk | lines: [parse_line(line) | current_chunk.lines]}}}
+  defp process_line(<<"-", _::binary>> = line, {patches, current_patch, %Chunk{} = current_chunk}),
+    do: {:ok, {patches, current_patch, %{current_chunk | lines: [parse_line(line) | current_chunk.lines]}}}
 
-  defp process_line(
-         <<" ", _::binary>> = line,
-         {patches, current_patch, %Chunk{} = current_chunk}
-       ),
-       do:
-         {:ok,
-          {patches, current_patch,
-           %{current_chunk | lines: [parse_line(line) | current_chunk.lines]}}}
+  defp process_line(<<" ", _::binary>> = line, {patches, current_patch, %Chunk{} = current_chunk}),
+    do: {:ok, {patches, current_patch, %{current_chunk | lines: [parse_line(line) | current_chunk.lines]}}}
 
-  defp process_line(
-         <<"\\", _::binary>> = line,
-         {patches, current_patch, %Chunk{} = current_chunk}
-       ),
-       do:
-         {:ok,
-          {patches, current_patch,
-           %{current_chunk | lines: [parse_line(line) | current_chunk.lines]}}}
+  defp process_line(<<"\\", _::binary>> = line, {patches, current_patch, %Chunk{} = current_chunk}),
+    do: {:ok, {patches, current_patch, %{current_chunk | lines: [parse_line(line) | current_chunk.lines]}}}
 
   defp process_line("" = line, {patches, current_patch, %Chunk{} = current_chunk}),
-    do:
-      {:ok,
-       {patches, current_patch,
-        %{current_chunk | lines: [parse_line(line) | current_chunk.lines]}}}
+    do: {:ok, {patches, current_patch, %{current_chunk | lines: [parse_line(line) | current_chunk.lines]}}}
 
   defp process_line(_line, {_patches, _current_patch, %Chunk{}}), do: :error
 
   # Header line inside a patch, before the first chunk
   defp process_line(line, {patches, %Patch{} = current_patch, nil}),
-    do:
-      {:ok,
-       {patches,
-        current_patch |> HeaderLineParser.parse_header_line(line) |> prepend_raw_header(line),
-        nil}}
+    do: {:ok, {patches, current_patch |> HeaderLineParser.parse_header_line(line) |> prepend_raw_header(line), nil}}
 
   # Outside any patch context
   defp process_line(_line, state), do: {:ok, state}

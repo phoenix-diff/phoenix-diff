@@ -18,17 +18,18 @@ defmodule PhxDiff.Logging.Formatter do
   end
 
   defp format_datetime({date, time}) do
-    [Logger.Formatter.format_date(date), ?T, Logger.Formatter.format_time(time), ?Z]
-    |> IO.iodata_to_binary()
+    IO.iodata_to_binary([Logger.Formatter.format_date(date), ?T, Logger.Formatter.format_time(time), ?Z])
   end
 
   defp known_metadata_attributes(metadata) do
-    Keyword.take(metadata, [:"event.domain", :"event.name"])
+    metadata
+    |> Keyword.take([:"event.domain", :"event.name"])
     |> Map.new()
   end
 
   defp trace_attributes(metadata) do
-    Enum.flat_map(metadata, fn
+    metadata
+    |> Enum.flat_map(fn
       {:otel_trace_id, trace_id} -> ["trace.id": to_string(trace_id)]
       _ -> []
     end)

@@ -1,8 +1,8 @@
 defmodule PhxDiffWeb.PageControllerTest do
   use PhxDiffWeb.ConnCase, async: true
 
-  import Phoenix.LiveViewTest
   import Mox
+  import Phoenix.LiveViewTest
 
   describe "GET /" do
     test "redirects to /compare/<prev>...<latest> when no params", %{conn: conn} do
@@ -11,13 +11,13 @@ defmodule PhxDiffWeb.PageControllerTest do
         |> get(~p"/")
         |> redirected_to(:found)
 
-      {:ok, view, _html} = conn |> live(path)
+      {:ok, view, _html} = live(conn, path)
 
       form_data = get_form_data(view)
 
-      assert form_data.source.version == PhxDiff.previous_release_version() |> to_string()
+      assert form_data.source.version == to_string(PhxDiff.previous_release_version())
       assert form_data.source.variant == "default"
-      assert form_data.target.version == PhxDiff.latest_version() |> to_string()
+      assert form_data.target.version == to_string(PhxDiff.latest_version())
       assert form_data.target.variant == "default"
     end
 
@@ -33,7 +33,7 @@ defmodule PhxDiffWeb.PageControllerTest do
 
       assert form_data.source.version == "1.7.2"
       assert form_data.source.variant == "default"
-      assert form_data.target.version == PhxDiff.latest_version() |> to_string()
+      assert form_data.target.version == to_string(PhxDiff.latest_version())
       assert form_data.target.variant == "default"
     end
 
@@ -47,7 +47,7 @@ defmodule PhxDiffWeb.PageControllerTest do
 
       form_data = get_form_data(view)
 
-      assert form_data.source.version == PhxDiff.previous_release_version() |> to_string()
+      assert form_data.source.version == to_string(PhxDiff.previous_release_version())
       assert form_data.source.variant == "default"
       assert form_data.target.version == "1.7.2"
       assert form_data.target.variant == "default"
@@ -66,7 +66,7 @@ defmodule PhxDiffWeb.PageControllerTest do
 
       assert form_data.source.version == "1.7.1"
       assert form_data.source.variant == "default"
-      assert form_data.target.version == PhxDiff.latest_version() |> to_string()
+      assert form_data.target.version == to_string(PhxDiff.latest_version())
       assert form_data.target.variant == "default"
     end
 
@@ -80,7 +80,7 @@ defmodule PhxDiffWeb.PageControllerTest do
 
       form_data = get_form_data(view)
 
-      assert form_data.source.version == PhxDiff.previous_release_version() |> to_string()
+      assert form_data.source.version == to_string(PhxDiff.previous_release_version())
       assert form_data.source.variant == "default"
       assert form_data.target.version == "1.7.1"
       assert form_data.target.variant == "default"
@@ -126,13 +126,13 @@ defmodule PhxDiffWeb.PageControllerTest do
         |> get(~p"/compare")
         |> redirected_to(:found)
 
-      {:ok, view, _html} = conn |> live(path)
+      {:ok, view, _html} = live(conn, path)
 
       form_data = get_form_data(view)
 
-      assert form_data.source.version == PhxDiff.previous_release_version() |> to_string()
+      assert form_data.source.version == to_string(PhxDiff.previous_release_version())
       assert form_data.source.variant == "default"
-      assert form_data.target.version == PhxDiff.latest_version() |> to_string()
+      assert form_data.target.version == to_string(PhxDiff.latest_version())
       assert form_data.target.variant == "default"
     end
 
@@ -155,7 +155,7 @@ defmodule PhxDiffWeb.PageControllerTest do
         |> get(~p"/compare")
         |> redirected_to(:found)
 
-      {:ok, view, _html} = conn |> live(path)
+      {:ok, view, _html} = live(conn, path)
 
       form_data = get_form_data(view)
 
@@ -175,15 +175,15 @@ defmodule PhxDiffWeb.PageControllerTest do
     %{
       source: %{
         version:
-          Floki.attribute(
-            document,
+          document
+          |> Floki.attribute(
             ~S|#[name="diff_selection[source][version]"] [selected=selected]|,
             "value"
           )
           |> List.first(),
         variant:
-          Floki.attribute(
-            document,
+          document
+          |> Floki.attribute(
             ~S|#[name="diff_selection[source][variant]"] [selected=selected]|,
             "value"
           )
@@ -191,15 +191,15 @@ defmodule PhxDiffWeb.PageControllerTest do
       },
       target: %{
         version:
-          Floki.attribute(
-            document,
+          document
+          |> Floki.attribute(
             ~S|#[name="diff_selection[target][version]"] [selected=selected]|,
             "value"
           )
           |> List.first(),
         variant:
-          Floki.attribute(
-            document,
+          document
+          |> Floki.attribute(
             ~S|#[name="diff_selection[target][variant]"] [selected=selected]|,
             "value"
           )

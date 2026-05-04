@@ -25,6 +25,7 @@ defmodule PhxDiff do
 
   alias PhxDiff.AppSpecification
   alias PhxDiff.ComparisonError
+  alias PhxDiff.Diff.Patch
   alias PhxDiff.DiffManifest
 
   @type diff :: String.t()
@@ -66,13 +67,13 @@ defmodule PhxDiff do
   @doc """
   Parse a unified diff string into a list of patches.
   """
-  @spec parse_diff(diff) :: {:ok, [PhxDiff.Diff.Patch.t()]} | {:error, :unrecognized_format}
+  @spec parse_diff(diff) :: {:ok, [Patch.t()]} | {:error, :unrecognized_format}
   defdelegate parse_diff(diff), to: PhxDiff.DiffParser, as: :parse
 
   @doc """
   Renders a list of parsed patches back to a unified diff string.
   """
-  @spec render_diff([PhxDiff.Diff.Patch.t()]) :: diff
+  @spec render_diff([Patch.t()]) :: diff
   defdelegate render_diff(patches), to: PhxDiff.DiffParser, as: :to_string
 
   @doc """

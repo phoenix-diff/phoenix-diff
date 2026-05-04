@@ -22,8 +22,7 @@ defmodule PhxDiffWeb.DiffSelections do
   end
 
   @spec find_valid_diff_selection(Changeset.t(DiffSelection.t())) :: DiffSelection.t()
-  def find_valid_diff_selection(%Changeset{valid?: true} = changeset),
-    do: Changeset.apply_action!(changeset, :validate)
+  def find_valid_diff_selection(%Changeset{valid?: true} = changeset), do: Changeset.apply_action!(changeset, :validate)
 
   def find_valid_diff_selection(%Changeset{} = changeset) do
     errors = Changeset.traverse_errors(changeset, &Function.identity/1)
@@ -57,7 +56,7 @@ defmodule PhxDiffWeb.DiffSelections do
             put_in(
               changeset.params,
               ["source", "version"],
-              PhxDiff.previous_release_version() |> to_string()
+              to_string(PhxDiff.previous_release_version())
             )
           )
 
@@ -67,7 +66,7 @@ defmodule PhxDiffWeb.DiffSelections do
             put_in(
               changeset.params,
               ["target", "version"],
-              PhxDiff.latest_version() |> to_string()
+              to_string(PhxDiff.latest_version())
             )
           )
 

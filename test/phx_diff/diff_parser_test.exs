@@ -254,7 +254,7 @@ defmodule PhxDiff.DiffParserTest do
       {:ok, patches} = DiffParser.parse(diff)
 
       multi_chunk = Enum.find(patches, &(length(&1.chunks) > 1))
-      assert multi_chunk != nil
+      assert multi_chunk
       assert length(multi_chunk.chunks) >= 2
     end
 
@@ -614,7 +614,7 @@ defmodule PhxDiff.DiffParserTest do
       [chunk] = patch.chunks
 
       empty_ctx = Enum.find(chunk.lines, &(&1.raw == ""))
-      assert empty_ctx != nil
+      assert empty_ctx
       assert empty_ctx.type == :context
       assert empty_ctx.text == ""
     end

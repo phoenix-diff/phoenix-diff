@@ -7,13 +7,13 @@ defmodule PhxDiff.TestSupport.OpenTelemetryTestExporter do
       :otel_batch_processor.set_exporter(#{inspect(__MODULE__)})
   """
 
+  @behaviour :otel_exporter
+
   import Record, only: [is_record: 2]
 
   alias PhxDiff.TestSupport.OpenTelemetryTestExporter.Records
 
   require Records
-
-  @behaviour :otel_exporter
 
   @registry __MODULE__
 

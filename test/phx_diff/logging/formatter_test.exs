@@ -9,7 +9,8 @@ defmodule PhxDiff.Logging.FormatterTest do
     log_msg = "Hello from #{inspect(__MODULE__)}"
 
     assert json_log =
-             capture_json_log(fn -> Logger.info(log_msg) end)
+             fn -> Logger.info(log_msg) end
+             |> capture_json_log()
              |> Enum.find(&match?(%{"message" => ^log_msg}, &1))
 
     assert {:ok, _date, _} = DateTime.from_iso8601(json_log["syslog"]["timestamp"])

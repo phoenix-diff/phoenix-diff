@@ -7,6 +7,23 @@
 # General application configuration
 import Config
 
+# Configure esbuild (the version is required)
+config :esbuild,
+  version: "0.25.9",
+  phx_diff: [
+    args: ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
+    cd: Path.expand("../assets", __DIR__),
+    env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
+  ]
+
+# Configures Elixir's Logger
+config :logger, :console,
+  format: "$time $metadata[$level] $message\n",
+  metadata: [:request_id]
+
+# Use Jason for JSON parsing in Phoenix
+config :phoenix, :json_library, Jason
+
 # Configures the endpoint
 config :phx_diff, PhxDiffWeb.Endpoint,
   url: [host: "localhost"],
@@ -20,18 +37,7 @@ config :phx_diff, PhxDiffWeb.Endpoint,
 
 config :phx_diff,
   app_repo_store: PhxDiff.Diffs.AppRepo.Store.FileSystem,
-  github_sample_app_base_url:
-    "https://github.com/phoenix-diff/phoenix-diff/tree/master/priv/data/sample-app"
-
-# Configure esbuild (the version is required)
-config :esbuild,
-  version: "0.25.9",
-  phx_diff: [
-    args:
-      ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
-    cd: Path.expand("../assets", __DIR__),
-    env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
-  ]
+  github_sample_app_base_url: "https://github.com/phoenix-diff/phoenix-diff/tree/master/priv/data/sample-app"
 
 # Configure tailwind (the version is required)
 config :tailwind,
@@ -43,14 +49,6 @@ config :tailwind,
     ),
     cd: Path.expand("..", __DIR__)
   ]
-
-# Configures Elixir's Logger
-config :logger, :console,
-  format: "$time $metadata[$level] $message\n",
-  metadata: [:request_id]
-
-# Use Jason for JSON parsing in Phoenix
-config :phoenix, :json_library, Jason
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

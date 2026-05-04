@@ -2,16 +2,15 @@ defmodule PhxDiffTest do
   use PhxDiff.MockedConfigCase, async: false
 
   import ExUnit.CaptureLog
+  import Mox
   import PhxDiff.TestSupport.FileHelpers
   import PhxDiff.TestSupport.OpenTelemetryTestExporter, only: [subscribe_to_otel_spans: 1]
   import PhxDiff.TestSupport.Sigils
   import PhxDiff.TestSupport.TelemetryHelpers, only: :macros
-  import Mox
 
   alias PhxDiff.AppSpecification
   alias PhxDiff.ComparisonError
   alias PhxDiff.TestSupport.DiffFixtures
-
   alias PhxDiff.TestSupport.TelemetryHelpers
 
   @unknown_phoenix_version ~V[0.0.99]
@@ -44,8 +43,8 @@ defmodule PhxDiffTest do
 
       assert length(versions) > 25
 
-      assert Enum.member?(versions, ~V[1.3.0])
-      assert Enum.member?(versions, ~V[1.4.0-rc.2])
+      assert ~V[1.3.0] in versions
+      assert ~V[1.4.0-rc.2] in versions
     end
 
     @tag :tmp_dir
@@ -62,8 +61,8 @@ defmodule PhxDiffTest do
 
       assert length(versions) > 20
 
-      assert Enum.member?(versions, ~V[1.3.0])
-      refute Enum.member?(versions, ~V[1.4.0-rc.2])
+      assert ~V[1.3.0] in versions
+      refute ~V[1.4.0-rc.2] in versions
     end
 
     @tag :tmp_dir
@@ -183,7 +182,7 @@ defmodule PhxDiffTest do
                |> PhxDiff.default_app_specification()
                |> PhxDiff.generate_sample_app()
 
-      assert storage_dir == PhxDiff.Config.app_repo_path() |> Path.join("1.5.3/live")
+      assert storage_dir == Path.join(PhxDiff.Config.app_repo_path(), "1.5.3/live")
 
       assert_file(Path.join(storage_dir, "mix.exs"))
 
@@ -211,7 +210,8 @@ defmodule PhxDiffTest do
       stub_repo_paths(tmp_dir)
 
       assert {:error, :unknown_version} =
-               PhxDiff.default_app_specification(~V[0.1.10])
+               ~V[0.1.10]
+               |> PhxDiff.default_app_specification()
                |> PhxDiff.generate_sample_app()
 
       assert_temp_dirs_cleaned_up()

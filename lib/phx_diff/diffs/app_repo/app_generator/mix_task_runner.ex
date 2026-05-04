@@ -85,10 +85,7 @@ defmodule PhxDiff.Diffs.AppRepo.AppGenerator.MixTaskRunner do
     {:noreply, state}
   end
 
-  def handle_info(
-        {port, {:exit_status, exit_status}},
-        %{port: port, parent_pid: parent_pid} = state
-      ) do
+  def handle_info({port, {:exit_status, exit_status}}, %{port: port, parent_pid: parent_pid} = state) do
     send(parent_pid, {:command_exited, self(), {get_output(state), exit_status}})
     {:stop, :normal, state}
   end
@@ -101,8 +98,7 @@ defmodule PhxDiff.Diffs.AppRepo.AppGenerator.MixTaskRunner do
     end
   end
 
-  defp handle_prompt!(_prompt, %{prompt_responses: [response | rest], port: port} = state)
-       when is_binary(response) do
+  defp handle_prompt!(_prompt, %{prompt_responses: [response | rest], port: port} = state) when is_binary(response) do
     Port.command(port, response <> "\n")
     %{state | prompt_responses: [rest]}
   end

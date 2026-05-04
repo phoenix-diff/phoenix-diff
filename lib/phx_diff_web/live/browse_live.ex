@@ -3,6 +3,7 @@ defmodule PhxDiffWeb.BrowseLive do
   use PhxDiffWeb, :live_view
 
   defmodule NotFoundError do
+    @moduledoc false
     defexception plug_status: 404
 
     def message(_) do
@@ -16,11 +17,7 @@ defmodule PhxDiffWeb.BrowseLive do
   end
 
   @impl true
-  def handle_params(
-        %{"app_specification" => app_spec_slug, "path" => path_segments},
-        _uri,
-        socket
-      )
+  def handle_params(%{"app_specification" => app_spec_slug, "path" => path_segments}, _uri, socket)
       when is_list(path_segments) do
     relative_path = Enum.join(path_segments, "/")
 

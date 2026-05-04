@@ -2,8 +2,8 @@ defmodule PhxDiffWeb.AdminDashboardsTest do
   use PhxDiffWeb.ConnCase, async: true
   use PhxDiff.MockedConfigCase
 
-  import Plug.BasicAuth, only: [encode_basic_auth: 2]
   import Mox
+  import Plug.BasicAuth, only: [encode_basic_auth: 2]
 
   alias PhxDiffWeb.Config.AdminDashboardCredential
 
@@ -31,7 +31,8 @@ defmodule PhxDiffWeb.AdminDashboardsTest do
     end
 
     test "is not accessible when unauthenticated", %{conn: conn} do
-      get(conn, ~p"/dashboard/home")
+      conn
+      |> get(~p"/dashboard/home")
       |> response(:unauthorized)
     end
   end

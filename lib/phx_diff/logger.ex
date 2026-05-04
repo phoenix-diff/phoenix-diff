@@ -53,7 +53,7 @@ defmodule PhxDiff.Logger do
         args -> [" ", Enum.intersperse(args, " ")]
       end
 
-    ["\"", app_spec.phoenix_version |> to_string(), flags_segment, "\""]
+    ["\"", to_string(app_spec.phoenix_version), flags_segment, "\""]
   end
 
   defp duration(duration) do

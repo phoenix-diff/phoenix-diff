@@ -17,20 +17,20 @@ defmodule PhxDiff.Diffs.AppRepo do
   end
 
   @spec release_versions() :: [version]
-  def release_versions, do: all_versions() |> Enum.reject(&pre_release?/1)
+  def release_versions, do: Enum.reject(all_versions(), &pre_release?/1)
 
   defp pre_release?(version), do: !Enum.empty?(version.pre)
 
   @spec latest_version() :: version
-  def latest_version, do: all_versions() |> List.last()
+  def latest_version, do: List.last(all_versions())
 
   @spec previous_release_version() :: version
   def previous_release_version do
     releases = release_versions()
-    latest_release = releases |> List.last()
+    latest_release = List.last(releases)
 
     if latest_version() == latest_release do
-      releases |> Enum.at(-2)
+      Enum.at(releases, -2)
     else
       latest_release
     end
@@ -94,7 +94,7 @@ defmodule PhxDiff.Diffs.AppRepo do
   defp read_file_bytes(app_spec, relative_path) do
     with :ok <- validate_path(relative_path),
          {:ok, root} <- fetch_app_path(app_spec),
-         full_path <- Path.expand(relative_path, root),
+         full_path = Path.expand(relative_path, root),
          true <- String.starts_with?(full_path, Path.expand(root)),
          true <- File.regular?(full_path),
          {:ok, content} <- File.read(full_path) do
@@ -117,8 +117,7 @@ defmodule PhxDiff.Diffs.AppRepo do
 
   @spec get_github_sample_app_base_url(AppSpecification.t()) :: String.t()
   def get_github_sample_app_base_url(%AppSpecification{} = app_spec) do
-    PhxDiff.Config.github_sample_app_base_url()
-    |> Path.join(AppSpecPath.path(app_spec))
+    Path.join(PhxDiff.Config.github_sample_app_base_url(), AppSpecPath.path(app_spec))
   end
 
   defp app_specifications_for_pre_generated_apps do

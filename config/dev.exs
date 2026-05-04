@@ -1,5 +1,26 @@
 import Config
 
+# Do not include metadata nor timestamps in development logs
+config :logger, :console, format: "[$level] $message\n"
+
+config :mix_test_watch,
+  tasks: ["test", "credo --strict --all"],
+  clear: true
+
+# Initialize plugs at runtime for faster development compilation
+config :phoenix, :plug_init_mode, :runtime
+
+# Set a higher stacktrace during development. Avoid configuring such
+# in production as building large stacktraces may be expensive.
+config :phoenix, :stacktrace_depth, 20
+
+config :phoenix_live_view,
+  # Include HEEx debug annotations as HTML comments in rendered markup
+  debug_heex_annotations: true,
+  debug_attributes: true,
+  # Enable helpful, but potentially expensive runtime checks
+  enable_expensive_runtime_checks: true
+
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #
@@ -55,24 +76,3 @@ config :phx_diff, PhxDiffWeb.Endpoint,
 config :phx_diff,
   admin_username: "admin",
   admin_password: "password"
-
-# Do not include metadata nor timestamps in development logs
-config :logger, :console, format: "[$level] $message\n"
-
-# Set a higher stacktrace during development. Avoid configuring such
-# in production as building large stacktraces may be expensive.
-config :phoenix, :stacktrace_depth, 20
-
-# Initialize plugs at runtime for faster development compilation
-config :phoenix, :plug_init_mode, :runtime
-
-config :phoenix_live_view,
-  # Include HEEx debug annotations as HTML comments in rendered markup
-  debug_heex_annotations: true,
-  debug_attributes: true,
-  # Enable helpful, but potentially expensive runtime checks
-  enable_expensive_runtime_checks: true
-
-config :mix_test_watch,
-  tasks: ["test", "credo --strict --all"],
-  clear: true

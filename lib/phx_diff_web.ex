@@ -27,11 +27,12 @@ defmodule PhxDiffWeb do
     quote do
       use Phoenix.Router, helpers: false
 
-      # Import common connection and controller functions to use in pipelines
-      import Plug.Conn
       import Phoenix.Controller
       import Phoenix.LiveView.Router
       import PhxDiffWeb.Analytics
+
+      # Import common connection and controller functions to use in pipelines
+      import Plug.Conn
     end
   end
 
@@ -51,6 +52,7 @@ defmodule PhxDiffWeb do
       use Gettext, backend: PhxDiffWeb.Gettext
 
       import Plug.Conn
+
       unquote(verified_routes())
     end
   end

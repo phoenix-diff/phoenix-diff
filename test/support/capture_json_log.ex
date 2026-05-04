@@ -8,14 +8,12 @@ defmodule PhxDiff.CaptureJSONLog do
   @dialyzer {:nowarn_function, parse_json_logs: 1}
   @spec capture_json_log((-> any())) :: [map()]
   def capture_json_log(function) when is_function(function) do
-    ExUnit.CaptureLog.capture_log(
-      [
-        format: {PhxDiff.Logging.Formatter, :format},
-        colors: [enabled: false],
-        metadata: :all
-      ],
-      function
-    )
+    [
+      format: {PhxDiff.Logging.Formatter, :format},
+      colors: [enabled: false],
+      metadata: :all
+    ]
+    |> ExUnit.CaptureLog.capture_log(function)
     |> parse_json_logs()
   end
 
