@@ -18,6 +18,7 @@ Each namespace layer follows the same structure:
 - **`PhxDiff`** — core business logic (diff computation, app specs, file access)
 - **`PhxDiffWeb`** — web layer (controllers, LiveViews, components, routing)
 - Module boundaries are enforced by the [Boundary](https://hex.pm/packages/boundary) library. Respect `deps:` and `exports:` declarations on each module.
+- Mix tasks use flat dot-separated filenames (e.g. `phx_diff.s3.seed.ex`) rather than nested directories, matching `Mix.Task` module names directly.
 
 ## Quality Gates
 
@@ -38,6 +39,10 @@ dialyzer
 - Use `with` for multi-step error handling; avoid deeply nested `case`.
 - Return `{:ok, value}` / `{:error, reason}` for fallible operations.
 - Name boolean functions with a `?` suffix; bang functions with `!`.
+- Use singular names for individual records, plural names for collections, and avoid names that could mean either.
+- For keyword-list options, define a singular option tuple type, e.g.
+  `@type put_object_opt :: {:content_type, String.t()} | {:if_none_match, String.t()}`,
+  and reference lists inline in specs as `[put_object_opt()]` rather than defining a separate list alias.
 
 ## Configuration
 
@@ -78,6 +83,7 @@ Use verified route sigils — never build URL strings manually:
 - Use `PhxDiffWeb.ConnCase` for HTTP tests, `Phoenix.LiveViewTest` for LiveViews.
 - Avoid mocks unless necessary to enable `async: true` — for example, when a test needs to change global config, use `Mox` to swap the adapter per-process. Set up mocks in `test/support/mocked_config_case.ex`.
 - Use `Floki` for HTML assertions (test-only dependency).
+- Create test data in the tests that use it rather than in shared setup blocks, so each test only generates the data it needs.
 
 ## Styling
 
