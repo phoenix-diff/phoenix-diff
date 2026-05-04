@@ -40,17 +40,8 @@ defmodule Mix.Tasks.PhxDiff.Gen.SampleTest do
 
     for {{version_1, v1_opts}, {version_2, v2_opts}} <- @diffs_to_compare do
       test "returns known diff comparing #{version_1} #{Enum.join(v1_opts, " ")} to #{version_2} #{Enum.join(v2_opts, " ")}" do
-        v1_app_spec =
-          AppSpecification.new(
-            Version.parse!(unquote(version_1)),
-            unquote(v1_opts)
-          )
-
-        v2_app_spec =
-          AppSpecification.new(
-            Version.parse!(unquote(version_2)),
-            unquote(v2_opts)
-          )
+        v1_app_spec = app_spec(unquote(version_1), unquote(v1_opts))
+        v2_app_spec = app_spec(unquote(version_2), unquote(v2_opts))
 
         Gen.Sample.run([unquote(version_1)] ++ unquote(v1_opts))
         Gen.Sample.run([unquote(version_2)] ++ unquote(v2_opts))
@@ -84,5 +75,9 @@ defmodule Mix.Tasks.PhxDiff.Gen.SampleTest do
     assert_receive {:mix_shell, :error, [msg]}
 
     assert msg == "A phoenix version must be specified"
+  end
+
+  defp app_spec(version, opts) do
+    AppSpecification.new(Version.parse!(version), opts)
   end
 end
