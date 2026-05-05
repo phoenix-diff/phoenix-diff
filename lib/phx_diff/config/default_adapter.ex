@@ -7,6 +7,12 @@ defmodule PhxDiff.Config.DefaultAdapter do
   def app_repo_path, do: Application.app_dir(:phx_diff, "priv/data/sample-app")
 
   @impl true
+  def app_repo_s3_store_cache_path, do: Application.app_dir(:phx_diff, "tmp/app_repo_s3_store_cache")
+
+  @impl true
+  def app_repo_s3_store_bucket, do: Application.fetch_env!(:phx_diff, :app_repo_s3_store_bucket)
+
+  @impl true
   def app_repo_store, do: Application.fetch_env!(:phx_diff, :app_repo_store)
 
   @impl true
@@ -28,5 +34,10 @@ defmodule PhxDiff.Config.DefaultAdapter do
   @impl true
   def s3_secret_access_key do
     Application.fetch_env!(:phx_diff, :s3_secret_access_key)
+  end
+
+  @impl true
+  def s3_region do
+    Application.fetch_env!(:phx_diff, :s3_region)
   end
 end

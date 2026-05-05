@@ -3,6 +3,7 @@ defmodule Mix.Tasks.PhxDiff.Gen.SampleTest do
 
   import Mox
 
+  alias ExAws.S3, as: ExAwsS3
   alias Mix.Tasks.PhxDiff.Gen
   alias PhxDiff.AppSpecification
   alias PhxDiff.Config.Mock
@@ -56,10 +57,31 @@ defmodule Mix.Tasks.PhxDiff.Gen.SampleTest do
   end
 
   describe "S3 app repo store adapter" do
-    setup do
-      stub(Mock, :app_repo_store, fn -> S3 end)
+    @describetag :tmp_dir
 
-      :ok
+    setup [{PhxDiff.SimulatorHelpers, :configure_for_s3_simulator}]
+
+    setup %{aws_config: aws_config, tmp_dir: tmp_dir} do
+      bucket = unique_bucket_name()
+
+      Mock
+      |> stub(:app_repo_store, fn -> S3 end)
+      |> stub(:app_repo_s3_store_bucket, fn -> bucket end)
+      |> stub(:app_repo_s3_store_cache_path, fn -> Path.join(tmp_dir, "app_repo_s3_store_cache") end)
+      |> stub(:app_generator_workspace_path, fn -> Path.join(tmp_dir, "generator_workspace") end)
+
+      assert {:ok, _response} = bucket |> ExAwsS3.put_bucket("us-east-1") |> request(aws_config)
+
+      [bucket: bucket]
+    end
+
+    test "uploads a tarball for the generated app", %{aws_config: aws_config, bucket: bucket} do
+      key = "1.5.2/live.tar.gz"
+
+      Gen.Sample.run(["1.5.2", "--live"])
+
+      assert {:ok, %{body: <<31, 139, _rest::binary>>}} =
+               bucket |> ExAwsS3.get_object(key) |> request(aws_config)
     end
 
     test "outputs no post-store instructions after generating an app" do
@@ -114,5 +136,13 @@ defmodule Mix.Tasks.PhxDiff.Gen.SampleTest do
 
   defp app_spec(version, opts) do
     AppSpecification.new(Version.parse!(version), opts)
+  end
+
+  defp request(operation, aws_config) do
+    ExAws.request(operation, aws_config)
+  end
+
+  defp unique_bucket_name do
+    "test-bucket-#{System.unique_integer([:positive])}"
   end
 end

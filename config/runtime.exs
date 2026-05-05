@@ -133,6 +133,23 @@ if config_env() != :test do
       "host.name": hostname
     ]
 
+  config :phx_diff,
+         Enum.flat_map(
+           [
+             app_repo_s3_store_bucket: "APP_REPO_S3_BUCKET",
+             s3_access_key_id: "AWS_ACCESS_KEY_ID",
+             s3_secret_access_key: "AWS_SECRET_ACCESS_KEY",
+             s3_base_url: "AWS_ENDPOINT_URL_S3",
+             s3_region: "AWS_REGION"
+           ],
+           fn {config_key, env_var} ->
+             case System.fetch_env(env_var) do
+               {:ok, value} -> [{config_key, value}]
+               :error -> []
+             end
+           end
+         )
+
   case System.fetch_env("OTEL_EXPORTER") do
     {:ok, "stdout"} ->
       config :opentelemetry, traces_exporter: {:otel_exporter_stdout, []}

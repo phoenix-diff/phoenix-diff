@@ -18,6 +18,7 @@ defmodule PhxDiff.SimulatorHelpers do
     |> Mox.stub(:s3_base_url, fn -> base_url end)
     |> Mox.stub(:s3_access_key_id, fn -> credential.access_key_id end)
     |> Mox.stub(:s3_secret_access_key, fn -> credential.secret_access_token end)
+    |> Mox.stub(:s3_region, fn -> "us-east-1" end)
 
     aws_config = build_aws_config(sim, credential)
 
