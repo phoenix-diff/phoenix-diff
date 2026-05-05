@@ -133,6 +133,20 @@ if config_env() != :test do
       "host.name": hostname
     ]
 
+  case System.fetch_env("APP_REPO_STORE") do
+    {:ok, "filesystem"} ->
+      :ok
+
+    {:ok, "s3"} ->
+      config :phx_diff, app_repo_store: PhxDiff.Diffs.AppRepo.Store.S3
+
+    {:ok, value} ->
+      raise "unsupported APP_REPO_STORE: #{inspect(value)}"
+
+    :error ->
+      :ok
+  end
+
   config :phx_diff,
          Enum.flat_map(
            [
