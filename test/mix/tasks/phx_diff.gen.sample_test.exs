@@ -5,6 +5,7 @@ defmodule Mix.Tasks.PhxDiff.Gen.SampleTest do
 
   alias Mix.Tasks.PhxDiff.Gen
   alias PhxDiff.AppSpecification
+  alias PhxDiff.Config.Mock
   alias PhxDiff.Diffs.AppRepo.Store.FileSystem
   alias PhxDiff.Diffs.AppRepo.Store.S3
   alias PhxDiff.TestSupport.DiffFixtures
@@ -18,7 +19,7 @@ defmodule Mix.Tasks.PhxDiff.Gen.SampleTest do
 
   describe "filesystem app repo store adapter" do
     setup do
-      stub(PhxDiff.Config.Mock, :app_repo_store, fn -> FileSystem end)
+      stub(Mock, :app_repo_store, fn -> FileSystem end)
 
       :ok
     end
@@ -56,7 +57,7 @@ defmodule Mix.Tasks.PhxDiff.Gen.SampleTest do
 
   describe "S3 app repo store adapter" do
     setup do
-      stub(PhxDiff.Config.Mock, :app_repo_store, fn -> S3 end)
+      stub(Mock, :app_repo_store, fn -> S3 end)
 
       :ok
     end

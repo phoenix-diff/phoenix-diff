@@ -53,8 +53,7 @@ defmodule PhxDiff.Diffs.AppRepo.Store.S3 do
   end
 
   defp app_path(app_spec) do
-    PhxDiff.Config.app_repo_path()
-    |> Path.join(AppSpecPath.path(app_spec))
+    Path.join(PhxDiff.Config.app_repo_path(), AppSpecPath.path(app_spec))
   end
 
   defp path_to_app_spec(path) do
