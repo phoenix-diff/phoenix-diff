@@ -75,7 +75,7 @@ defmodule PhxDiff.MixProject do
        github: "tailwindlabs/heroicons", tag: "v2.2.0", sparse: "optimized", app: false, compile: false, depth: 1},
       {
         :font_awesome,
-        github: "FortAwesome/Font-Awesome", tag: "7.2.0", sparse: "svgs", app: false, compile: false, depth: 1
+        github: "FortAwesome/Font-Awesome", tag: "7.3.1", sparse: "svgs", app: false, compile: false, depth: 1
       },
       {:ex_doc, "~> 0.27", only: :dev, runtime: false},
       {:styler, "~> 1.11", only: [:dev, :test], runtime: false},
